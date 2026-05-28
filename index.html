@@ -27,7 +27,18 @@
                 </div>
                 <div class="header-titles">
                     <h1>San Nicolás de Myra</h1>
-                    <p class="subtitle">Optimización & Gestión de Aseo</p>
+                    <div class="header-sub-flex">
+                        <p class="subtitle">Optimización & Gestión de Aseo</p>
+                        <div class="operator-selector-wrapper">
+                            <span class="operator-icon">👤</span>
+                            <select id="operator-select" class="operator-select">
+                                <option value="Tía María">Tía María</option>
+                                <option value="Tía Carmen">Tía Carmen</option>
+                                <option value="Tía Rosa">Tía Rosa</option>
+                                <option value="Tía Patricia">Tía Patricia</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -107,6 +118,14 @@
                 </svg>
                 <span>Alertas y Recomendaciones</span>
                 <span class="tab-alert-badge hidden" id="optimizer-tab-badge">!</span>
+            </button>
+            <button class="nav-tab" id="tab-btn-analytics" data-tab="tab-analytics">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" class="tab-icon">
+                    <line x1="18" y1="20" x2="18" y2="10"/>
+                    <line x1="12" y1="20" x2="12" y2="4"/>
+                    <line x1="6" y1="20" x2="6" y2="14"/>
+                </svg>
+                <span>Analítica y Priorización</span>
             </button>
             <button class="nav-tab" id="tab-btn-admin" data-tab="tab-admin">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" class="tab-icon">
@@ -272,7 +291,104 @@
                 </div>
             </section>
 
-            <!-- SECCIÓN 3: ADMINISTRACIÓN DEL CALENDARIO -->
+            <!-- SECCIÓN 3: ANALÍTICA, RANKINGS Y PRIORIZACIÓN INTELIGENTE -->
+            <section class="tab-content" id="tab-analytics">
+                <div class="analytics-layout-grid">
+                    
+                    <!-- COLUMNA IZQUIERDA: PRIORIZACIÓN E HISTORIAL -->
+                    <div class="analytics-col">
+                        <!-- TARJETA 1: LISTA DINÁMICA DE PRIORIDAD DE ASEO ACTUAL -->
+                        <div class="glass-card priority-list-card">
+                            <div class="card-header-actions">
+                                <h3>🚨 Prioridad de Aseo Actual</h3>
+                                <span class="badge info">Orden Inteligente</span>
+                            </div>
+                            <p class="card-desc">Lista dinámica reordenada por inactividad, tráfico y recreos inminentes. Usa colores semafóricos.</p>
+                            <div class="priority-list-container" id="priority-list-container">
+                                <!-- Generado dinámicamente en app.js -->
+                            </div>
+                        </div>
+
+                        <!-- TARJETA 2: VISTA DE CALENDARIO E HISTORIAL -->
+                        <div class="glass-card calendar-history-card">
+                            <h3>📅 Calendario y Bitácora de Actividades</h3>
+                            <p class="card-desc">Haz clic en cualquier día para desplegar el historial de limpiezas detallado.</p>
+                            
+                            <div class="calendar-history-flex">
+                                <!-- Calendario visual -->
+                                <div class="calendar-widget-wrapper">
+                                    <div class="calendar-header-nav">
+                                        <button class="btn-calendar-nav" id="btn-calendar-prev">◀</button>
+                                        <h4 id="calendar-month-year-label">Mayo 2026</h4>
+                                        <button class="btn-calendar-nav" id="btn-calendar-next">▶</button>
+                                    </div>
+                                    <div class="calendar-days-grid-header">
+                                        <span>D</span><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span>
+                                    </div>
+                                    <div class="calendar-days-grid" id="calendar-days-grid">
+                                        <!-- Generado dinámicamente -->
+                                    </div>
+                                </div>
+                                
+                                <!-- Bitácora del día seleccionado -->
+                                <div class="history-log-panel">
+                                    <div class="log-panel-header">
+                                        <h4 id="selected-day-label">Bitácora del 28 de Mayo</h4>
+                                        <span class="log-count-badge" id="selected-day-count">0 registros</span>
+                                    </div>
+                                    <div class="log-list-container" id="selected-day-logs">
+                                        <!-- Generado dinámicamente -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUMNA DERECHA: DASHBOARD, RANKINGS Y REPORTES -->
+                    <div class="analytics-col">
+                        <!-- TARJETA 3: DASHBOARD DE ESTADÍSTICAS Y RANKINGS -->
+                        <div class="glass-card stats-dashboard-card">
+                            <h3>🏆 Podio de Excelencia (Zonas más Limpias)</h3>
+                            <p class="card-desc">Zonas con mejor cumplimiento y mayor frecuencia de aseo en la última semana.</p>
+                            
+                            <!-- Podio visual -->
+                            <div class="podium-wrapper" id="excellence-podium">
+                                <!-- Generado dinámicamente en app.js -->
+                            </div>
+                        </div>
+
+                        <!-- TARJETA 4: GRÁFICO DE ZONAS CRÍTICAS -->
+                        <div class="glass-card critical-zones-card">
+                            <h3>⚠️ Zonas Críticas (Mayor tiempo sin aseo)</h3>
+                            <p class="card-desc">Identificación de salas y baños que requieren mayor atención mensual.</p>
+                            
+                            <div class="critical-chart-container" id="critical-chart-container">
+                                <!-- Gráfico de barras horizontales puro HTML/CSS/SVG generado en app.js -->
+                            </div>
+                        </div>
+
+                        <!-- TARJETA 5: INFORME MENSUAL E ACCIONES -->
+                        <div class="glass-card report-card">
+                            <h3>📊 Informe de Desempeño Escolar</h3>
+                            <p class="card-desc">Genera un informe ejecutivo completo con KPIs de aseo mensual y porcentaje de cumplimiento.</p>
+                            
+                            <button class="primary-btn full-width" id="btn-generate-monthly-report" style="margin-top: 10px;">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 8px;">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                    <polyline points="10 9 9 9 8 9"/>
+                                </svg>
+                                Generar Informe de Desempeño
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- SECCIÓN 4: ADMINISTRACIÓN DEL CALENDARIO -->
             <section class="tab-content" id="tab-admin">
                 <!-- SELECTOR DE HORARIO DIARIO -->
                 <div class="glass-card schedule-selector-card" style="margin-bottom: 20px;">
@@ -415,6 +531,24 @@
                     <button type="submit" class="primary-btn" id="btn-save-block">Guardar Bloque</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL INFORME DE DESEMPEÑO MENSUAL -->
+    <div class="modal-overlay hidden" id="report-modal">
+        <div class="glass-card modal-card report-modal-card">
+            <div class="report-modal-header no-print">
+                <h3>📊 Informe Mensual de Desempeño de Aseo</h3>
+                <div class="modal-header-buttons">
+                    <button class="success-btn btn-sm" id="btn-print-report">🖨️ Imprimir / Guardar PDF</button>
+                    <button class="secondary-btn btn-sm" id="btn-close-report-modal">Cerrar</button>
+                </div>
+            </div>
+            
+            <!-- CONTENIDO IMPRIMIBLE DEL REPORTE -->
+            <div class="printable-report-content" id="printable-report-content">
+                <!-- Generado dinámicamente en app.js -->
+            </div>
         </div>
     </div>
 

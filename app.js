@@ -67,7 +67,13 @@ let appState = {
     calendar: [],      // Programación diaria activa
     isSimulatorOn: false,
     simulatedMinutes: 676, // Inicialmente 11:16 AM en minutos desde las 00:00 (11*60 + 16 = 676)
-    activeTab: "tab-marking"
+    activeTab: "tab-marking",
+    
+    // Módulo 3
+    historyLogs: [],       // Bitácora histórica de limpiezas
+    currentCalendarDate: new Date(2026, 4, 28), // 28 de Mayo de 2026 por defecto (mes 4 es Mayo en JS, 0-indexed)
+    selectedLogDate: new Date(2026, 4, 28),
+    activeOperator: "Tía María" // Operaria seleccionada por defecto
 };
 
 // SVG ICONOS GENERALES DE ALTA FIDELIDAD
@@ -122,6 +128,14 @@ function initData() {
         }
     } else {
         buildNewZonesState();
+    }
+
+    // D. Inicializar Historial de Aseos
+    const savedLogs = localStorage.getItem("san_nicolas_history_logs");
+    if (savedLogs) {
+        appState.historyLogs = JSON.parse(savedLogs);
+    } else {
+        generateMockHistoryLogs();
     }
 }
 
@@ -359,6 +373,12 @@ function renderAll() {
     updateQuickStats();
     updateAccordionHeaders();
     updateActiveCycleDisplay();
+
+    // Renderizadores Módulo 3
+    renderPriorityList(timeStr);
+    renderPodium();
+    renderCriticalChart(timeStr);
+    renderCalendarComponent();
 }
 
 // Actualiza el indicador visual de ciclo en el panel de marcado
@@ -504,7 +524,6 @@ function renderMarkingPanel(optStatus) {
         } else if (zone.type === "cancha") {
             canchasGrid.appendChild(btn);
         } else {
-            // baños y camarines van en el tercer grid
             banosGrid.appendChild(btn);
         }
     });
@@ -512,19 +531,52 @@ function renderMarkingPanel(optStatus) {
 
 // Registro de marcajes de aseo
 function markZoneAsClean(zone, optStatus) {
-    zone.lastClean = new Date().toISOString();
+    const timestampStr = new Date().toISOString();
+    let recordTimestamp = timestampStr;
+    
+    // Si el simulador está activo, simulamos el log en Mayo 28, 2026
+    if (appState.isSimulatorOn) {
+        const simDate = new Date(2026, 4, 28);
+        const simMins = appState.simulatedMinutes;
+        simDate.setHours(Math.floor(simMins / 60), simMins % 60, 0, 0);
+        recordTimestamp = simDate.toISOString();
+    }
+
+    zone.lastClean = recordTimestamp;
     saveAseosToStorage();
+
+    // Determinar la compliancia del marcaje
+    let compliance = "success";
+    if (optStatus.rating === "danger") {
+        compliance = "danger";
+    } else if (optStatus.rating === "warning") {
+        compliance = "warning";
+    }
+
+    // Agregar entrada al registro histórico
+    const newLog = {
+        zoneId: zone.id,
+        zoneName: zone.name,
+        zoneType: zone.type,
+        timestamp: recordTimestamp,
+        operatorName: appState.activeOperator,
+        compliance: compliance
+    };
+    appState.historyLogs.push(newLog);
+    localStorage.setItem("san_nicolas_history_logs", JSON.stringify(appState.historyLogs));
+
     renderAll();
 
-    const hrs = String(new Date().getHours()).padStart(2, '0');
-    const mins = String(new Date().getMinutes()).padStart(2, '0');
+    const cleanDate = new Date(recordTimestamp);
+    const hrs = String(cleanDate.getHours()).padStart(2, '0');
+    const mins = String(cleanDate.getMinutes()).padStart(2, '0');
 
     if (optStatus.conflictZoneWarning && (zone.type === "sala" || zone.type === "bano")) {
         showToast(`⚠️ Registrado a las ${hrs}:${mins}. ${optStatus.text}`, "warning");
     } else if (optStatus.isOptimalWindow) {
-        showToast(`✨ ¡Aseo óptimo! ${zone.name} marcado como LIMPIO a las ${hrs}:${mins} hrs.`, "success");
+        showToast(`✨ ¡Aseo óptimo! ${zone.name} marcado como LIMPIO a las ${hrs}:${mins} hrs por ${appState.activeOperator}.`, "success");
     } else {
-        showToast(`✨ ${zone.name} marcado como LIMPIO a las ${hrs}:${mins} hrs.`, "success");
+        showToast(`✨ ${zone.name} marcado como LIMPIO a las ${hrs}:${mins} hrs por ${appState.activeOperator}.`, "success");
     }
 }
 
@@ -823,6 +875,52 @@ function setupEventListeners() {
 
     // Descargar Calendario
     document.getElementById("btn-download-calendar").addEventListener("click", downloadCalendarJson);
+
+    // Módulo 3 Event Listeners
+    // A. Selector de Operaria
+    const operatorSelect = document.getElementById("operator-select");
+    if (operatorSelect) {
+        operatorSelect.value = appState.activeOperator;
+        operatorSelect.addEventListener("change", (e) => {
+            appState.activeOperator = e.target.value;
+            showToast(`👤 Operaria activa cambiada a: ${appState.activeOperator}`, "info");
+        });
+    }
+
+    // B. Navegación del Calendario
+    const btnPrev = document.getElementById("btn-calendar-prev");
+    const btnNext = document.getElementById("btn-calendar-next");
+    if (btnPrev && btnNext) {
+        btnPrev.addEventListener("click", () => {
+            const current = appState.currentCalendarDate;
+            appState.currentCalendarDate = new Date(current.getFullYear(), current.getMonth() - 1, 1);
+            renderCalendarComponent();
+        });
+        btnNext.addEventListener("click", () => {
+            const current = appState.currentCalendarDate;
+            appState.currentCalendarDate = new Date(current.getFullYear(), current.getMonth() + 1, 1);
+            renderCalendarComponent();
+        });
+    }
+
+    // C. Generador y Modales de Informe
+    const btnGenReport = document.getElementById("btn-generate-monthly-report");
+    const btnCloseReport = document.getElementById("btn-close-report-modal");
+    const btnPrintReport = document.getElementById("btn-print-report");
+
+    if (btnGenReport) {
+        btnGenReport.addEventListener("click", generateMonthlyReportModal);
+    }
+    if (btnCloseReport) {
+        btnCloseReport.addEventListener("click", () => {
+            document.getElementById("report-modal").classList.add("hidden");
+        });
+    }
+    if (btnPrintReport) {
+        btnPrintReport.addEventListener("click", () => {
+            window.print();
+        });
+    }
 }
 
 // 7. INTERRUPTOR DE HORARIOS DIARIOS
@@ -1047,4 +1145,616 @@ function showToast(message, type = "success") {
     setTimeout(() => {
         toast.remove();
     }, 3000);
+}
+
+// ==========================================================================
+// MÓDULO 3 - FUNCIONES DE PRIORIZACIÓN, HISTORIAL Y REPORTES
+// ==========================================================================
+
+// Generador de Logs Históricos de 30 días para localStorage
+function generateMockHistoryLogs() {
+    const logs = [];
+    const operators = ["Tía María", "Tía Carmen", "Tía Rosa", "Tía Patricia"];
+    const compliances = ["success", "success", "success", "warning", "danger"];
+    const today = new Date(2026, 4, 28);
+    
+    const tempZones = [];
+    for (let i = 1; i <= 30; i++) {
+        tempZones.push({ id: `sala-${i}`, name: `Sala ${i}`, type: "sala" });
+    }
+    SPECIAL_ZONES.forEach((canchaName, index) => {
+        tempZones.push({ id: `cancha-${index + 1}`, name: canchaName, type: "cancha" });
+    });
+    BANO_CAMARIN_DEFINITIONS.forEach((def, index) => {
+        tempZones.push({ id: `bano-camarin-${index + 1}`, name: def.name, type: def.type });
+    });
+
+    // Generar ~240 registros
+    for (let i = 0; i < 240; i++) {
+        const daysAgo = Math.floor(Math.random() * 30);
+        const logDate = new Date(today.getTime());
+        logDate.setDate(today.getDate() - daysAgo);
+        
+        const hour = 8 + Math.floor(Math.random() * 9);
+        const minute = Math.floor(Math.random() * 60);
+        logDate.setHours(hour, minute, 0, 0);
+        
+        let zoneIndex = Math.floor(Math.random() * tempZones.length);
+        const r = Math.random();
+        if (r < 0.08) {
+            zoneIndex = tempZones.findIndex(z => z.id === "bano-camarin-1");
+        } else if (r < 0.14) {
+            zoneIndex = tempZones.findIndex(z => z.id === "sala-1");
+        } else if (r < 0.19) {
+            zoneIndex = tempZones.findIndex(z => z.id === "cancha-1");
+        }
+        
+        const zone = tempZones[zoneIndex];
+        const operatorName = operators[Math.floor(Math.random() * operators.length)];
+        const compliance = compliances[Math.floor(Math.random() * compliances.length)];
+        
+        logs.push({
+            zoneId: zone.id,
+            zoneName: zone.name,
+            zoneType: zone.type,
+            timestamp: logDate.toISOString(),
+            operatorName: operatorName,
+            compliance: compliance
+        });
+    }
+
+    logs.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+    appState.historyLogs = logs;
+    localStorage.setItem("san_nicolas_history_logs", JSON.stringify(logs));
+}
+
+// Algoritmo de Priorización Dinámica
+function calculateZonePriority(zone, timeStr) {
+    const optStatus = getOptimizationStatus(timeStr);
+    
+    let inactivityHours = 8;
+    if (zone.lastClean) {
+        const timeDiffMs = Date.now() - new Date(zone.lastClean).getTime();
+        inactivityHours = timeDiffMs / (1000 * 60 * 60);
+    }
+    
+    // Adaptar inactividad en modo simulación
+    if (appState.isSimulatorOn) {
+        const simDate = new Date(2026, 4, 28);
+        const simMins = appState.simulatedMinutes;
+        simDate.setHours(Math.floor(simMins / 60), simMins % 60, 0, 0);
+        
+        if (zone.lastClean) {
+            const timeDiffMs = simDate.getTime() - new Date(zone.lastClean).getTime();
+            inactivityHours = timeDiffMs / (1000 * 60 * 60);
+            if (inactivityHours < 0) inactivityHours = 0;
+        } else {
+            inactivityHours = 8;
+        }
+    }
+
+    let score = inactivityHours * 10;
+    
+    // Peso de tráfico
+    let trafficWeight = 0;
+    if (zone.type === "bano" || zone.type === "camarin") {
+        trafficWeight = 40;
+    } else if (zone.type === "cancha") {
+        trafficWeight = 25;
+    }
+    score += trafficWeight;
+    
+    // Ajuste de recreo (Próximo recreo en <= 30 mins)
+    let recessAdjustment = 0;
+    if (optStatus.conflictZoneWarning) {
+        if (optStatus.minutesToConflict !== null && optStatus.minutesToConflict <= 30 && optStatus.rating === "warning") {
+            if (zone.type === "bano" || zone.type === "camarin") {
+                recessAdjustment = 50; // Urgencia alta de preparar baños antes
+            } else if (zone.type === "sala") {
+                recessAdjustment = -30; // Evitar limpiar salas
+            }
+        } else if (optStatus.rating === "danger") {
+            if (zone.type === "bano" || zone.type === "camarin") {
+                recessAdjustment = 20;
+            } else if (zone.type === "sala") {
+                recessAdjustment = -50;
+            }
+        }
+    }
+    score += recessAdjustment;
+    score = Math.max(0, score);
+
+    let rating = "low";
+    if (score >= 85) {
+        rating = "critical";
+    } else if (score >= 45) {
+        rating = "medium";
+    }
+
+    return {
+        score: Math.round(score),
+        rating,
+        inactivityHours
+    };
+}
+
+// Renderizar Lista Dinámica de Prioridades
+function renderPriorityList(timeStr) {
+    const container = document.getElementById("priority-list-container");
+    if (!container) return;
+    container.innerHTML = "";
+
+    const prioritizedZones = appState.zones.map(zone => {
+        const priority = calculateZonePriority(zone, timeStr);
+        return { zone, priority };
+    }).sort((a, b) => b.priority.score - a.priority.score);
+
+    prioritizedZones.forEach((item, index) => {
+        const zone = item.zone;
+        const priority = item.priority;
+        
+        let inactivityDisplay = "Sin registrar";
+        if (zone.lastClean) {
+            const hrs = Math.floor(priority.inactivityHours);
+            const mins = Math.floor((priority.inactivityHours % 1) * 60);
+            inactivityDisplay = hrs > 0 ? `Hace ${hrs}h ${mins}m` : `Hace ${mins}m`;
+        }
+
+        const ratingLabels = {
+            critical: "Crítica",
+            medium: "Media",
+            low: "Baja"
+        };
+
+        const itemDiv = document.createElement("div");
+        itemDiv.className = `priority-item-card ${priority.rating}`;
+        itemDiv.innerHTML = `
+            <div class="priority-item-left">
+                <div class="priority-number-badge">${index + 1}</div>
+                <div class="priority-zone-info">
+                    <span class="priority-zone-name">${zone.name}</span>
+                    <span class="priority-zone-meta">${zone.type === "sala" ? "Sala" : (zone.type === "bano" ? "Baño" : "Camarín")} • ${inactivityDisplay}</span>
+                </div>
+            </div>
+            <div class="priority-item-right">
+                <span class="priority-score-pill">${ratingLabels[priority.rating]}: ${priority.score} pts</span>
+                <button class="primary-btn btn-sm btn-priority-clean" data-id="${zone.id}" style="padding: 6px 10px; font-size: 0.72rem; border-radius: 8px;">✔ Limpiar</button>
+            </div>
+        `;
+        
+        itemDiv.querySelector(".btn-priority-clean").addEventListener("click", () => {
+            const optStatus = getOptimizationStatus(timeStr);
+            markZoneAsClean(zone, optStatus);
+        });
+
+        container.appendChild(itemDiv);
+    });
+}
+
+// Renderizar Podio 3D de Excelencia
+function renderPodium() {
+    const podiumContainer = document.getElementById("excellence-podium");
+    if (!podiumContainer) return;
+    podiumContainer.innerHTML = "";
+
+    const today = new Date(2026, 4, 28);
+    if (appState.isSimulatorOn) {
+        const simMins = appState.simulatedMinutes;
+        today.setHours(Math.floor(simMins / 60), simMins % 60, 0, 0);
+    }
+    const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    const counts = {};
+    appState.historyLogs.forEach(log => {
+        const logDate = new Date(log.timestamp);
+        if (logDate >= sevenDaysAgo && logDate <= today) {
+            counts[log.zoneId] = (counts[log.zoneId] || 0) + 1;
+        }
+    });
+
+    const complianceList = appState.zones.map(zone => {
+        return {
+            id: zone.id,
+            name: zone.name,
+            type: zone.type,
+            count: counts[zone.id] || 0
+        };
+    }).sort((a, b) => b.count - a.count);
+
+    const top1 = complianceList[0] || { name: "Sin datos", count: 0, type: "sala" };
+    const top2 = complianceList[1] || { name: "Sin datos", count: 0, type: "sala" };
+    const top3 = complianceList[2] || { name: "Sin datos", count: 0, type: "sala" };
+
+    const avatars = {
+        sala: "🏫",
+        cancha: "⚽",
+        bano: "💧",
+        camarin: "🚪"
+    };
+
+    // Segundo lugar
+    const stand2 = document.createElement("div");
+    stand2.className = "podium-stand second";
+    stand2.innerHTML = `
+        <div class="podium-avatar">${avatars[top2.type] || "🏫"}</div>
+        <div class="podium-name">${top2.name}</div>
+        <div class="podium-bar">
+            <div class="podium-medal">2</div>
+            <span class="podium-count">${top2.count}</span>
+        </div>
+    `;
+    podiumContainer.appendChild(stand2);
+
+    // Primer lugar
+    const stand1 = document.createElement("div");
+    stand1.className = "podium-stand first";
+    stand1.innerHTML = `
+        <div class="podium-avatar">${avatars[top1.type] || "🏫"}</div>
+        <div class="podium-name">${top1.name}</div>
+        <div class="podium-bar">
+            <div class="podium-medal">1</div>
+            <span class="podium-count">${top1.count}</span>
+        </div>
+    `;
+    podiumContainer.appendChild(stand1);
+
+    // Tercer lugar
+    const stand3 = document.createElement("div");
+    stand3.className = "podium-stand third";
+    stand3.innerHTML = `
+        <div class="podium-avatar">${avatars[top3.type] || "🏫"}</div>
+        <div class="podium-name">${top3.name}</div>
+        <div class="podium-bar">
+            <div class="podium-medal">3</div>
+            <span class="podium-count">${top3.count}</span>
+        </div>
+    `;
+    podiumContainer.appendChild(stand3);
+}
+
+// Renderizar Gráfico de Barras de Zonas Críticas
+function renderCriticalChart(timeStr) {
+    const chartContainer = document.getElementById("critical-chart-container");
+    if (!chartContainer) return;
+    chartContainer.innerHTML = "";
+
+    const zonesWithInactivity = appState.zones.map(zone => {
+        let inactivityHours = 8;
+        if (zone.lastClean) {
+            let refDate = new Date();
+            if (appState.isSimulatorOn) {
+                refDate = new Date(2026, 4, 28);
+                const simMins = appState.simulatedMinutes;
+                refDate.setHours(Math.floor(simMins / 60), simMins % 60, 0, 0);
+            }
+            const timeDiffMs = refDate.getTime() - new Date(zone.lastClean).getTime();
+            inactivityHours = Math.max(0, timeDiffMs / (1000 * 60 * 60));
+        }
+        return { zone, inactivityHours };
+    }).sort((a, b) => b.inactivityHours - a.inactivityHours);
+
+    const topCritical = zonesWithInactivity.slice(0, 5);
+
+    topCritical.forEach(item => {
+        const zone = item.zone;
+        const hours = item.inactivityHours;
+        
+        let hoursDisplay = hours > 24 ? `${Math.floor(hours / 24)}d ${Math.floor(hours % 24)}h` : `${Math.floor(hours)}h ${Math.floor((hours % 1) * 60)}m`;
+        if (hours === 8 && !zone.lastClean) {
+            hoursDisplay = "Nunca limpiado";
+        }
+
+        const pct = Math.min(100, (hours / 24) * 100);
+        const barClass = hours >= 6 ? "danger" : "warning";
+
+        const chartRow = document.createElement("div");
+        chartRow.className = "chart-row";
+        chartRow.innerHTML = `
+            <div class="chart-row-header">
+                <span class="chart-row-title">${zone.name}</span>
+                <span class="chart-row-value">${hoursDisplay}</span>
+            </div>
+            <div class="chart-bar-bg">
+                <div class="chart-bar-fill ${barClass}" style="width: ${pct}%;"></div>
+            </div>
+        `;
+        chartContainer.appendChild(chartRow);
+    });
+}
+
+// Renderizar Componente Calendario
+function renderCalendarComponent() {
+    const calendarGrid = document.getElementById("calendar-days-grid");
+    const monthLabel = document.getElementById("calendar-month-year-label");
+    if (!calendarGrid || !monthLabel) return;
+
+    calendarGrid.innerHTML = "";
+
+    const date = appState.currentCalendarDate;
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    monthLabel.innerText = `${monthNames[month]} ${year}`;
+
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const totalDays = new Date(year, month + 1, 0).getDate();
+    const prevMonthTotalDays = new Date(year, month, 0).getDate();
+
+    // Rellenar días del mes anterior
+    for (let i = firstDayIndex - 1; i >= 0; i--) {
+        const paddingBtn = document.createElement("button");
+        paddingBtn.className = "calendar-day-btn prev-month";
+        paddingBtn.innerText = prevMonthTotalDays - i;
+        calendarGrid.appendChild(paddingBtn);
+    }
+
+    // Detectar qué días tienen registros
+    const logDaysSet = new Set();
+    appState.historyLogs.forEach(log => {
+        const logDate = new Date(log.timestamp);
+        if (logDate.getFullYear() === year && logDate.getMonth() === month) {
+            logDaysSet.add(logDate.getDate());
+        }
+    });
+
+    // Renderizar días activos
+    for (let day = 1; day <= totalDays; day++) {
+        const dayBtn = document.createElement("button");
+        dayBtn.className = "calendar-day-btn";
+        dayBtn.innerText = day;
+
+        const selected = appState.selectedLogDate;
+        if (selected.getFullYear() === year && selected.getMonth() === month && selected.getDate() === day) {
+            dayBtn.classList.add("active");
+        }
+
+        if (logDaysSet.has(day)) {
+            dayBtn.classList.add("has-logs");
+        }
+
+        dayBtn.addEventListener("click", () => {
+            appState.selectedLogDate = new Date(year, month, day);
+            renderCalendarComponent();
+            renderSelectedDayLogs();
+        });
+
+        calendarGrid.appendChild(dayBtn);
+    }
+
+    // Rellenar días del mes siguiente (mantener cuadrícula de 42 celdas)
+    const totalRendered = firstDayIndex + totalDays;
+    const remainingPadding = 42 - totalRendered;
+    for (let i = 1; i <= remainingPadding; i++) {
+        const paddingBtn = document.createElement("button");
+        paddingBtn.className = "calendar-day-btn next-month";
+        paddingBtn.innerText = i;
+        calendarGrid.appendChild(paddingBtn);
+    }
+
+    renderSelectedDayLogs();
+}
+
+// Renderizar bitácora del día seleccionado
+function renderSelectedDayLogs() {
+    const logList = document.getElementById("selected-day-logs");
+    const label = document.getElementById("selected-day-label");
+    const countBadge = document.getElementById("selected-day-count");
+    if (!logList || !label || !countBadge) return;
+
+    logList.innerHTML = "";
+
+    const selected = appState.selectedLogDate;
+    const day = selected.getDate();
+    const month = selected.getMonth();
+    const year = selected.getFullYear();
+
+    const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    label.innerText = `Bitácora del ${day} de ${monthNames[month]}`;
+
+    const dailyLogs = appState.historyLogs.filter(log => {
+        const logDate = new Date(log.timestamp);
+        return logDate.getFullYear() === year && logDate.getMonth() === month && logDate.getDate() === day;
+    }).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+    countBadge.innerText = `${dailyLogs.length} ${dailyLogs.length === 1 ? 'registro' : 'registros'}`;
+
+    if (dailyLogs.length === 0) {
+        logList.innerHTML = `<div class="log-empty-msg">No hay registros de aseo para este día.</div>`;
+        return;
+    }
+
+    const avatars = {
+        sala: "🏫",
+        cancha: "⚽",
+        bano: "💧",
+        camarin: "🚪"
+    };
+
+    const ratingLabels = {
+        success: "Eficiente",
+        warning: "Postponible",
+        danger: "Riesgoso"
+    };
+
+    dailyLogs.forEach(log => {
+        const logDate = new Date(log.timestamp);
+        const hrsStr = String(logDate.getHours()).padStart(2, '0');
+        const minsStr = String(logDate.getMinutes()).padStart(2, '0');
+
+        const logCard = document.createElement("div");
+        logCard.className = "log-card";
+        logCard.innerHTML = `
+            <div class="log-card-icon">${avatars[log.zoneType] || "🏫"}</div>
+            <div class="log-card-body">
+                <span class="log-card-title">${log.zoneName}</span>
+                <span class="log-card-meta">A las ${hrsStr}:${minsStr} hrs por <strong>${log.operatorName || 'Operaria'}</strong></span>
+                <span class="log-compliance-badge ${log.compliance}">${ratingLabels[log.compliance] || "Eficiente"}</span>
+            </div>
+        `;
+        logList.appendChild(logCard);
+    });
+}
+
+// Generador de Informe Mensual Modal Imprimible
+function generateMonthlyReportModal() {
+    const modal = document.getElementById("report-modal");
+    const content = document.getElementById("printable-report-content");
+    if (!modal || !content) return;
+
+    const mayLogs = appState.historyLogs.filter(log => {
+        const logDate = new Date(log.timestamp);
+        return logDate.getFullYear() === 2026 && logDate.getMonth() === 4;
+    });
+
+    const totalLimpiezas = mayLogs.length;
+    const totalHours = Math.round(totalLimpiezas * 0.5);
+    
+    const successLogsCount = mayLogs.filter(log => log.compliance === "success").length;
+    const complianceRate = totalLimpiezas > 0 ? Math.round((successLogsCount / totalLimpiezas) * 100) : 100;
+
+    const operariasCount = {
+        "Tía María": 0,
+        "Tía Carmen": 0,
+        "Tía Rosa": 0,
+        "Tía Patricia": 0
+    };
+    mayLogs.forEach(log => {
+        if (operariasCount[log.operatorName] !== undefined) {
+            operariasCount[log.operatorName]++;
+        }
+    });
+
+    const zoneCleanings = {};
+    appState.zones.forEach(z => {
+        zoneCleanings[z.id] = { name: z.name, count: 0, type: z.type, successCount: 0 };
+    });
+
+    mayLogs.forEach(log => {
+        if (zoneCleanings[log.zoneId]) {
+            zoneCleanings[log.zoneId].count++;
+            if (log.compliance === "success") {
+                zoneCleanings[log.zoneId].successCount++;
+            }
+        }
+    });
+
+    let tableRowsHtml = "";
+    Object.values(zoneCleanings)
+        .sort((a, b) => b.count - a.count)
+        .forEach(item => {
+            const zoneRate = item.count > 0 ? Math.round((item.successCount / item.count) * 100) : 100;
+            let badgeClass = "success";
+            if (zoneRate < 50) {
+                badgeClass = "danger";
+            } else if (zoneRate < 80) {
+                badgeClass = "warning";
+            }
+
+            tableRowsHtml += `
+                <tr>
+                    <td><strong>${item.name}</strong></td>
+                    <td style="text-transform: capitalize;">${item.type === "sala" ? "Sala" : (item.type === "bano" ? "Baño" : "Camarín")}</td>
+                    <td>${item.count} limpiezas</td>
+                    <td>${item.count * 0.5} hrs</td>
+                    <td><span class="report-doc-badge ${badgeClass}">${zoneRate}%</span></td>
+                </tr>
+            `;
+        });
+
+    content.innerHTML = `
+        <div class="report-document">
+            <div class="report-doc-header">
+                <div class="report-doc-title-area">
+                    <h2>Colegio San Nicolás de Myra</h2>
+                    <p>Sistema de Optimización y Gestión de Aseo</p>
+                </div>
+                <div class="report-doc-meta">
+                    <p>Reporte: <strong>Informe de Desempeño Mensual</strong></p>
+                    <p>Período: <strong>Mayo 2026</strong></p>
+                    <p>Fecha Emisión: <strong>28/05/2026</strong></p>
+                </div>
+            </div>
+            
+            <div class="report-doc-kpis">
+                <div class="report-doc-kpi-card">
+                    <div class="report-doc-kpi-lbl">Total Limpiezas</div>
+                    <div class="report-doc-kpi-val">${totalLimpiezas}</div>
+                </div>
+                <div class="report-doc-kpi-card">
+                    <div class="report-doc-kpi-lbl">Horas-Hombre Invertidas</div>
+                    <div class="report-doc-kpi-val">${totalHours} hrs</div>
+                </div>
+                <div class="report-doc-kpi-card">
+                    <div class="report-doc-kpi-lbl">Cumplimiento Horario</div>
+                    <div class="report-doc-kpi-val success">${complianceRate}%</div>
+                </div>
+                <div class="report-doc-kpi-card">
+                    <div class="report-doc-kpi-lbl">Operarias Activas</div>
+                    <div class="report-doc-kpi-val" style="font-size: 1.15rem; margin-top:4px;">4 Operarias</div>
+                </div>
+            </div>
+            
+            <div class="report-doc-section-title">Resumen por Operaria de Aseo</div>
+            <table class="report-doc-table">
+                <thead>
+                    <tr>
+                        <th>Operaria de Aseo</th>
+                        <th>Servicios Registrados</th>
+                        <th>Tiempo de Limpieza Estimado</th>
+                        <th>Desempeño Visual</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Tía María</strong></td>
+                        <td>${operariasCount["Tía María"]} limpiezas</td>
+                        <td>${operariasCount["Tía María"] * 0.5} horas</td>
+                        <td><span class="report-doc-badge success">Excelente</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tía Carmen</strong></td>
+                        <td>${operariasCount["Tía Carmen"]} limpiezas</td>
+                        <td>${operariasCount["Tía Carmen"] * 0.5} horas</td>
+                        <td><span class="report-doc-badge success">Excelente</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tía Rosa</strong></td>
+                        <td>${operariasCount["Tía Rosa"]} limpiezas</td>
+                        <td>${operariasCount["Tía Rosa"] * 0.5} horas</td>
+                        <td><span class="report-doc-badge success">Excelente</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tía Patricia</strong></td>
+                        <td>${operariasCount["Tía Patricia"]} limpiezas</td>
+                        <td>${operariasCount["Tía Patricia"] * 0.5} horas</td>
+                        <td><span class="report-doc-badge success">Excelente</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="report-doc-section-title">Desglose Detallado por Zona de Infraestructura</div>
+            <table class="report-doc-table">
+                <thead>
+                    <tr>
+                        <th>Zona / Sala / Baño</th>
+                        <th>Tipo</th>
+                        <th>Total Limpiezas</th>
+                        <th>Horas Invertidas</th>
+                        <th>% Cumplimiento Horario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRowsHtml}
+                </tbody>
+            </table>
+            
+            <div class="report-doc-footer">
+                <p>Generado por el módulo de analítica inteligente del Colegio San Nicolás de Myra.</p>
+                <p>Página 1 de 1</p>
+            </div>
+        </div>
+    `;
+
+    modal.classList.remove("hidden");
 }
