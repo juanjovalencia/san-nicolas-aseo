@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión y Optimización de Aseo - Colegio San Nicolás de Mira</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- HEADER PRINCIPAL -->
+        <header class="app-header">
+            <div class="header-logo-title">
+                <div class="logo-shield">
+                    <svg viewBox="0 0 100 100" class="shield-svg">
+                        <path d="M50 5 L90 20 L90 50 C90 75 50 95 50 95 C50 95 10 75 10 50 L10 20 Z" fill="#0d233a" stroke="#fbbf24" stroke-width="3"/>
+                        <path d="M50 12 L82 24 L82 48 C82 69 50 86 50 86 C50 86 18 69 18 48 L18 24 Z" fill="#1e3a8a"/>
+                        <circle cx="50" cy="45" r="18" fill="#fbbf24" opacity="0.15"/>
+                        <path d="M45 35 L45 55 L58 63" stroke="#fbbf24" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <path d="M35 72 L65 72" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M40 76 L60 76" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="header-titles">
+                    <h1>San Nicolás de Mira</h1>
+                    <p class="subtitle">Optimización & Gestión de Aseo</p>
+                </div>
+            </div>
+            
+            <div class="header-clock-card">
+                <div class="clock-display">
+                    <span id="live-time">11:16:24</span>
+                    <span id="live-ampm">AM</span>
+                </div>
+                <div class="clock-date" id="live-date">Jueves, 28 de Mayo</div>
+                <div class="status-indicator-pill info" id="global-status-pill">
+                    <span class="pulse-dot"></span>
+                    <span id="global-status-text">Horario Escolar Activo</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- INDICADOR DE CONFLICTOS GLOBAL -->
+        <div class="conflict-alert-banner hidden" id="global-conflict-banner">
+            <div class="banner-icon">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+            </div>
+            <div class="banner-content">
+                <h4 id="banner-title">⚠️ ¡Conflicto de Aseo Próximo!</h4>
+                <p id="banner-message">El recreo general comienza pronto (10:00 hrs). Se recomienda evitar limpiar salas hasta las 10:20 hrs.</p>
+            </div>
+        </div>
+
+        <!-- SIMULATOR CONTROL BAR -->
+        <div class="simulator-bar" id="simulator-container">
+            <div class="sim-header">
+                <div class="sim-title">
+                    <span class="sim-badge">MODO SIMULADOR</span>
+                    <span class="sim-desc">Prueba cómo cambian las alertas del calendario escolar</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="simulator-toggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div class="sim-controls collapsed" id="sim-controls-wrapper">
+                <div class="sim-control-group">
+                    <label for="sim-time-slider">Simular Hora Escolar:</label>
+                    <div class="slider-val-wrapper">
+                        <input type="range" id="sim-time-slider" min="450" max="1020" step="5" value="676" class="time-range-slider">
+                        <span class="slider-time-badge" id="sim-time-badge">11:16 AM</span>
+                    </div>
+                </div>
+                <div class="sim-quick-presets">
+                    <span class="preset-label">Presets Rápidos:</span>
+                    <button class="preset-btn" data-time="08:15">08:15 (Clase)</button>
+                    <button class="preset-btn warning" data-time="09:40">09:40 (Pre-Recreo 🚨)</button>
+                    <button class="preset-btn success" data-time="10:15">10:15 (Recreo 🍎)</button>
+                    <button class="preset-btn" data-time="11:30">11:30 (Clase)</button>
+                    <button class="preset-btn warning" data-time="12:45">12:45 (Pre-Almuerzo 🚨)</button>
+                    <button class="preset-btn success" data-time="13:30">13:30 (Almuerzo 🍔)</button>
+                    <button class="preset-btn" data-time="16:30">16:30 (Salida)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- BARRA DE NAVEGACIÓN -->
+        <nav class="app-nav">
+            <button class="nav-tab active" id="tab-btn-marking" data-tab="tab-marking">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" class="tab-icon">
+                    <path d="M9 11l3 3L22 4"/>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                </svg>
+                <span>Panel de Marcado</span>
+            </button>
+            <button class="nav-tab" id="tab-btn-optimizer" data-tab="tab-optimizer">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" class="tab-icon">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+                <span>Alertas y Recomendaciones</span>
+                <span class="tab-alert-badge hidden" id="optimizer-tab-badge">!</span>
+            </button>
+            <button class="nav-tab" id="tab-btn-admin" data-tab="tab-admin">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" class="tab-icon">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span>Gestión de Horarios</span>
+            </button>
+        </nav>
+
+        <!-- SECCIONES DE CONTENIDO -->
+        <main class="app-main">
+            
+            <!-- SECCIÓN 1: PANEL DE MARCADO (LAS TÍAS DEL ASEO) -->
+            <section class="tab-content active" id="tab-marking">
+                <div class="section-intro-card">
+                    <div class="intro-text">
+                        <h3>📋 Registro de Aseo Diario</h3>
+                        <p>Presiona el botón de la sala o cancha correspondiente al terminar de limpiar. El sistema registrará la hora automáticamente.</p>
+                    </div>
+                    <div class="quick-stats">
+                        <div class="stat-pill">
+                            <span class="stat-num" id="stat-cleaned-count">0</span>
+                            <span class="stat-lbl">Zonas Limpias hoy</span>
+                        </div>
+                        <button class="secondary-btn btn-sm" id="btn-reset-all-aseos">
+                            Reiniciar Todos
+                        </button>
+                    </div>
+                </div>
+
+                <!-- GRIDS DE MARCADO -->
+                <div class="grid-section">
+                    <h4 class="grid-section-title">🏫 Salas de Clases (30)</h4>
+                    <div class="marking-grid" id="salas-grid">
+                        <!-- Generado dinámicamente en app.js -->
+                    </div>
+                </div>
+
+                <div class="grid-section">
+                    <h4 class="grid-section-title">⚽ Campos y Canchas Deportivas</h4>
+                    <div class="marking-grid special-grid" id="canchas-grid">
+                        <!-- Generado dinámicamente en app.js -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 2: OPTIMIZACIÓN Y RECOMENDACIONES -->
+            <section class="tab-content" id="tab-optimizer">
+                <div class="optimizer-dashboard">
+                    <!-- TARJETA ESTADO ACTUAL -->
+                    <div class="glass-card status-summary-card" id="opt-status-summary">
+                        <div class="status-summary-header">
+                            <div class="block-badge" id="opt-current-block-type">BLOQUE ACTUAL</div>
+                            <h2 id="opt-current-block-name">Clase de Lenguaje y Comunicación</h2>
+                            <p class="time-range" id="opt-current-block-time">08:30 - 10:00 hrs</p>
+                        </div>
+                        <div class="optimization-status-graphic" id="opt-status-graphic">
+                            <div class="gauge-ring success">
+                                <div class="gauge-fill"></div>
+                                <span class="gauge-text" id="opt-rating-label">Óptimo</span>
+                            </div>
+                            <div class="gauge-description">
+                                <h3 id="opt-recommendation-title">¡Excelente momento para limpiar!</h3>
+                                <p id="opt-recommendation-text">El bloque actual de clases durará 45 minutos más. Limpiar salas en este momento garantiza que se mantendrán limpias hasta el próximo recreo.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RECOMENDACIONES DE CRONOGRAMA -->
+                    <div class="glass-card optimizer-timeline-card">
+                        <h3>🕒 Recomendaciones del Día Escolar</h3>
+                        <p class="timeline-helper-text">Sugerencias basadas en el calendario académico del Colegio para maximizar la duración del aseo.</p>
+                        
+                        <div class="optimizer-timeline" id="optimizer-timeline-container">
+                            <!-- Generado dinámicamente en app.js -->
+                        </div>
+                    </div>
+
+                    <!-- EXPLICACIÓN LÓGICA -->
+                    <div class="glass-card logic-explainer-card">
+                        <h3>🧠 ¿Cómo funciona la Optimización?</h3>
+                        <div class="logic-steps">
+                            <div class="logic-step">
+                                <div class="step-num">1</div>
+                                <div class="step-detail">
+                                    <h4>Monitorea el Calendario Académico</h4>
+                                    <p>Cruza el reloj actual con la programación de recreos, almuerzos, eventos especiales y bloques de clases.</p>
+                                </div>
+                            </div>
+                            <div class="logic-step">
+                                <div class="step-num">2</div>
+                                <div class="step-detail">
+                                    <h4>Alerta de Conflictos Críticos</h4>
+                                    <p>Si faltan menos de 30 minutos para un recreo o evento masivo, el sistema alerta visualmente para evitar limpiar zonas que se ensuciarán de inmediato.</p>
+                                </div>
+                            </div>
+                            <div class="logic-step">
+                                <div class="step-num">3</div>
+                                <div class="step-detail">
+                                    <h4>Sugiere Ventanas Inteligentes</h4>
+                                    <p>Propone postergar el aseo a ventanas ideales (por ejemplo, justo al iniciar un bloque de clases largo o inmediatamente después de finalizar un recreo).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 3: ADMINISTRACIÓN DEL CALENDARIO -->
+            <section class="tab-content" id="tab-admin">
+                <div class="admin-grid">
+                    
+                    <!-- EDITAR CALENDARIO VISUAL -->
+                    <div class="glass-card admin-editor-card">
+                        <div class="card-header-actions">
+                            <h3>📅 Calendario Académico Diario</h3>
+                            <div class="header-buttons">
+                                <button class="secondary-btn btn-sm" id="btn-restore-default-calendar">Restaurar Original</button>
+                                <button class="primary-btn btn-sm" id="btn-add-block-modal">Añadir Bloque</button>
+                            </div>
+                        </div>
+                        <p class="card-desc">Modifica los bloques de clases, recreos y eventos del colegio. El motor de alertas se actualizará en tiempo real.</p>
+                        
+                        <div class="calendar-blocks-table-wrapper">
+                            <table class="calendar-blocks-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th>Nombre del Bloque</th>
+                                        <th>Inicio</th>
+                                        <th>Fin</th>
+                                        <th style="width: 80px;">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="calendar-blocks-tbody">
+                                    <!-- Generado dinámicamente en app.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SUBIDA Y EXPORTACIÓN JSON -->
+                    <div class="glass-card admin-upload-card">
+                        <h3>📤 Importar / Exportar Horarios</h3>
+                        <p class="card-desc">Carga la programación oficial del colegio mediante un archivo JSON o descarga la configuración actual.</p>
+                        
+                        <div class="upload-zone" id="json-drop-zone">
+                            <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" class="upload-icon">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <p class="upload-main-text">Arrastra un archivo JSON aquí o <span>selecciona desde tu equipo</span></p>
+                            <p class="upload-sub-text">Formatos válidos: JSON estructurado de bloques académicos.</p>
+                            <input type="file" id="json-file-input" accept=".json" class="hidden-input">
+                        </div>
+
+                        <div class="action-row">
+                            <button class="secondary-btn full-width" id="btn-download-calendar">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                Descargar Configuración Actual
+                            </button>
+                        </div>
+                        
+                        <div class="json-preview-container">
+                            <h4>Vista Previa del Formato JSON:</h4>
+                            <pre class="json-preview"><code>[
+  {
+    "name": "Entrada y Aseo Matinal",
+    "type": "clase",
+    "start": "08:00",
+    "end": "08:30"
+  },
+  {
+    "name": "Recreo General",
+    "type": "recreo",
+    "start": "10:00",
+    "end": "10:30"
+  }
+]</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+        
+        <!-- FOOTER -->
+        <footer class="app-footer">
+            <p>© 2026 Colegio San Nicolás de Mira. Todos los derechos reservados.</p>
+            <p class="footer-branch">Rama Git activa: <code class="git-badge">juanjo</code></p>
+        </footer>
+    </div>
+
+    <!-- MODAL AÑADIR/EDITAR BLOQUE -->
+    <div class="modal-overlay hidden" id="block-modal">
+        <div class="glass-card modal-card">
+            <h3 id="modal-title">Añadir Bloque Académico</h3>
+            <form id="block-form">
+                <input type="hidden" id="edit-block-index" value="">
+                
+                <div class="form-group">
+                    <label for="block-name">Nombre del Bloque</label>
+                    <input type="text" id="block-name" placeholder="Ej: Primer Recreo, Matemáticas, etc." required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="block-type">Tipo de Bloque</label>
+                    <select id="block-type" required>
+                        <option value="clase">Clase / Bloque Regular</option>
+                        <option value="recreo">Recreo / Receso</option>
+                        <option value="evento">Evento Especial / Masivo</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="block-start">Hora de Inicio</label>
+                        <input type="time" id="block-start" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="block-end">Hora de Término</label>
+                        <input type="time" id="block-end" required>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="secondary-btn" id="btn-cancel-modal">Cancelar</button>
+                    <button type="submit" class="primary-btn" id="btn-save-block">Guardar Bloque</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATIONS CONTAINER -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
