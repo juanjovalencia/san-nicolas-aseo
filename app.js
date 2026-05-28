@@ -358,6 +358,16 @@ function renderAll() {
     updateGlobalUIPills(optStatus);
     updateQuickStats();
     updateAccordionHeaders();
+    updateActiveCycleDisplay();
+}
+
+// Actualiza el indicador visual de ciclo en el panel de marcado
+function updateActiveCycleDisplay() {
+    const cycleText = document.getElementById("marking-active-cycle-text");
+    if (cycleText) {
+        const cycleName = appState.activeSchedule === 1 ? "Primer Ciclo" : "Segundo Ciclo";
+        cycleText.innerText = `Horario Activo: ${cycleName}`;
+    }
 }
 
 // Sincroniza badges del header
@@ -830,8 +840,8 @@ function switchSchedule(type) {
     saveCalendarToStorage();
     renderAll();
     
-    const schedName = type === 1 ? "Horario 1 (Regular)" : "Horario 2 (Especial)";
-    showToast(`📅 Configurado e Importado: ${schedName} para hoy.`, "success");
+    const schedName = type === 1 ? "Primer Ciclo" : "Segundo Ciclo";
+    showToast(`📅 Cambiado a Horario ${schedName} para hoy.`, "success");
 }
 
 function updateScheduleSelectorUI() {

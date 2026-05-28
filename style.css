@@ -1825,4 +1825,40 @@ input:checked + .slider:before {
     border-color: rgba(245, 158, 11, 0.3);
 }
 
+/* ==========================================================================
+   ESTILOS DE INDICADOR DE CICLO ACTIVO (ADENDA HORARIOS)
+   ========================================================================== */
+.active-cycle-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(251, 191, 36, 0.08);
+    border: 1px solid rgba(251, 191, 36, 0.25);
+    color: var(--color-gold);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 10px;
+    box-shadow: var(--shadow-glow-gold);
+    animation: pulseGlow 2s infinite ease-in-out;
+}
+
+.cycle-pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--color-gold);
+    box-shadow: 0 0 8px var(--color-gold);
+}
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 5px rgba(251, 191, 36, 0.15); }
+    50% { box-shadow: 0 0 15px rgba(251, 191, 36, 0.35); }
+    100% { box-shadow: 0 0 5px rgba(251, 191, 36, 0.15); }
+}
+
+
 
