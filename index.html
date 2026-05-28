@@ -75,7 +75,7 @@
                 <div class="sim-control-group">
                     <label for="sim-time-slider">Simular Hora Escolar:</label>
                     <div class="slider-val-wrapper">
-                        <input type="range" id="sim-time-slider" min="450" max="1020" step="5" value="676" class="time-range-slider">
+                        <input type="range" id="sim-time-slider" min="450" max="1080" step="5" value="676" class="time-range-slider">
                         <span class="slider-time-badge" id="sim-time-badge">11:16 AM</span>
                     </div>
                 </div>
@@ -220,6 +220,22 @@
 
             <!-- SECCIÓN 3: ADMINISTRACIÓN DEL CALENDARIO -->
             <section class="tab-content" id="tab-admin">
+                <!-- SELECTOR DE HORARIO DIARIO -->
+                <div class="glass-card schedule-selector-card" style="margin-bottom: 20px;">
+                    <div class="schedule-selector-flex">
+                        <div class="selector-info">
+                            <h3>📅 Selector de Calendario Diario</h3>
+                            <p>Elige qué esquema de horario rige hoy en el colegio para recalcular las alertas de aseo en tiempo real.</p>
+                        </div>
+                        <div class="selector-controls">
+                            <div class="segmented-control">
+                                <button class="segment-btn active" id="btn-sched-1" data-sched="1">Horario 1 (Regular)</button>
+                                <button class="segment-btn" id="btn-sched-2" data-sched="2">Horario 2 (Especial)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="admin-grid">
                     
                     <!-- EDITAR CALENDARIO VISUAL -->

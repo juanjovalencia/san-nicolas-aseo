@@ -1,23 +1,30 @@
 /* ==========================================================================
    LÓGICA CENTRAL DE LA APLICACIÓN - COLEGIO SAN NICOLÁS DE MIRA
-   Controlador del Módulo de Marcado, Calendario Académico y Motor de Alertas
+   Controlador de Módulo de Marcado, Horarios ( रेगुलर/विशेष ) y Motor de Optimización
    ========================================================================== */
 
-// 1. CONFIGURACIÓN Y PROGRAMACIÓN ESCOLAR POR DEFECTO
-const DEFAULT_CALENDAR = [
-    { name: "Entrada y Registro Matinal", type: "clase", start: "08:00", end: "08:30" },
-    { name: "Bloque 1: Clases Lectivas", type: "clase", start: "08:30", end: "10:00" },
-    { name: "Recreo de la Mañana (Primer Recreo)", type: "recreo", start: "10:00", end: "10:30" },
-    { name: "Bloque 2: Clases Lectivas", type: "clase", start: "10:30", end: "12:00" },
-    { name: "Recreo de Colación (Segundo Recreo)", type: "recreo", start: "12:00", end: "12:20" },
-    { name: "Bloque 3: Clases Lectivas", type: "clase", start: "12:20", end: "13:40" },
-    { name: "Almuerzo y Recreo Largo", type: "recreo", start: "13:40", end: "14:30" },
-    { name: "Bloque 4: Talleres y Deportes", type: "clase", start: "14:30", end: "16:00" },
-    { name: "Despido Escolar y Salida", type: "clase", start: "16:00", end: "16:30" },
-    { name: "Bloque de Aseo Profundo / Tarde", type: "clase", start: "16:30", end: "18:00" }
+// 1. CONFIGURACIÓN DE LOS DOS ESQUEMAS DE HORARIOS (ADENDA)
+const SCHEDULE_1 = [
+    { name: "Bloque 1", type: "clase", start: "08:15", end: "10:20" },
+    { name: "Recreo", type: "recreo", start: "10:20", end: "10:35" },
+    { name: "Bloque 2", type: "clase", start: "10:35", end: "11:55" },
+    { name: "Recreo", type: "recreo", start: "11:55", end: "12:10" },
+    { name: "Bloque 3", type: "clase", start: "12:10", end: "13:30" },
+    { name: "Almuerzo", type: "recreo", start: "13:30", end: "14:10" },
+    { name: "Bloque 4", type: "clase", start: "14:10", end: "15:30" }
 ];
 
-// Nombres exactos solicitados para las canchas
+const SCHEDULE_2 = [
+    { name: "Bloque 1", type: "clase", start: "08:15", end: "09:40" },
+    { name: "Recreo", type: "recreo", start: "09:40", end: "09:55" },
+    { name: "Bloque 2", type: "clase", start: "09:55", end: "11:55" },
+    { name: "Recreo", type: "recreo", start: "11:55", end: "12:35" },
+    { name: "Bloque 3", type: "clase", start: "12:35", end: "13:55" },
+    { name: "Recreo", type: "recreo", start: "13:55", end: "14:10" },
+    { name: "Bloque 4", type: "clase", start: "14:10", end: "15:30" }
+];
+
+// Nombres exactos de las canchas solicitadas
 const SPECIAL_ZONES = [
     "Cancha Central",
     "Cancha de Básquetbol",
@@ -26,10 +33,11 @@ const SPECIAL_ZONES = [
 
 // ESTADO GLOBAL DE LA APLICACIÓN
 let appState = {
+    activeSchedule: 1, // 1 (Regular) o 2 (Especial)
     zones: [],         // Timestamps y estados de aseo
-    calendar: [],      // Programación diaria activa
+    calendar: [],      // Programación diaria activa (Horario 1 o Horario 2)
     isSimulatorOn: false,
-    simulatedMinutes: 676, // Inicialmente 11:16 AM en minutos desde las 00:00
+    simulatedMinutes: 676, // Inicialmente 11:16 AM en minutos desde las 00:00 (11*60 + 16 = 676)
     activeTab: "tab-marking"
 };
 
@@ -43,21 +51,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 3. ADMINISTRACIÓN DE DATOS (LOCALSTORAGE)
 function initData() {
-    // Inicializar Calendario
+    // A. Inicializar Tipo de Horario Activo (1 o 2)
+    const savedActiveSched = localStorage.getItem("san_nicolas_active_schedule");
+    if (savedActiveSched) {
+        appState.activeSchedule = parseInt(savedActiveSched);
+    } else {
+        appState.activeSchedule = 1;
+        localStorage.setItem("san_nicolas_active_schedule", 1);
+    }
+
+    // B. Inicializar Calendario
     const savedCalendar = localStorage.getItem("san_nicolas_calendar");
     if (savedCalendar) {
         appState.calendar = JSON.parse(savedCalendar);
     } else {
-        appState.calendar = [...DEFAULT_CALENDAR];
+        appState.calendar = appState.activeSchedule === 1 ? [...SCHEDULE_1] : [...SCHEDULE_2];
         localStorage.setItem("san_nicolas_calendar", JSON.stringify(appState.calendar));
     }
 
-    // Inicializar Zonas de Aseo (33 casillas: 30 salas + 3 canchas exactas)
+    // Sincronizar clases activas en los botones de selección en el DOM una vez cargados
+    setTimeout(() => {
+        updateScheduleSelectorUI();
+    }, 30);
+
+    // C. Inicializar Zonas de Aseo (33 casillas: 30 salas + 3 canchas exactas)
     const savedAseos = localStorage.getItem("san_nicolas_aseos");
     if (savedAseos) {
         appState.zones = JSON.parse(savedAseos);
         
-        // Sanity Check: Asegurar que hay exactamente 33 zonas por si cambió la lógica
+        // Sanity Check: Asegurar que hay exactamente 33 zonas
         if (appState.zones.length !== 33) {
             buildNewZonesState();
         }
@@ -100,11 +122,27 @@ function saveCalendarToStorage() {
     localStorage.setItem("san_nicolas_calendar", JSON.stringify(appState.calendar));
 }
 
-// 4. MOTOR DE OPTIMIZACIÓN Y ALERTAS
-// Recibe un string de hora en formato "HH:MM" y retorna el análisis de optimización
+// 4. MOTOR DE OPTIMIZACIÓN Y ALERTAS (ADENDA DE REGLAS)
 function getOptimizationStatus(timeStr) {
     const currentMins = timeStringToMinutes(timeStr);
     
+    // VENTANA IDEAL: Final de la jornada después de las 15:30 (Salida)
+    if (currentMins >= 930) { // 15:30 = 15*60 + 30 = 930 minutos
+        return {
+            rating: "success", // Verde
+            label: "Óptimo",
+            title: "¡Horario Óptimo (Fin de Jornada)!",
+            text: "La jornada escolar regular ha finalizado (después de las 15:30). Excelente momento para realizar el aseo profundo de salas y canchas sin interrupciones.",
+            currentBlockName: "Fin de Jornada Escolar",
+            currentBlockTime: "15:30 - 23:59 hrs",
+            currentBlockType: "salida",
+            conflictZoneWarning: false,
+            minutesToConflict: null,
+            nextConflictName: "",
+            isOptimalWindow: true
+        };
+    }
+
     // Encontrar bloque actual
     let currentBlock = appState.calendar.find(b => {
         const startMins = timeStringToMinutes(b.start);
@@ -120,76 +158,144 @@ function getOptimizationStatus(timeStr) {
     let nextBlock = nextBlocks[0] || null;
     let nextConflictBlock = nextBlocks.find(b => b.type === "recreo" || b.type === "evento") || null;
 
-    // Horarios fuera de rango escolar (antes de las 8 AM o después de las 6 PM)
-    if (!currentBlock) {
-        if (currentMins >= 1080 || currentMins < 480) { // Después de las 18:00 o antes de las 08:00
-            return {
-                rating: "success", // Verde
-                label: "Óptimo",
-                title: "Ventana de Aseo General",
-                text: "La jornada escolar regular no está activa. Excelente momento para realizar aseo profundo en salas y canchas sin interrupciones.",
-                currentBlockName: "Fuera de Jornada Escolar",
-                currentBlockTime: "18:00 - 08:00 hrs",
-                currentBlockType: "libre",
-                conflictZoneWarning: false,
-                minutesToConflict: null,
-                nextConflictName: ""
-            };
-        } else {
-            // Un bloque libre durante la jornada
-            currentBlock = { name: "Bloque Libre / Ventana", type: "libre", start: "08:00", end: "18:00" };
-        }
+    // Horario antes de la entrada (antes de las 8:15 AM)
+    if (!currentBlock && currentMins < 495) { // 08:15 = 8*60 + 15 = 495 minutos
+        return {
+            rating: "success", // Verde
+            label: "Óptimo",
+            title: "Horario Previo a Clases",
+            text: "Aún no inicia el primer bloque de clases de hoy. Gran momento para dejar las salas preparadas antes de la entrada de alumnos.",
+            currentBlockName: "Antes de Clases",
+            currentBlockTime: "00:00 - 08:15 hrs",
+            currentBlockType: "libre",
+            conflictZoneWarning: false,
+            minutesToConflict: null,
+            nextConflictName: "",
+            isOptimalWindow: true
+        };
     }
 
-    // 1. CASO: RECREO O EVENTO EN CURSO (Alerta roja/peligro)
+    // Si no calza en ningún bloque escolar (ej. recreo largo ya terminado pero antes de clases tarde)
+    if (!currentBlock) {
+        currentBlock = { name: "Bloque Libre / Ventana", type: "libre", start: "08:15", end: "15:30" };
+    }
+
+    // A. RECREO O ALMUERZO ACTIVO (Alerta roja - Evitar limpiar)
     if (currentBlock.type === "recreo" || currentBlock.type === "evento") {
+        const blockTypeName = currentBlock.name.toLowerCase().includes("almuerzo") ? "almuerzo" : "recreo";
         return {
             rating: "danger", // Rojo
             label: "Evitar",
-            title: "Tránsito Activo en Progreso",
-            text: `Hay un ${currentBlock.type === "recreo" ? "recreo" : "evento masivo"} en curso ("${currentBlock.name}"). Evitar limpiar ya que las zonas de alto tránsito se ensuciarán inmediatamente. Se sugiere postergar la limpieza hasta que los alumnos vuelvan a clases.`,
+            title: `${currentBlock.name} Activo`,
+            text: `Hay un ${blockTypeName} en curso ("${currentBlock.name}"). Evitar limpiar salas ya que los alumnos circulan por los pasillos y se ensuciarán de inmediato.`,
             currentBlockName: currentBlock.name,
             currentBlockTime: `${currentBlock.start} - ${currentBlock.end} hrs`,
             currentBlockType: currentBlock.type,
             conflictZoneWarning: true, // Avisa de evitar limpieza
             minutesToConflict: 0,
-            nextConflictName: currentBlock.name
+            nextConflictName: currentBlock.name,
+            isOptimalWindow: false
         };
     }
 
-    // 2. CASO: PRE-CONFLICTO (Recreo o Evento se aproxima en los próximos 30 minutos)
-    if (nextConflictBlock) {
-        const nextConflictStart = timeStringToMinutes(nextConflictBlock.start);
-        const diffMinutes = nextConflictStart - currentMins;
+    // B. REGLA: BLOQUEO DE EFICIENCIA (Últimos 20 minutos de un bloque de clases)
+    if (currentBlock.type === "clase") {
+        const blockEndMins = timeStringToMinutes(currentBlock.end);
+        const minsRemaining = blockEndMins - currentMins;
 
-        if (diffMinutes <= 30) {
+        if (minsRemaining <= 20) {
             return {
                 rating: "warning", // Naranja
                 label: "Postponer",
-                title: "¡Conflicto Próximo!",
-                text: `El bloque "${nextConflictBlock.name}" comenzará en ${diffMinutes} minutos (a las ${nextConflictBlock.start} hrs). Si limpia salas ahora, el esfuerzo se perderá debido al alto flujo inminente de estudiantes. Se sugiere esperar y limpiar después del recreo.`,
+                title: "Eficiencia de Aseo Baja",
+                // Texto exacto solicitado por la regla
+                text: "Sugerencia: Esperar a que termine el recreo para limpiar, la sala se ensuciará pronto",
                 currentBlockName: currentBlock.name,
                 currentBlockTime: `${currentBlock.start} - ${currentBlock.end} hrs`,
                 currentBlockType: currentBlock.type,
-                conflictZoneWarning: true, // Avisa de evitar limpieza
-                minutesToConflict: diffMinutes,
-                nextConflictName: nextConflictBlock.name
+                conflictZoneWarning: true, // Bloquea/Advierte visualmente en las casillas
+                minutesToConflict: minsRemaining,
+                nextConflictName: nextConflictBlock ? nextConflictBlock.name : "Recreo",
+                isOptimalWindow: false
             };
         }
     }
 
-    // 3. CASO: CLASE LECTIVA ACTIVA (Y no hay recreo en los próximos 30 minutos)
+    // C. REGLA: VENTANA IDEAL (Inicio de bloque de clases: primeros 20 minutos)
+    if (currentBlock.type === "clase") {
+        const blockStartMins = timeStringToMinutes(currentBlock.start);
+        const minsElapsed = currentMins - blockStartMins;
+
+        if (minsElapsed <= 20) {
+            return {
+                rating: "success", // Verde
+                label: "Óptimo",
+                title: "Horario Óptimo (Inicio de Clase)",
+                text: `Los alumnos acaban de entrar a clases (${currentBlock.name}) y restan más de 20 minutos del bloque. Limpiar ahora garantiza una máxima duración del aseo.`,
+                currentBlockName: currentBlock.name,
+                currentBlockTime: `${currentBlock.start} - ${currentBlock.end} hrs`,
+                currentBlockType: currentBlock.type,
+                conflictZoneWarning: false,
+                minutesToConflict: null,
+                nextConflictName: "",
+                isOptimalWindow: true
+            };
+        }
+    }
+
+    // D. HORARIO DE CLASE STANDARD (Intermedio: tras primeros 20 mins y antes de los últimos 20 mins)
+    if (currentBlock.type === "clase") {
+        // En caso de que falten menos de 30 mins para el próximo recreo (pero estemos entre 21 y 30 mins, por ende no aplica bloqueo de 20 mins)
+        if (nextConflictBlock) {
+            const nextConflictStart = timeStringToMinutes(nextConflictBlock.start);
+            const diffMinutes = nextConflictStart - currentMins;
+
+            if (diffMinutes <= 30) {
+                return {
+                    rating: "warning",
+                    label: "Postponer",
+                    title: "¡Recreo Próximo!",
+                    text: `Un recreo iniciará en ${diffMinutes} minutos. Se sugiere postergar la limpieza de salas hasta después del recreo para evitar desperdiciar el esfuerzo.`,
+                    currentBlockName: currentBlock.name,
+                    currentBlockTime: `${currentBlock.start} - ${currentBlock.end} hrs`,
+                    currentBlockType: currentBlock.type,
+                    conflictZoneWarning: true,
+                    minutesToConflict: diffMinutes,
+                    nextConflictName: nextConflictBlock.name,
+                    isOptimalWindow: false
+                };
+            }
+        }
+
+        // Horario normal de clase lectiva (Favorable)
+        return {
+            rating: "success", 
+            label: "Favorable",
+            title: "Limpieza Favorable (En clases)",
+            text: `Los alumnos están en clases (${currentBlock.name}). Buen momento para realizar limpieza silenciosa sin interrupciones directas de estudiantes.`,
+            currentBlockName: currentBlock.name,
+            currentBlockTime: `${currentBlock.start} - ${currentBlock.end} hrs`,
+            currentBlockType: currentBlock.type,
+            conflictZoneWarning: false,
+            minutesToConflict: null,
+            nextConflictName: "",
+            isOptimalWindow: false
+        };
+    }
+
+    // Por defecto (Seguro)
     return {
-        rating: "success", // Verde
+        rating: "success",
         label: "Óptimo",
-        title: "Excelente momento para limpiar",
-        text: `Los alumnos se encuentran en clases (${currentBlock.name}) y no hay recreos próximos en los siguientes 30 minutos. Limpiar ahora garantiza que el aseo dure y se mantenga en excelentes condiciones.`,
-        currentBlockName: currentBlock.name,
-        currentBlockTime: `${currentBlock.start} - ${currentBlock.end} hrs`,
-        currentBlockType: currentBlock.type,
+        title: "Bloque Disponible",
+        text: "No se registran clases activas ni recreos inminentes en este bloque.",
+        currentBlockName: "Ventana Libre",
+        currentBlockTime: "08:15 - 15:30 hrs",
+        currentBlockType: "libre",
         conflictZoneWarning: false,
         minutesToConflict: null,
-        nextConflictName: ""
+        nextConflictName: "",
+        isOptimalWindow: true
     };
 }
 
@@ -206,7 +312,7 @@ function renderAll() {
     updateQuickStats();
 }
 
-// Actualiza los badges del header principal
+// Sincroniza badges del header principal
 function updateGlobalUIPills(optStatus) {
     const statusPill = document.getElementById("global-status-pill");
     const statusText = document.getElementById("global-status-text");
@@ -214,7 +320,7 @@ function updateGlobalUIPills(optStatus) {
     statusPill.className = `status-indicator-pill ${optStatus.rating}`;
     statusText.innerText = optStatus.currentBlockName;
 
-    // Actualizar también la campana/alerta en la pestaña de recomendaciones
+    // Badge rojo/alerta en pestaña de recomendaciones
     const tabBadge = document.getElementById("optimizer-tab-badge");
     if (optStatus.conflictZoneWarning) {
         tabBadge.classList.remove("hidden");
@@ -223,7 +329,7 @@ function updateGlobalUIPills(optStatus) {
     }
 }
 
-// Muestra/Oculta el banner superior de conflicto
+// Muestra/Oculta banner superior de conflicto
 function renderGlobalAlertBanner(optStatus) {
     const banner = document.getElementById("global-conflict-banner");
     const title = document.getElementById("banner-title");
@@ -237,15 +343,16 @@ function renderGlobalAlertBanner(optStatus) {
             title.innerText = `🚨 Tránsito Escolar Activo: ${optStatus.currentBlockName}`;
             message.innerText = `Los estudiantes están fuera de las aulas. Por favor, posterga el aseo de salas hasta el término de este bloque (${optStatus.currentBlockTime.split(" ")[2]} hrs).`;
         } else {
-            title.innerText = `⚠️ Conflicto de Aseo Próximo: ${optStatus.nextConflictName}`;
-            message.innerText = `Un recreo o evento iniciará en ${optStatus.minutesToConflict} minutos. Se sugiere esperar para limpiar las salas de clases.`;
+            // Caso Bloqueo de Eficiencia o pre-recreo normal
+            title.innerText = `⚠️ Advertencia de Eficiencia de Aseo`;
+            message.innerText = optStatus.text; // Utiliza el texto de adenda
         }
     } else {
         banner.classList.add("hidden");
     }
 }
 
-// Renderiza la cuadrícula de salas y canchas del Módulo 1
+// Módulo 1: Cuadrícula visual
 function renderMarkingPanel(optStatus) {
     const salasGrid = document.getElementById("salas-grid");
     const canchasGrid = document.getElementById("canchas-grid");
@@ -260,7 +367,7 @@ function renderMarkingPanel(optStatus) {
         // Estilos base y de optimización
         let classList = ["zone-btn"];
         
-        // 1. Determinar si está limpio (menos de 4 horas desde la última limpieza)
+        // 1. Determinar si está limpio (menos de 4 horas)
         const isClean = zone.lastClean && (Date.now() - new Date(zone.lastClean).getTime() < 4 * 60 * 60 * 1000);
         if (isClean) {
             classList.push("clean");
@@ -268,14 +375,14 @@ function renderMarkingPanel(optStatus) {
             classList.push("dirty"); // Requiere atención
         }
 
-        // 2. Aplicar advertencia visual si es sala y hay conflicto escolar activo
+        // 2. Aplicar advertencia visual si es sala y hay conflicto activo
         if (optStatus.conflictZoneWarning && zone.type === "sala") {
             classList.push("warn-collision");
         }
 
         btn.className = classList.join(" ");
 
-        // Formatear timestamp de última limpieza
+        // Formatear timestamp de última limpieza (Formato exacto solicitado)
         let timeDisplay = "Sin registrar";
         if (zone.lastClean) {
             const cleanDate = new Date(zone.lastClean);
@@ -286,7 +393,7 @@ function renderMarkingPanel(optStatus) {
 
         const statusLabel = isClean ? "Limpio" : "Requiere Aseo";
 
-        // Layout diferenciado para salas (grid compacto) vs canchas (filas anchas)
+        // Renderizado
         if (zone.type === "sala") {
             btn.innerHTML = `
                 <span class="zone-name">${zone.name}</span>
@@ -294,7 +401,6 @@ function renderMarkingPanel(optStatus) {
                 <span class="zone-time">${timeDisplay}</span>
             `;
         } else {
-            // Estructura adaptada para canchas deportivas
             btn.innerHTML = `
                 <div class="zone-details">
                     <span class="zone-name">${zone.name}</span>
@@ -306,12 +412,11 @@ function renderMarkingPanel(optStatus) {
             `;
         }
 
-        // Evento de clic para marcar como "Limpio"
+        // Evento de clic
         btn.addEventListener("click", () => {
             markZoneAsClean(zone, optStatus);
         });
 
-        // Distribuir en el contenedor correspondiente
         if (zone.type === "sala") {
             salasGrid.appendChild(btn);
         } else {
@@ -322,7 +427,6 @@ function renderMarkingPanel(optStatus) {
 
 // Acción de registro de aseo
 function markZoneAsClean(zone, optStatus) {
-    const prevClean = zone.lastClean;
     zone.lastClean = new Date().toISOString();
     saveAseosToStorage();
     renderAll();
@@ -330,28 +434,36 @@ function markZoneAsClean(zone, optStatus) {
     const hrs = String(new Date().getHours()).padStart(2, '0');
     const mins = String(new Date().getMinutes()).padStart(2, '0');
 
-    // Generar avisos amigables
+    // Avisos dinámicos en los Toast
     if (optStatus.conflictZoneWarning && zone.type === "sala") {
-        showToast(`⚠️ Registrado a las ${hrs}:${mins}. Cuidado: el aseo podría perderse rápido por recreo inminente.`, "warning");
+        showToast(`⚠️ Registrado a las ${hrs}:${mins}. ${optStatus.text}`, "warning");
+    } else if (optStatus.isOptimalWindow) {
+        showToast(`✨ ¡Aseo óptimo! ${zone.name} marcado como LIMPIO a las ${hrs}:${mins} hrs.`, "success");
     } else {
         showToast(`✨ ${zone.name} marcado como LIMPIO a las ${hrs}:${mins} hrs.`, "success");
     }
 }
 
-// Renderiza la sección de Alertas y Recomendaciones del Módulo 2
+// Módulo 2: Alertas y recomendaciones
 function renderOptimizationDashboard(optStatus) {
     // 1. Actualizar Tarjeta de Resumen Actual
     const summaryCard = document.getElementById("opt-status-summary");
+    
+    // Determinar la clase del marco de optimización
+    let graphicRating = optStatus.rating;
+    if (optStatus.label === "Favorable") {
+        graphicRating = "success"; // Usar verde para favorable en el borde del anillo
+    }
     summaryCard.className = `glass-card status-summary-card ${optStatus.rating}`;
     
     document.getElementById("opt-current-block-type").innerText = optStatus.currentBlockType;
     document.getElementById("opt-current-block-name").innerText = optStatus.currentBlockName;
     document.getElementById("opt-current-block-time").innerText = optStatus.currentBlockTime;
     
-    // Gráfico de anillo
+    // Gráfico de anillo y descripciones
     const graphicContainer = document.getElementById("opt-status-graphic");
     graphicContainer.innerHTML = `
-        <div class="gauge-ring ${optStatus.rating}">
+        <div class="gauge-ring ${graphicRating}">
             <div class="gauge-fill"></div>
             <span class="gauge-text">${optStatus.label}</span>
         </div>
@@ -371,27 +483,30 @@ function renderOptimizationDashboard(optStatus) {
         .forEach((block) => {
             const item = document.createElement("div");
             
-            // Evaluar la recomendación ficticia para ese bloque específico
+            // Evaluar recomendación para el timeline
             let blockRating = "success";
-            let blockText = "Excelente momento para limpiar salas.";
+            let blockText = "Bloque de clases: Inicio ideal para limpiar.";
             let badgeLabel = "Óptimo";
 
-            if (block.type === "recreo") {
+            if (block.type === "recreo" || block.type === "evento") {
                 blockRating = "danger";
-                blockText = "Evitar limpiar salas. Alumnos fuera de clase.";
-                badgeLabel = "Tránsito Alto";
-            } else if (block.type === "evento") {
-                blockRating = "warning";
-                blockText = "Tránsito moderado/alto. Limpiar con cuidado.";
-                badgeLabel = "Precaución";
+                blockText = block.name === "Almuerzo" ? "Almuerzo activo: alumnos en comedor." : "Recreo en curso: flujo masivo en salas.";
+                badgeLabel = "Evitar";
             }
 
-            // Detectar si este bloque es el que se está ejecutando actualmente
+            // Detectar si este bloque es el actual
             const currentFormattedTime = getCurrentTimeFormatted();
             const currentMins = timeStringToMinutes(currentFormattedTime);
             const bStart = timeStringToMinutes(block.start);
             const bEnd = timeStringToMinutes(block.end);
             const isCurrent = currentMins >= bStart && currentMins < bEnd;
+
+            // Rating intermedio para el bloque actual según el motor exacto
+            if (isCurrent) {
+                blockRating = optStatus.rating;
+                blockText = optStatus.text;
+                badgeLabel = optStatus.label;
+            }
 
             let itemClasses = ["timeline-item", blockRating];
             if (isCurrent) {
@@ -413,7 +528,7 @@ function renderOptimizationDashboard(optStatus) {
         });
 }
 
-// Renderiza la tabla de bloques en el Módulo de Administración
+// Renderiza tabla de bloques del administrador
 function renderCalendarBlocksTable() {
     const tbody = document.getElementById("calendar-blocks-tbody");
     tbody.innerHTML = "";
@@ -438,7 +553,7 @@ function renderCalendarBlocksTable() {
             tbody.appendChild(tr);
         });
 
-    // Agregar listeners a los botones generados
+    // Event listeners para botones generados
     document.querySelectorAll(".edit-block-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
             const index = e.currentTarget.getAttribute("data-index");
@@ -454,9 +569,8 @@ function renderCalendarBlocksTable() {
     });
 }
 
-// Estadísticas rápidas en la intro de marcado
+// Estadísticas rápidas en el Módulo 1
 function updateQuickStats() {
-    // Contar cuántas zonas fueron limpiadas hoy (desde las 00:00 del día actual)
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
 
@@ -467,18 +581,25 @@ function updateQuickStats() {
     document.getElementById("stat-cleaned-count").innerText = cleanedTodayCount;
 }
 
-// 6. EVENTOS Y NAVEGACIÓN
+// 6. EVENTOS, NAVEGACIÓN Y SELECTOR DE HORARIOS (ADENDA)
 function setupEventListeners() {
-    // Navegación de Pestañas
+    // A. Selector de Horarios (Horario 1 vs Horario 2)
+    const btnSched1 = document.getElementById("btn-sched-1");
+    const btnSched2 = document.getElementById("btn-sched-2");
+
+    if (btnSched1 && btnSched2) {
+        btnSched1.addEventListener("click", () => switchSchedule(1));
+        btnSched2.addEventListener("click", () => switchSchedule(2));
+    }
+
+    // B. Navegación de Pestañas
     document.querySelectorAll(".nav-tab").forEach((tab) => {
         tab.addEventListener("click", (e) => {
             const targetTab = e.currentTarget.getAttribute("data-tab");
             
-            // Alternar clases activas en botones
             document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
             e.currentTarget.classList.add("active");
 
-            // Alternar visibilidad de secciones
             document.querySelectorAll(".tab-content").forEach(section => section.classList.remove("active"));
             document.getElementById(targetTab).classList.add("active");
             
@@ -486,7 +607,7 @@ function setupEventListeners() {
         });
     });
 
-    // Toggle del Simulador
+    // C. Toggle del Simulador
     const simToggle = document.getElementById("simulator-toggle");
     const simControls = document.getElementById("sim-controls-wrapper");
     const simTimeSlider = document.getElementById("sim-time-slider");
@@ -510,7 +631,7 @@ function setupEventListeners() {
         renderAll();
     });
 
-    // Presets rápidos del simulador
+    // Presets del simulador
     document.querySelectorAll(".preset-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
             const timeVal = e.target.getAttribute("data-time");
@@ -533,10 +654,10 @@ function setupEventListeners() {
         }
     });
 
-    // Restaurar calendario académico por defecto
+    // Restaurar calendario académico al original por defecto
     document.getElementById("btn-restore-default-calendar").addEventListener("click", () => {
-        if (confirm("¿Deseas restaurar la programación académica por defecto del Colegio San Nicolás de Mira?")) {
-            appState.calendar = [...DEFAULT_CALENDAR];
+        if (confirm("¿Deseas restaurar la programación académica original de este horario?")) {
+            appState.calendar = appState.activeSchedule === 1 ? [...SCHEDULE_1] : [...SCHEDULE_2];
             saveCalendarToStorage();
             renderAll();
             showToast("📅 Programación escolar restaurada al diseño estándar.", "success");
@@ -589,7 +710,42 @@ function setupEventListeners() {
     document.getElementById("btn-download-calendar").addEventListener("click", downloadCalendarJson);
 }
 
-// 7. COMPONENTE MODAL DE EDICIÓN DE CALENDARIO
+// 7. INTERRUPTOR DE HORARIOS DIARIOS (LÓGICA ADENDA)
+function switchSchedule(type) {
+    appState.activeSchedule = type;
+    localStorage.setItem("san_nicolas_active_schedule", type);
+    
+    // Asignar plantilla correspondiente
+    if (type === 1) {
+        appState.calendar = [...SCHEDULE_1];
+    } else {
+        appState.calendar = [...SCHEDULE_2];
+    }
+    
+    updateScheduleSelectorUI();
+    saveCalendarToStorage();
+    renderAll();
+    
+    const schedName = type === 1 ? "Horario 1 (Regular)" : "Horario 2 (Especial)";
+    showToast(`📅 Configurado e Importado: ${schedName} para hoy.`, "success");
+}
+
+function updateScheduleSelectorUI() {
+    const btnSched1 = document.getElementById("btn-sched-1");
+    const btnSched2 = document.getElementById("btn-sched-2");
+    
+    if (btnSched1 && btnSched2) {
+        if (appState.activeSchedule === 1) {
+            btnSched1.classList.add("active");
+            btnSched2.classList.remove("active");
+        } else {
+            btnSched2.classList.add("active");
+            btnSched1.classList.remove("active");
+        }
+    }
+}
+
+// 8. COMPONENTE MODAL DE EDICIÓN DE CALENDARIO
 function openBlockModal(index = null) {
     const modal = document.getElementById("block-modal");
     const form = document.getElementById("block-form");
@@ -627,18 +783,16 @@ function saveBlockFromForm() {
 
     const blockData = { name, type, start, end };
 
-    // Validar solapamiento lógico básico (start < end)
+    // Validar solapamiento lógico básico
     if (timeStringToMinutes(start) >= timeStringToMinutes(end)) {
         alert("La hora de inicio debe ser anterior a la hora de término.");
         return;
     }
 
     if (index !== "") {
-        // Reemplazar existente
         appState.calendar[parseInt(index)] = blockData;
         showToast("✏️ Bloque académico actualizado.", "success");
     } else {
-        // Añadir nuevo
         appState.calendar.push(blockData);
         showToast("➕ Nuevo bloque escolar agregado con éxito.", "success");
     }
@@ -657,7 +811,7 @@ function deleteBlock(index) {
     }
 }
 
-// 8. IMPORTACIÓN Y EXPORTACIÓN JSON
+// 9. IMPORTACIÓN Y EXPORTACIÓN JSON
 function handleJsonFile(file) {
     if (file.type !== "application/json" && !file.name.endsWith(".json")) {
         showToast("❌ Formato de archivo no válido. Debe ser un archivo .json.", "warning");
@@ -669,14 +823,13 @@ function handleJsonFile(file) {
         try {
             const data = JSON.parse(e.target.result);
             
-            // Validar la estructura del JSON importado
             if (Array.isArray(data) && data.every(b => b.name && b.type && b.start && b.end)) {
                 appState.calendar = data;
                 saveCalendarToStorage();
                 renderAll();
                 showToast("📥 ¡Calendario académico importado exitosamente!", "success");
             } else {
-                showToast("❌ Formato JSON interno inválido. Falta campos obligatorios.", "warning");
+                showToast("❌ Formato JSON interno inválido. Faltan campos obligatorios.", "warning");
             }
         } catch (err) {
             showToast("❌ Error al decodificar el archivo JSON.", "warning");
@@ -689,14 +842,14 @@ function downloadCalendarJson() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState.calendar, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", "calendario_san_nicolas.json");
+    downloadAnchor.setAttribute("download", `calendario_san_nicolas_horario_${appState.activeSchedule}.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
     showToast("💾 Archivo de configuración descargado.", "success");
 }
 
-// 9. RELOJ DEL SISTEMA EN VIVO
+// 10. RELOJ DEL SISTEMA EN VIVO
 function startLiveClock() {
     setInterval(() => {
         const now = new Date();
@@ -706,34 +859,28 @@ function startLiveClock() {
         const secs = String(now.getSeconds()).padStart(2, '0');
         const ampm = hrs >= 12 ? 'PM' : 'AM';
         
-        // Ajustar formato de 12 horas para display premium
         hrs = hrs % 12;
-        hrs = hrs ? hrs : 12; // 0 debe ser 12
+        hrs = hrs ? hrs : 12;
         const hrsStr = String(hrs).padStart(2, '0');
 
-        // Formatear Fecha
         const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
         const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
         const dateStr = `${days[now.getDay()]}, ${now.getDate()} de ${months[now.getMonth()]}`;
 
-        // Si el simulador está apagado, mostrar la hora real
         if (!appState.isSimulatorOn) {
             document.getElementById("live-time").innerText = `${hrsStr}:${mins}:${secs}`;
             document.getElementById("live-ampm").innerText = ampm;
             document.getElementById("live-date").innerText = dateStr;
 
-            // Cada minuto recalcular el estado y alertas
             if (now.getSeconds() === 0) {
                 renderAll();
             }
         }
     }, 1000);
     
-    // Inicializar visualización de barra de simulación
     updateSimulatedTimeBadge();
 }
 
-// Actualiza el badge visual del slider del simulador
 function updateSimulatedTimeBadge() {
     const totalMins = appState.simulatedMinutes;
     let hrs = Math.floor(totalMins / 60);
@@ -746,7 +893,6 @@ function updateSimulatedTimeBadge() {
 
     document.getElementById("sim-time-badge").innerText = `${hrsStr}:${mins} ${ampm}`;
 
-    // Si el simulador está ENCENDIDO, reescribir reloj principal
     if (appState.isSimulatorOn) {
         document.getElementById("live-time").innerText = `${hrsStr}:${mins}:00`;
         document.getElementById("live-ampm").innerText = ampm;
@@ -754,7 +900,7 @@ function updateSimulatedTimeBadge() {
     }
 }
 
-// 10. HELPERS DE CONVERSIÓN DE TIEMPO
+// 11. HELPERS DE CONVERSIÓN DE TIEMPO
 function timeStringToMinutes(timeStr) {
     const [hrs, mins] = timeStr.split(":").map(Number);
     return hrs * 60 + mins;
@@ -774,7 +920,7 @@ function getCurrentTimeFormatted() {
     }
 }
 
-// 11. SISTEMA PREMIUM DE TOAST NOTIFICATIONS
+// 12. SISTEMA PREMIUM DE TOAST NOTIFICATIONS
 function showToast(message, type = "success") {
     const container = document.getElementById("toast-container");
     
@@ -787,7 +933,6 @@ function showToast(message, type = "success") {
     
     container.appendChild(toast);
 
-    // Autoeliminar después del ciclo de animación (3 segundos)
     setTimeout(() => {
         toast.remove();
     }, 3000);
