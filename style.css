@@ -1618,3 +1618,211 @@ input:checked + .slider:before {
     }
 }
 
+/* ==========================================================================
+   ESTILOS DE ACORDEÓN DE ZONAS (MÓDULO DE MARCADO)
+   ========================================================================== */
+.accordion-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.accordion-item {
+    background: var(--color-card-glass);
+    border: 1.5px solid var(--color-border-glass);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: var(--transition-smooth);
+}
+
+.accordion-item.active {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(17, 24, 39, 0.8);
+    box-shadow: var(--shadow-premium);
+}
+
+.accordion-header {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    color: var(--color-text-white);
+    transition: var(--transition-smooth);
+    user-select: none;
+}
+
+.accordion-header:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.acc-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.acc-icon {
+    color: var(--color-gold);
+    filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.2));
+}
+
+.acc-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+}
+
+.acc-header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.acc-count-pill {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--color-border-glass);
+    color: var(--color-text-muted);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.accordion-item.active .acc-count-pill {
+    background: rgba(251, 191, 36, 0.1);
+    border-color: rgba(251, 191, 36, 0.3);
+    color: var(--color-gold);
+}
+
+.acc-chevron {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    transition: transform 0.3s ease;
+}
+
+.accordion-item.active .acc-chevron {
+    transform: rotate(180deg);
+    color: var(--color-gold);
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease;
+    padding: 0 24px;
+}
+
+.accordion-item.active .accordion-content {
+    max-height: 1500px; /* Suficiente para albergar el grid de salas */
+    padding: 0 24px 24px 24px;
+    border-top: 1px solid var(--color-border-glass);
+}
+
+/* ETIQUETAS DE PISO Y CÓDIGOS DE COLORES */
+.floor-badge {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* 1er Piso: Azul */
+.zone-btn.floor-1 {
+    border-color: rgba(59, 130, 246, 0.3);
+    background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.05) 0%, rgba(9, 14, 26, 0.4) 100%);
+}
+.zone-btn.floor-1:hover {
+    border-color: rgba(59, 130, 246, 0.6);
+}
+.zone-btn.floor-1 .floor-badge {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* 2do Piso: Verde */
+.zone-btn.floor-2 {
+    border-color: rgba(16, 185, 129, 0.3);
+    background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.05) 0%, rgba(9, 14, 26, 0.4) 100%);
+}
+.zone-btn.floor-2:hover {
+    border-color: rgba(16, 185, 129, 0.6);
+}
+.zone-btn.floor-2 .floor-badge {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* 3er Piso: Morado */
+.zone-btn.floor-3 {
+    border-color: rgba(139, 92, 246, 0.3);
+    background: radial-gradient(circle at top right, rgba(139, 92, 246, 0.05) 0%, rgba(9, 14, 26, 0.4) 100%);
+}
+.zone-btn.floor-3:hover {
+    border-color: rgba(139, 92, 246, 0.6);
+}
+.zone-btn.floor-3 .floor-badge {
+    background: rgba(139, 92, 246, 0.15);
+    color: #a78bfa;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+/* Zonas Comunes: Naranja/Slate */
+.zone-btn.floor-comun {
+    border-color: rgba(245, 158, 11, 0.3);
+    background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.05) 0%, rgba(9, 14, 26, 0.4) 100%);
+}
+.zone-btn.floor-comun:hover {
+    border-color: rgba(245, 158, 11, 0.6);
+}
+.zone-btn.floor-comun .floor-badge {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbd38d;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* CONTENEDOR DE ICONOS REDONDOS */
+.zone-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    border: 1.5px solid var(--color-border-glass);
+    transition: var(--transition-smooth);
+    margin-bottom: 2px;
+}
+
+.zone-btn:hover .zone-icon-wrapper {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--color-gold);
+    border-color: rgba(251, 191, 36, 0.3);
+    transform: translateY(-2px);
+}
+
+.zone-btn.clean .zone-icon-wrapper {
+    color: var(--color-success);
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.zone-btn.warn-collision .zone-icon-wrapper {
+    color: var(--color-warning);
+    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+
