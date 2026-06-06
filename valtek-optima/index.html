@@ -1,0 +1,2059 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valtek Optima - Optimización de Aseo Institucional</title>
+    
+    <!-- Meta tags SEO -->
+    <meta name="description" content="Valtek Optima es la plataforma SaaS inteligente de optimización y gestión de aseo para colegios, universidades e instituciones educativas. Controle la trazabilidad en terreno.">
+    <meta name="keywords" content="Valtek, Optima, optimizacion de aseo, software de aseo, gestion de campus, colegios, universidades">
+    <meta name="author" content="Valtek">
+    
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================================================
+           1. SISTEMA DE DISEÑO & VARIABLES
+           ========================================================================== */
+        :root {
+            --font-primary: 'Inter', sans-serif;
+            --font-display: 'Outfit', sans-serif;
+
+            /* Paleta de colores - Premium Dark Mode */
+            --bg-main: #070913;
+            --bg-radial: radial-gradient(circle at 50% 50%, #151833 0%, #070913 100%);
+            --card-bg: rgba(15, 20, 38, 0.7);
+            --card-border: rgba(255, 255, 255, 0.07);
+            --card-hover-bg: rgba(23, 29, 54, 0.85);
+            --card-hover-border: rgba(255, 255, 255, 0.15);
+            
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --text-dark: #1f2937;
+            
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-glow: rgba(99, 102, 241, 0.3);
+            
+            --accent: #00f2fe;
+            --accent-glow: rgba(0, 242, 254, 0.2);
+
+            /* Colores de Pisos con Glow */
+            --color-piso1: #00c6ff;
+            --color-piso1-glow: rgba(0, 198, 255, 0.25);
+            
+            --color-piso2: #00f260;
+            --color-piso2-glow: rgba(0, 242, 96, 0.25);
+            
+            --color-piso3: #c084fc;
+            --color-piso3-glow: rgba(192, 132, 252, 0.25);
+            
+            --color-pisoComun: #f97316;
+            --color-pisoComun-glow: rgba(249, 115, 22, 0.25);
+
+            --color-clean: #10b981;
+            --color-dirty: #ef4444;
+
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-radius-sm: 8px;
+            --border-radius-md: 16px;
+            --border-radius-lg: 24px;
+        }
+
+        /* ==========================================================================
+           2. ESTILOS GENERALES Y RESETS
+           ========================================================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            background-image: var(--bg-radial);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: var(--font-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Utilidades de Scroll Margin */
+        section {
+            scroll-margin-top: 100px;
+        }
+
+        /* ==========================================================================
+           3. NAVBAR (STICKY Y GLASSMORPHIC)
+           ========================================================================== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(7, 9, 19, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+            transition: var(--transition-smooth);
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.25rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-svg {
+            width: 32px;
+            height: 32px;
+            filter: drop-shadow(0 0 8px var(--accent-glow));
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: var(--transition-smooth);
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            text-shadow: 0 0 8px var(--primary-glow);
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%);
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px var(--primary-glow);
+            transition: var(--transition-smooth);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+            background: linear-gradient(135deg, #4f46e5 0%, var(--primary) 100%);
+        }
+
+        /* Hamburger menu */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-main);
+            border-radius: 3px;
+            transition: var(--transition-smooth);
+        }
+
+        /* ==========================================================================
+           4. HERO SECTION (PRIMERA IMPRESIÓN WOW)
+           ========================================================================== */
+        .hero {
+            min-height: 100vh;
+            padding: 9rem 2rem 5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Fondo decorativo */
+        .hero-glow-1 {
+            position: absolute;
+            top: 20%;
+            left: 10%;
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+            filter: blur(40px);
+        }
+
+        .hero-glow-2 {
+            position: absolute;
+            bottom: 10%;
+            right: 10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+            filter: blur(50px);
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 4rem;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .hero-badge {
+            align-self: flex-start;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #a5b4fc;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .hero-badge::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(0, 242, 254, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 242, 254, 0); }
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #e2e8f0;
+            line-height: 1.3;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary-lg {
+            background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%);
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 1rem 2.25rem;
+            border-radius: var(--border-radius-md);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+            transition: var(--transition-smooth);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-primary-lg:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.6);
+            background: linear-gradient(135deg, #4f46e5 0%, var(--primary) 100%);
+        }
+
+        .btn-secondary-lg {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 1rem 2.25rem;
+            border-radius: var(--border-radius-md);
+            border: 1px solid var(--card-border);
+            transition: var(--transition-smooth);
+        }
+
+        .btn-secondary-lg:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* Mockup 3D de la Plataforma en Hero */
+        .hero-mockup {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mockup-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            width: 100%;
+            max-width: 420px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            transform: perspective(1000px) rotateY(-10deg) rotateX(5deg);
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+
+        .mockup-card:hover {
+            transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: 0 20px 50px rgba(99, 102, 241, 0.25);
+        }
+
+        .mockup-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 1rem;
+        }
+
+        .mockup-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .mockup-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .mockup-dot.red { background-color: #ef4444; }
+        .mockup-dot.yellow { background-color: #f59e0b; }
+        .mockup-dot.green { background-color: #10b981; }
+
+        .mockup-title {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .mockup-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .mockup-stat {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            padding: 1rem;
+            border-radius: var(--border-radius-md);
+            text-align: center;
+        }
+
+        .mockup-stat-val {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .mockup-stat-lbl {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .mockup-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .mockup-item {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 3px solid var(--color-piso1);
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+        }
+
+        .mockup-item.piso2 { border-left-color: var(--color-piso2); }
+        .mockup-item.piso3 { border-left-color: var(--color-piso3); }
+
+        .mockup-item-status {
+            color: var(--color-clean);
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        /* ==========================================================================
+           5. SECCIÓN "EL PROBLEMA"
+           ========================================================================== */
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 4rem;
+            padding: 0 1rem;
+        }
+
+        .section-tag {
+            color: var(--accent);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            margin-bottom: 1rem;
+        }
+
+        .section-desc {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .problema {
+            padding: 6rem 2rem;
+            position: relative;
+        }
+
+        .cards-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .card-premium {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-lg);
+            padding: 2.5rem;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* Efecto de borde neón al hover */
+        .card-premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--primary), var(--accent), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .card-premium:hover::before {
+            transform: translateX(100%);
+        }
+
+        .card-premium:hover {
+            transform: translateY(-8px);
+            background: var(--card-hover-bg);
+            border-color: var(--card-hover-border);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(99, 102, 241, 0.1);
+        }
+
+        .card-icon-wrapper {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            width: 54px;
+            height: 54px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+            transition: var(--transition-smooth);
+        }
+
+        .card-premium:hover .card-icon-wrapper {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: scale(1.1);
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .card-desc {
+            color: var(--text-muted);
+            font-size: 0.975rem;
+            line-height: 1.6;
+        }
+
+        /* ==========================================================================
+           6. SECCIÓN "BENEFICIOS COMPROBADOS"
+           ========================================================================== */
+        .beneficios {
+            padding: 6rem 2rem;
+            background: rgba(10, 12, 26, 0.5);
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            position: relative;
+        }
+
+        /* ==========================================================================
+           7. DEMO INTERACTIVA (PANEL DE CONTROL DE ALTA FIDELIDAD)
+           ========================================================================== */
+        .demo-section {
+            padding: 7rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .demo-card {
+            background: rgba(10, 14, 28, 0.7);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: var(--border-radius-lg);
+            padding: 3rem 2.5rem;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(99, 102, 241, 0.05);
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        /* Encabezado del panel */
+        .demo-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .panel-meta-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .panel-badge {
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.15) 0%, rgba(99, 102, 241, 0.15) 100%);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            color: var(--accent);
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            align-self: flex-start;
+        }
+
+        .panel-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .panel-subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Selector de Operaria */
+        .operator-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--border-radius-md);
+        }
+
+        .operator-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .operator-select {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            outline: none;
+            cursor: pointer;
+            padding-right: 0.5rem;
+            font-family: var(--font-primary);
+        }
+
+        .operator-select option {
+            background: var(--bg-main);
+            color: #fff;
+        }
+
+        /* Acordeones */
+        .accordion-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .accordion-item {
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-md);
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.01);
+            transition: var(--transition-smooth);
+        }
+
+        .accordion-item.active {
+            border-color: rgba(99, 102, 241, 0.3);
+            background: rgba(255, 255, 255, 0.02);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .accordion-header {
+            width: 100%;
+            padding: 1.25rem 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: none;
+            outline: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #fff;
+            transition: var(--transition-smooth);
+        }
+
+        .accordion-header:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .accordion-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .accordion-icon-wrapper {
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+        }
+
+        .accordion-title {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .accordion-header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .accordion-progress-badge {
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #a5b4fc;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            transition: var(--transition-smooth);
+        }
+
+        .accordion-item.active .accordion-progress-badge {
+            background: var(--primary);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .accordion-chevron {
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+            color: var(--text-muted);
+        }
+
+        .accordion-item.active .accordion-chevron {
+            transform: rotate(180deg);
+            color: #fff;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 2000px; /* Suficiente para acomodar las zonas */
+        }
+
+        .accordion-inner-panel {
+            padding: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        /* Cuadrículas de botones */
+        .zones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 1rem;
+        }
+
+        /* Botón de Zona de Aseo */
+        .zone-btn {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--border-radius-sm);
+            padding: 1rem 0.5rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            transition: var(--transition-smooth);
+            position: relative;
+            outline: none;
+        }
+
+        .zone-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .zone-floor-tag {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .zone-svg {
+            width: 24px;
+            height: 24px;
+            transition: var(--transition-smooth);
+            stroke-width: 2.2;
+        }
+
+        .zone-name {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #fff;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+        .zone-status-text {
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 50px;
+            background: rgba(239, 68, 68, 0.15);
+            color: #fc8181;
+            transition: var(--transition-smooth);
+        }
+
+        .zone-time {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        /* Código de Colores / Estilos Específicos de los Pisos */
+        
+        /* 1er Piso - Azul */
+        .zone-btn.floor-1 {
+            border-color: rgba(0, 198, 255, 0.2);
+        }
+        .zone-btn.floor-1:hover {
+            box-shadow: 0 0 10px var(--color-piso1-glow);
+            border-color: rgba(0, 198, 255, 0.4);
+        }
+        .zone-btn.floor-1 .zone-floor-tag {
+            color: var(--color-piso1);
+            background: rgba(0, 198, 255, 0.1);
+        }
+        .zone-btn.floor-1 .zone-svg {
+            color: var(--color-piso1);
+        }
+
+        /* 2do Piso - Verde */
+        .zone-btn.floor-2 {
+            border-color: rgba(0, 242, 96, 0.2);
+        }
+        .zone-btn.floor-2:hover {
+            box-shadow: 0 0 10px var(--color-piso2-glow);
+            border-color: rgba(0, 242, 96, 0.4);
+        }
+        .zone-btn.floor-2 .zone-floor-tag {
+            color: var(--color-piso2);
+            background: rgba(0, 242, 96, 0.1);
+        }
+        .zone-btn.floor-2 .zone-svg {
+            color: var(--color-piso2);
+        }
+
+        /* 3er Piso - Morado */
+        .zone-btn.floor-3 {
+            border-color: rgba(192, 132, 252, 0.2);
+        }
+        .zone-btn.floor-3:hover {
+            box-shadow: 0 0 10px var(--color-piso3-glow);
+            border-color: rgba(192, 132, 252, 0.4);
+        }
+        .zone-btn.floor-3 .zone-floor-tag {
+            color: var(--color-piso3);
+            background: rgba(192, 132, 252, 0.1);
+        }
+        .zone-btn.floor-3 .zone-svg {
+            color: var(--color-piso3);
+        }
+
+        /* Áreas Comunes & Deportes - Naranja */
+        .zone-btn.floor-comun {
+            border-color: rgba(249, 115, 22, 0.2);
+        }
+        .zone-btn.floor-comun:hover {
+            box-shadow: 0 0 10px var(--color-pisoComun-glow);
+            border-color: rgba(249, 115, 22, 0.4);
+        }
+        .zone-btn.floor-comun .zone-floor-tag {
+            color: var(--color-pisoComun);
+            background: rgba(249, 115, 22, 0.1);
+        }
+        .zone-btn.floor-comun .zone-svg {
+            color: var(--color-pisoComun);
+        }
+
+        /* ESTADO LIMPIO (Modificaciones Dinámicas) */
+        .zone-btn.clean {
+            background: rgba(16, 185, 129, 0.08) !important;
+            border-color: var(--color-clean) !important;
+        }
+
+        .zone-btn.clean.floor-1 { box-shadow: 0 0 15px rgba(0, 198, 255, 0.3) !important; }
+        .zone-btn.clean.floor-2 { box-shadow: 0 0 15px rgba(0, 242, 96, 0.3) !important; }
+        .zone-btn.clean.floor-3 { box-shadow: 0 0 15px rgba(192, 132, 252, 0.3) !important; }
+        .zone-btn.clean.floor-comun { box-shadow: 0 0 15px rgba(249, 115, 22, 0.3) !important; }
+
+        .zone-btn.clean .zone-status-text {
+            background: rgba(16, 185, 129, 0.15) !important;
+            color: #6ee7b7 !important;
+        }
+
+        .zone-btn.clean .zone-svg {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 5px currentColor);
+        }
+
+        /* Agrupamientos específicos de Baños (Sub-secciones internas) */
+        .bathroom-subgroup-title {
+            grid-column: 1 / -1;
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin: 1.5rem 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.25rem;
+        }
+
+        .bathroom-subgroup-title:first-child {
+            margin-top: 0;
+        }
+
+        /* ==========================================================================
+           8. PANEL DEL SUPERVISOR EN TIEMPO REAL (MÉTRICAS Y FEED)
+           ========================================================================== */
+        .supervisor-metrics {
+            margin-top: 3rem;
+            display: grid;
+            grid-template-columns: 0.7fr 1.3fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .supervisor-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Widget de Eficiencia */
+        .efficiency-widget {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-md);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .efficiency-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            text-align: center;
+        }
+
+        /* Indicador circular */
+        .circle-progress-wrapper {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.03);
+            stroke-width: 10;
+        }
+
+        .circle-progress {
+            fill: none;
+            stroke: url(#progressGradient);
+            stroke-width: 10;
+            stroke-linecap: round;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 440;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 0.8s ease;
+        }
+
+        .efficiency-percentage-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1;
+        }
+
+        .efficiency-percentage-display span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .efficiency-status-pill {
+            background: rgba(0, 242, 254, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Feed en vivo */
+        .live-feed-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-md);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .feed-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .feed-title {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feed-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--color-clean);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--color-clean);
+            animation: pulse-green 1.5s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        .feed-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-clear-feed {
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.35rem 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-clear-feed:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        .feed-table-container {
+            overflow-y: auto;
+            max-height: 250px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.15);
+            padding-right: 4px;
+        }
+
+        /* Scrollbar styling */
+        .feed-table-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .feed-table-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .feed-table-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        .feed-table-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .feed-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.825rem;
+            text-align: left;
+        }
+
+        .feed-table th {
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            background: rgba(10, 14, 28, 0.95);
+        }
+
+        .feed-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            color: var(--text-main);
+        }
+
+        .feed-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .feed-timestamp {
+            color: var(--accent);
+            font-family: monospace;
+            font-weight: 600;
+        }
+
+        .feed-zone-badge {
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .feed-operator {
+            color: var(--text-muted);
+        }
+
+        .feed-status {
+            color: var(--color-clean);
+            font-weight: 600;
+        }
+
+        .feed-empty {
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 0.85rem;
+        }
+
+        /* ==========================================================================
+           9. FOOTER
+           ========================================================================== */
+        .footer {
+            border-top: 1px solid var(--card-border);
+            background: rgba(5, 7, 16, 0.9);
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-desc {
+            color: var(--text-muted);
+            max-width: 400px;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .git-branch-badge {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            color: #818cf8;
+            font-family: monospace;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        /* ==========================================================================
+           10. RESPONSIVE MEDIA QUERIES
+           ========================================================================== */
+        @media (max-width: 1024px) {
+            .hero-title { font-size: 3rem; }
+            .hero-subtitle { font-size: 1.3rem; }
+            .hero-container { gap: 2rem; }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-container { padding: 1rem 1.5rem; }
+            .nav-links {
+                display: none; /* Se simplifica para la demo */
+            }
+            .menu-toggle { display: flex; }
+            .hero { padding-top: 7rem; }
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .hero-content {
+                align-items: center;
+            }
+            .hero-badge { align-self: center; }
+            .hero-cta-group { justify-content: center; }
+            .hero-mockup { display: none; } /* Ocultar mockup en móviles para priorizar espacio */
+            .section-title { font-size: 2rem; }
+            .demo-card { padding: 1.5rem 1rem; }
+            .zones-grid {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            }
+            .zone-btn {
+                padding: 0.75rem 0.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================================================
+       BARRA DE NAVEGACIÓN
+       ========================================================================== -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="logo">
+                <!-- SVG Logo personalizado para Valtek Optima -->
+                <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 5 L90 25 L90 75 L50 95 L10 75 L10 25 Z" fill="#0F1426" stroke="#00f2fe" stroke-width="6"/>
+                    <path d="M50 20 L78 35 L78 65 L50 80 L22 65 L22 35 Z" fill="rgba(99, 102, 241, 0.2)" stroke="#6366f1" stroke-width="4"/>
+                    <circle cx="50" cy="50" r="12" fill="#00f2fe"/>
+                    <path d="M50 35 V65 M35 50 H65" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+                </svg>
+                <span>Valtek Optima</span>
+            </a>
+            
+            <div class="nav-links">
+                <a href="#problema" class="nav-link">El Problema</a>
+                <a href="#beneficios" class="nav-link">Beneficios</a>
+                <a href="#demo" class="nav-btn">Probar Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==========================================================================
+       SECCIÓN HERO (BIENVENIDA DE ALTO IMPACTO)
+       ========================================================================== -->
+    <section class="hero">
+        <div class="hero-glow-1"></div>
+        <div class="hero-glow-2"></div>
+        
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">SaaS Educativo Premium</div>
+                <h1 class="hero-title">Valtek Optima</h1>
+                <h2 class="hero-subtitle">La plataforma inteligente de gestión y optimización de aseo para instituciones educativas.</h2>
+                <p class="hero-description">
+                    Elimine la incertidumbre operativa. Controle el rendimiento real de su personal, reduzca los tiempos muertos y garantice campus 100% sanitizados con una interfaz táctil diseñada para el terreno.
+                </p>
+                <div class="hero-cta-group">
+                    <a href="#demo" class="btn-primary-lg">
+                        Probar Demo Interactiva
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
+                    <a href="#problema" class="btn-secondary-lg">Saber más</a>
+                </div>
+            </div>
+            
+            <div class="hero-mockup">
+                <!-- Card de previsualización animada / 3D mockup del panel -->
+                <div class="mockup-card">
+                    <div class="mockup-header">
+                        <div class="mockup-dots">
+                            <span class="mockup-dot red"></span>
+                            <span class="mockup-dot yellow"></span>
+                            <span class="mockup-dot green"></span>
+                        </div>
+                        <div class="mockup-title">VALTEK OPTIMA SUPERVISOR</div>
+                    </div>
+                    <div class="mockup-stats-grid">
+                        <div class="mockup-stat">
+                            <div class="mockup-stat-val">94%</div>
+                            <div class="mockup-stat-lbl">Eficiencia Escolar</div>
+                        </div>
+                        <div class="mockup-stat">
+                            <div class="mockup-stat-val">51/51</div>
+                            <div class="mockup-stat-lbl">Zonas Auditadas</div>
+                        </div>
+                    </div>
+                    <div class="mockup-list">
+                        <div class="mockup-item">
+                            <span>Sala de Clases 12</span>
+                            <span class="mockup-item-status">Limpio</span>
+                        </div>
+                        <div class="mockup-item piso2">
+                            <span>Baño Hombres (Piso 2)</span>
+                            <span class="mockup-item-status">Limpio</span>
+                        </div>
+                        <div class="mockup-item piso3">
+                            <span>Laboratorio Química</span>
+                            <span class="mockup-item-status">Limpio</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================================================
+       SECCIÓN "EL PROBLEMA"
+       ========================================================================== */ -->
+    <section id="problema" class="problema">
+        <div class="section-header">
+            <span class="section-tag">Los Desafíos Actuales</span>
+            <h2 class="section-title">¿Por qué fallan los planes de aseo tradicionales?</h2>
+            <p class="section-desc">Los campus educativos enfrentan problemas constantes debido a la falta de trazabilidad y herramientas diseñadas para el trabajo en el terreno.</p>
+        </div>
+        
+        <div class="cards-grid">
+            <!-- Tarjeta 1: Pérdida de Tiempo -->
+            <div class="card-premium">
+                <div class="card-icon-wrapper">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
+                <h3 class="card-title">Pérdida de Tiempo</h3>
+                <p class="card-desc">Horas muertas provocadas por la falta de asignación clara y rutas ineficientes. El personal de aseo pierde hasta un 30% del día decidiendo qué zona limpiar.</p>
+            </div>
+            
+            <!-- Tarjeta 2: Falta de Trazabilidad -->
+            <div class="card-premium">
+                <div class="card-icon-wrapper">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                </div>
+                <h3 class="card-title">Falta de Trazabilidad</h3>
+                <p class="card-desc">Imposibilidad de auditar y verificar el historial. Los supervisores no pueden comprobar si un área se limpió hace 20 minutos o hace 4 horas, arriesgando la higiene del campus.</p>
+            </div>
+            
+            <!-- Tarjeta 3: Injusticia Laboral -->
+            <div class="card-premium">
+                <div class="card-icon-wrapper">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </div>
+                <h3 class="card-title">Injusticia Laboral</h3>
+                <p class="card-desc">Cargas de trabajo desequilibradas y desmotivación debido a la falta de visibilidad del rendimiento. El esfuerzo real no queda registrado y se sobrecarga a los operarios más eficientes.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================================================
+       SECCIÓN "BENEFICIOS COMPROBADOS"
+       ========================================================================== */ -->
+    <section id="beneficios" class="beneficios">
+        <div class="section-header">
+            <span class="section-tag">Nuestras Soluciones</span>
+            <h2 class="section-title">Beneficios Comprobados de Valtek Optima</h2>
+            <p class="section-desc">Una suite integral que empodera al personal y entrega métricas en tiempo real a los tomadores de decisiones.</p>
+        </div>
+        
+        <div class="cards-grid">
+            <!-- Beneficio 1: Control de Rendimiento -->
+            <div class="card-premium">
+                <div class="card-icon-wrapper">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                </div>
+                <h3 class="card-title">Control de Rendimiento</h3>
+                <p class="card-desc">Reportes automáticos integrados con "timestamps" para medir la productividad del campus y eliminar pérdidas de tiempo.</p>
+            </div>
+            
+            <!-- Beneficio 2: Interfaz Zero-Friction -->
+            <div class="card-premium">
+                <div class="card-icon-wrapper">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                    </svg>
+                </div>
+                <h3 class="card-title">Interfaz Zero-Friction</h3>
+                <p class="card-desc">Paneles colapsables táctiles optimizados para el uso en el terreno escolar que aumentan la motivación y facilitan la carga de datos del personal de aseo.</p>
+            </div>
+            
+            <!-- Beneficio 3: Navegación Visual Universal -->
+            <div class="card-premium">
+                <div class="card-icon-wrapper">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                </div>
+                <h3 class="card-title">Navegación Visual Universal</h3>
+                <p class="card-desc">Uso riguroso de iconografía SVG clara y simplificada para eliminar por completo las barreras de lectura e idioma en el equipo operativo.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================================================
+       SECCIÓN DE DEMO INTERACTIVA (PANEL DE CONTROL)
+       ========================================================================== */ -->
+    <section id="demo" class="demo-section">
+        <div class="section-header">
+            <span class="section-tag">Demostración en Vivo</span>
+            <h2 class="section-title">Panel Táctil de Operaciones</h2>
+            <p class="section-desc">Interactúe con el panel digital simulado de 51 zonas de aseo. Presione cualquier botón para marcar una zona como limpia y vea cómo reacciona el Panel de Supervisión.</p>
+        </div>
+        
+        <div class="demo-card">
+            <!-- Encabezado del Panel -->
+            <div class="demo-panel-header">
+                <div class="panel-meta-info">
+                    <span class="panel-badge">MODO DEMO INTERACTIVO</span>
+                    <h3 class="panel-title">Consola del Operario</h3>
+                    <p class="panel-subtitle">Campus Central - Educación Superior / Escolar</p>
+                </div>
+                
+                <div class="operator-selector">
+                    <span class="operator-label">OPERARIO:</span>
+                    <select id="operatorSelect" class="operator-select">
+                        <option value="Tía María">Tía María</option>
+                        <option value="Tía Carmen">Tía Carmen</option>
+                        <option value="Tía Rosa">Tía Rosa</option>
+                        <option value="Tía Patricia">Tía Patricia</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Contenedor de Acordeones -->
+            <div class="accordion-container">
+                
+                <!-- ACORDEÓN 1: SALAS DE CLASES -->
+                <div class="accordion-item active" id="accordion-salas">
+                    <button class="accordion-header" onclick="toggleAccordion('accordion-salas')">
+                        <div class="accordion-header-left">
+                            <span class="accordion-icon-wrapper">
+                                <!-- Icono Pizarra SVG -->
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                                    <line x1="8" y1="21" x2="16" y2="21" />
+                                    <line x1="12" y1="17" x2="12" y2="21" />
+                                </svg>
+                            </span>
+                            <span class="accordion-title">Salas de Clases</span>
+                        </div>
+                        <div class="accordion-header-right">
+                            <span class="accordion-progress-badge" id="badge-salas">0 / 30 Limpios</span>
+                            <span class="accordion-chevron">▼</span>
+                        </div>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-inner-panel">
+                            <div class="zones-grid" id="grid-salas">
+                                <!-- Generado por JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ACORDEÓN 2: CANCHAS DEPORTIVAS -->
+                <div class="accordion-item" id="accordion-canchas">
+                    <button class="accordion-header" onclick="toggleAccordion('accordion-canchas')">
+                        <div class="accordion-header-left">
+                            <span class="accordion-icon-wrapper">
+                                <!-- Icono Balón SVG -->
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <path d="M6.2 6.2c2.4 2.4 2.4 6.4 0 8.8" />
+                                    <path d="M17.8 6.2c-2.4 2.4-2.4 6.4 0 8.8" />
+                                    <path d="M2 12h20" />
+                                    <path d="M12 2v20" />
+                                </svg>
+                            </span>
+                            <span class="accordion-title">Canchas y Campos Deportivos</span>
+                        </div>
+                        <div class="accordion-header-right">
+                            <span class="accordion-progress-badge" id="badge-canchas">0 / 3 Limpios</span>
+                            <span class="accordion-chevron">▼</span>
+                        </div>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-inner-panel">
+                            <div class="zones-grid" id="grid-canchas">
+                                <!-- Generado por JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ACORDEÓN 3: BAÑOS Y CAMARINES -->
+                <div class="accordion-item" id="accordion-banos">
+                    <button class="accordion-header" onclick="toggleAccordion('accordion-banos')">
+                        <div class="accordion-header-left">
+                            <span class="accordion-icon-wrapper">
+                                <!-- Icono Inodoro SVG -->
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M7 2h10v4H7z" />
+                                    <path d="M5 6h14v5a7 7 0 0 1-7 7H12a7 7 0 0 1-7-7V6z" />
+                                    <path d="M12 18v4" />
+                                    <path d="M9 22h6" />
+                                </svg>
+                            </span>
+                            <span class="accordion-title">Baños y Camarines</span>
+                        </div>
+                        <div class="accordion-header-right">
+                            <span class="accordion-progress-badge" id="badge-banos">0 / 18 Limpios</span>
+                            <span class="accordion-chevron">▼</span>
+                        </div>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-inner-panel">
+                            <div class="zones-grid" id="grid-banos">
+                                <!-- Generado por JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- PANEL DE MÉTRICAS PARA EL SUPERVISOR (NUEVA FUNCIÓN COMERCIAL) -->
+            <div id="metrics" class="supervisor-metrics">
+                
+                <!-- Eficiencia Global -->
+                <div class="efficiency-widget">
+                    <h4 class="efficiency-title">Eficiencia del Campus</h4>
+                    <div class="circle-progress-wrapper">
+                        <svg width="150" height="150" viewBox="0 0 150 150">
+                            <defs>
+                                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#6366f1" />
+                                    <stop offset="100%" stop-color="#00f2fe" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="circle-bg" cx="75" cy="75" r="70" />
+                            <circle class="circle-progress" id="efficiencyCircle" cx="75" cy="75" r="70" />
+                        </svg>
+                        <div class="efficiency-percentage-display" id="efficiencyValue">
+                            0%
+                            <span>COMPLETADO</span>
+                        </div>
+                    </div>
+                    <span class="efficiency-status-pill" id="efficiencyLabel">Rendimiento Inicial</span>
+                </div>
+                
+                <!-- Feed / Logs en Vivo -->
+                <div class="live-feed-card">
+                    <div class="feed-header">
+                        <h4 class="feed-title">
+                            <span class="feed-dot"></span>
+                            Bitácora del Supervisor (Feed en Vivo)
+                        </h4>
+                        <div class="feed-actions">
+                            <button class="btn-clear-feed" onclick="clearFeed()">Limpiar Historial</button>
+                        </div>
+                    </div>
+                    
+                    <div class="feed-table-container">
+                        <table class="feed-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Zona Sanitizada</th>
+                                    <th>Operario</th>
+                                    <th>Estado / Guardado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feedTableBody">
+                                <!-- Logs generados en JS -->
+                                <tr>
+                                    <td colspan="4" class="feed-empty">No hay registros de aseo en esta sesión de demo. Presione botones en la consola superior.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================================================
+       FOOTER
+       ========================================================================== */ -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div>
+                    <a href="#" class="logo">
+                        <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M50 5 L90 25 L90 75 L50 95 L10 75 L10 25 Z" fill="#0F1426" stroke="#00f2fe" stroke-width="6"/>
+                            <path d="M50 20 L78 35 L78 65 L50 80 L22 65 L22 35 Z" fill="rgba(99, 102, 241, 0.2)" stroke="#6366f1" stroke-width="4"/>
+                            <circle cx="50" cy="50" r="12" fill="#00f2fe"/>
+                            <path d="M50 35 V65 M35 50 H65" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+                        </svg>
+                        <span>Valtek Optima</span>
+                    </a>
+                    <p class="footer-desc">El primer software inteligente diseñado específicamente para optimizar y auditar el aseo y sanitización en instituciones educativas.</p>
+                </div>
+                <div style="font-size: 0.9rem;">
+                    <p style="margin-bottom: 0.5rem; font-weight: 600;">Desarrollo Comercial y SaaS</p>
+                    <p style="color: var(--text-muted);">Diseñado con componentes de alta fidelidad.</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2026 Valtek Optima. Todos los derechos reservados.</p>
+                <div>
+                    Rama Git activa: <span class="git-branch-badge">juanjo</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==========================================================================
+       CÓDIGO DE LOGICA REACTIVA (JAVASCRIPT INTEGRADO)
+       ========================================================================== */ -->
+    <script>
+        // Iconografía vectorial SVG inline en variables para inyección dinámica
+        const ICONS = {
+            sala: `<svg class="zone-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" /></svg>`,
+            cancha: `<svg class="zone-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M6.2 6.2c2.4 2.4 2.4 6.4 0 8.8" /><path d="M17.8 6.2c-2.4 2.4-2.4 6.4 0 8.8" /><path d="M2 12h20" /><path d="M12 2v20" /></svg>`,
+            bano: `<svg class="zone-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2h10v4H7z" /><path d="M5 6h14v5a7 7 0 0 1-7 7H12a7 7 0 0 1-7-7V6z" /><path d="M12 18v4" /><path d="M9 22h6" /></svg>`,
+            camarin: `<svg class="zone-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 1 3 3h-6a3 3 0 0 1 3-3z" /><path d="M22 19H2L12 5z" /></svg>`
+        };
+
+        // Estado de las 51 Zonas de Aseo
+        let zones = [];
+        let logs = [];
+
+        // Inicializar zonas al cargar la página
+        function initZones() {
+            zones = [];
+            
+            // 1. Acordeón 1: 30 Salas de clases (piso 1: 1-10, piso 2: 11-20, piso 3: 21-30)
+            for (let i = 1; i <= 30; i++) {
+                let floor = 1;
+                if (i > 10 && i <= 20) floor = 2;
+                if (i > 20) floor = 3;
+                
+                zones.push({
+                    id: `sala-${i}`,
+                    name: `Sala ${i}`,
+                    type: 'sala',
+                    floor: floor,
+                    isClean: false,
+                    lastCleanedTime: null
+                });
+            }
+
+            // 2. Acordeón 1: 3 Canchas deportivas (comunes / exterior)
+            const canchaNames = ["Cancha Fútbol", "Cancha Básquet", "Gimnasio Techado"];
+            canchaNames.forEach((name, index) => {
+                zones.push({
+                    id: `cancha-${index + 1}`,
+                    name: name,
+                    type: 'cancha',
+                    floor: 'comun', // Naranja
+                    isClean: false,
+                    lastCleanedTime: null
+                });
+            });
+
+            // 3. Acordeón 2 (simetría de Baños por piso: 4 por piso * 3 pisos = 12)
+            const floors = [1, 2, 3];
+            const banoTypes = [
+                { suffix: "Mujeres", type: "bano" },
+                { suffix: "Hombres", type: "bano" },
+                { suffix: "Profesores", type: "bano" },
+                { suffix: "Discapacitados", type: "bano" }
+            ];
+
+            floors.forEach(floor => {
+                banoTypes.forEach((def, index) => {
+                    zones.push({
+                        id: `bano-p${floor}-${def.suffix.toLowerCase()}`,
+                        name: `Baño ${def.suffix} (P${floor})`,
+                        type: def.type,
+                        floor: floor,
+                        isClean: false,
+                        lastCleanedTime: null
+                    });
+                });
+            });
+
+            // 4. Áreas comunes / 6 puntos adicionales entre zonas comunes y camarines
+            const commonAreas = [
+                { id: "camarin-varones", name: "Camarín Varones", type: "camarin" },
+                { id: "camarin-damas", name: "Camarín Damas", type: "camarin" },
+                { id: "bano-personal", name: "Baño Personal", type: "bano" },
+                { id: "bano-casino", name: "Baño Casino", type: "bano" },
+                { id: "bano-kiosco", name: "Baño Kiosco", type: "bano" },
+                { id: "camarin-profesores", name: "Camarín Profesores EF", type: "camarin" }
+            ];
+
+            commonAreas.forEach(area => {
+                zones.push({
+                    id: area.id,
+                    name: area.name,
+                    type: area.type,
+                    floor: 'comun',
+                    isClean: false,
+                    lastCleanedTime: null
+                });
+            });
+        }
+
+        // Renderizar los botones en los acordeones correspondientes
+        function renderPanel() {
+            const gridSalas = document.getElementById('grid-salas');
+            const gridCanchas = document.getElementById('grid-canchas');
+            const gridBanos = document.getElementById('grid-banos');
+
+            gridSalas.innerHTML = '';
+            gridCanchas.innerHTML = '';
+            gridBanos.innerHTML = '';
+
+            // Filtrar zonas por acordeón
+            const salas = zones.filter(z => z.type === 'sala');
+            const canchas = zones.filter(z => z.type === 'cancha');
+            
+            // Organizar el acordeón 2 de Baños y Camarines
+            // Dividiremos internamente por piso para una visualización premium
+            const banosFloor1 = zones.filter(z => (z.type === 'bano' || z.type === 'camarin') && z.floor === 1);
+            const banosFloor2 = zones.filter(z => (z.type === 'bano' || z.type === 'camarin') && z.floor === 2);
+            const banosFloor3 = zones.filter(z => (z.type === 'bano' || z.type === 'camarin') && z.floor === 3);
+            const banosComunes = zones.filter(z => (z.type === 'bano' || z.type === 'camarin') && z.floor === 'comun');
+
+            // Renderizar Salas de clases
+            salas.forEach(sala => {
+                gridSalas.appendChild(createZoneButton(sala));
+            });
+
+            // Renderizar Canchas
+            canchas.forEach(cancha => {
+                gridCanchas.appendChild(createZoneButton(cancha));
+            });
+
+            // Renderizar Baños y Camarines por subgrupos estructurados
+            if (banosFloor1.length > 0) {
+                const title = document.createElement('div');
+                title.className = 'bathroom-subgroup-title';
+                title.innerText = 'Primer Piso';
+                gridBanos.appendChild(title);
+                banosFloor1.forEach(b => gridBanos.appendChild(createZoneButton(b)));
+            }
+
+            if (banosFloor2.length > 0) {
+                const title = document.createElement('div');
+                title.className = 'bathroom-subgroup-title';
+                title.innerText = 'Segundo Piso';
+                gridBanos.appendChild(title);
+                banosFloor2.forEach(b => gridBanos.appendChild(createZoneButton(b)));
+            }
+
+            if (banosFloor3.length > 0) {
+                const title = document.createElement('div');
+                title.className = 'bathroom-subgroup-title';
+                title.innerText = 'Tercer Piso';
+                gridBanos.appendChild(title);
+                banosFloor3.forEach(b => gridBanos.appendChild(createZoneButton(b)));
+            }
+
+            if (banosComunes.length > 0) {
+                const title = document.createElement('div');
+                title.className = 'bathroom-subgroup-title';
+                title.innerText = 'Áreas Comunes y Camarines';
+                gridBanos.appendChild(title);
+                banosComunes.forEach(b => gridBanos.appendChild(createZoneButton(b)));
+            }
+
+            // Actualizar contadores y métricas globales
+            updateCounters();
+        }
+
+        // Crear elemento de botón para una zona
+        function createZoneButton(zone) {
+            const btn = document.createElement('button');
+            
+            // Clases base
+            let btnClass = `zone-btn`;
+            if (zone.isClean) btnClass += ' clean';
+            
+            // Clases de piso
+            if (zone.floor === 1) btnClass += ' floor-1';
+            else if (zone.floor === 2) btnClass += ' floor-2';
+            else if (zone.floor === 3) btnClass += ' floor-3';
+            else btnClass += ' floor-comun';
+
+            btn.className = btnClass;
+            btn.id = `btn-${zone.id}`;
+            
+            // Etiquetas de Piso
+            let floorLabel = `${zone.floor}º Piso`;
+            if (zone.floor === 'comun') {
+                floorLabel = zone.type === 'cancha' ? 'Exterior' : 'Común';
+            }
+
+            const statusText = zone.isClean ? 'Limpio' : 'Pendiente';
+            const timeText = zone.lastCleanedTime ? zone.lastCleanedTime : 'Sin registro';
+
+            btn.innerHTML = `
+                <span class="zone-floor-tag">${floorLabel}</span>
+                ${ICONS[zone.type] || ICONS.sala}
+                <span class="zone-name">${zone.name}</span>
+                <span class="zone-status-text">${statusText}</span>
+                <span class="zone-time">${timeText}</span>
+            `;
+
+            // Click listener
+            btn.onclick = () => toggleZoneState(zone.id);
+
+            return btn;
+        }
+
+        // Alternar estado limpio / pendiente
+        function toggleZoneState(zoneId) {
+            const zone = zones.find(z => z.id === zoneId);
+            if (!zone) return;
+
+            zone.isClean = !zone.isClean;
+            
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            if (zone.isClean) {
+                zone.lastCleanedTime = timeString;
+                
+                // Nueva función comercial: Guardar registro en el feed de auditoría en vivo
+                addLogEntry(zone.name, timeString);
+            } else {
+                zone.lastCleanedTime = null;
+            }
+
+            // Re-renderizar panel táctil
+            renderPanel();
+        }
+
+        // Registrar entrada de auditoría en vivo
+        function addLogEntry(zoneName, timeStr) {
+            const currentOperator = document.getElementById('operatorSelect').value;
+            
+            // Tiempos estimados aleatorios pero realistas para la demo comercial
+            const estimatedExecutionTime = Math.floor(Math.random() * 15) + 10; // entre 10 y 25 minutos
+            
+            const logEntry = {
+                timestamp: timeStr,
+                zoneName: zoneName,
+                operator: currentOperator,
+                status: `LIMPIA - Tiempo est: ${estimatedExecutionTime} min (Guardado con éxito)`
+            };
+
+            logs.unshift(logEntry); // Insertar al inicio de la lista
+            updateFeedTable();
+        }
+
+        // Limpiar el feed
+        function clearFeed() {
+            logs = [];
+            updateFeedTable();
+        }
+
+        // Actualizar tabla de registros en vivo
+        function updateFeedTable() {
+            const tbody = document.getElementById('feedTableBody');
+            tbody.innerHTML = '';
+
+            if (logs.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="feed-empty">No hay registros de aseo en esta sesión de demo. Presione botones en la consola superior.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            logs.forEach(log => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="feed-timestamp">${log.timestamp}</td>
+                    <td class="feed-zone-badge">${log.zoneName}</td>
+                    <td class="feed-operator">${log.operator}</td>
+                    <td class="feed-status">${log.status}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Calcular y actualizar contadores reactivos de cabecera y el KPI global de eficiencia
+        function updateCounters() {
+            // Contadores por tipo
+            const salas = zones.filter(z => z.type === 'sala');
+            const cleanSalas = salas.filter(z => z.isClean).length;
+            document.getElementById('badge-salas').innerText = `${cleanSalas} / ${salas.length} Limpios`;
+
+            const canchas = zones.filter(z => z.type === 'cancha');
+            const cleanCanchas = canchas.filter(z => z.isClean).length;
+            document.getElementById('badge-canchas').innerText = `${cleanCanchas} / ${canchas.length} Limpios`;
+
+            const banos = zones.filter(z => z.type === 'bano' || z.type === 'camarin');
+            const cleanBanos = banos.filter(z => z.isClean).length;
+            document.getElementById('badge-banos').innerText = `${cleanBanos} / ${banos.length} Limpios`;
+
+            // Eficiencia Global del Campus (51 zonas en total)
+            const totalZones = zones.length;
+            const totalClean = zones.filter(z => z.isClean).length;
+            const efficiencyPercentage = Math.round((totalClean / totalZones) * 100) || 0;
+
+            // Actualizar visual del círculo de progreso de eficiencia
+            document.getElementById('efficiencyValue').innerHTML = `${efficiencyPercentage}% <span>COMPLETADO</span>`;
+            
+            const circle = document.getElementById('efficiencyCircle');
+            const circumference = 440;
+            const offset = circumference - (efficiencyPercentage / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+
+            // Actualizar estado cualitativo
+            const label = document.getElementById('efficiencyLabel');
+            if (efficiencyPercentage === 0) {
+                label.innerText = 'Rendimiento Inicial';
+                label.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                label.style.color = '#fff';
+            } else if (efficiencyPercentage < 35) {
+                label.innerText = 'Requiere Sanitización';
+                label.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+                label.style.color = '#f87171';
+            } else if (efficiencyPercentage < 75) {
+                label.innerText = 'Limpieza Favorable';
+                label.style.borderColor = 'rgba(249, 115, 22, 0.4)';
+                label.style.color = '#fb923c';
+            } else {
+                label.innerText = 'Campus Sanitizado';
+                label.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+                label.style.color = '#34d399';
+            }
+        }
+
+        // Alternar el estado colapsado / activo de un acordeón
+        function toggleAccordion(itemId) {
+            const accordionItem = document.getElementById(itemId);
+            const isActive = accordionItem.classList.contains('active');
+            
+            // Cerrar todos los acordeones para un look limpio
+            document.querySelectorAll('.accordion-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Si no estaba activo, abrir el actual
+            if (!isActive) {
+                accordionItem.classList.add('active');
+            }
+        }
+
+        // Ejecutar inicializaciones cuando el DOM esté listo
+        document.addEventListener("DOMContentLoaded", () => {
+            initZones();
+            renderPanel();
+        });
+    </script>
+</body>
+</html>
