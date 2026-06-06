@@ -680,19 +680,41 @@
   // ─────────────────────────────────────────
   // LOCALSTORAGE PERSISTENCE
   // ─────────────────────────────────────────
+  const DATA_VERSION = '2.0';
+
   function saveData() {
+    localStorage.setItem('vo_version', DATA_VERSION);
     localStorage.setItem('vo_schools', JSON.stringify(state.schools));
     localStorage.setItem('vo_users', JSON.stringify(state.users));
     localStorage.setItem('vo_msg', state.mensajeDelDia);
   }
   function loadData() {
+    // Clean old keys from previous app versions
+    localStorage.removeItem('valtek_users');
+
+    // If version mismatch → wipe and reseed
+    const storedVersion = localStorage.getItem('vo_version');
+    if (storedVersion !== DATA_VERSION) {
+      localStorage.removeItem('vo_schools');
+      localStorage.removeItem('vo_users');
+      localStorage.removeItem('vo_msg');
+    }
+
     const schools = localStorage.getItem('vo_schools');
     const users = localStorage.getItem('vo_users');
     const msg = localStorage.getItem('vo_msg');
     state.schools = schools ? JSON.parse(schools) : JSON.parse(JSON.stringify(SEED_SCHOOLS));
     state.users = users ? JSON.parse(users) : JSON.parse(JSON.stringify(SEED_USERS));
     state.mensajeDelDia = msg || state.mensajeDelDia;
-    if (!schools) saveData();
+
+    // Always ensure seed users exist (in case they were deleted or corrupted)
+    SEED_USERS.forEach(su => {
+      if (!state.users.find(u => u.email === su.email)) {
+        state.users.push(JSON.parse(JSON.stringify(su)));
+      }
+    });
+
+    saveData();
   }
 
   // ─────────────────────────────────────────
