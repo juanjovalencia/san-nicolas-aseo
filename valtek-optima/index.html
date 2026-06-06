@@ -1,2668 +1,1516 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valtek Optima - Optimización de Aseo Institucional</title>
-    
-    <!-- Meta tags SEO -->
-    <meta name="description" content="Valtek Optima es la plataforma SaaS inteligente de optimización y gestión de aseo para colegios, universidades e instituciones educativas. Controle la trazabilidad en terreno.">
-    <meta name="keywords" content="Valtek, Optima, optimizacion de aseo, software de aseo, gestion de campus, colegios, universidades">
-    <meta name="author" content="Valtek">
-    
-    <!-- Google Fonts: Outfit & Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        /* ==========================================================================
-           1. SISTEMA DE DISEÑO & VARIABLES
-           ========================================================================== */
-        :root {
-            --font-primary: 'Inter', sans-serif;
-            --font-display: 'Outfit', sans-serif;
-
-            /* Paleta de colores - Premium Dark Mode */
-            --bg-main: #070913;
-            --bg-radial: radial-gradient(circle at 50% 50%, #151833 0%, #070913 100%);
-            --card-bg: rgba(15, 20, 38, 0.7);
-            --card-border: rgba(255, 255, 255, 0.07);
-            --card-hover-bg: rgba(23, 29, 54, 0.85);
-            --card-hover-border: rgba(255, 255, 255, 0.15);
-            
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --text-dark: #1f2937;
-            
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --primary-glow: rgba(99, 102, 241, 0.3);
-            
-            --accent: #00f2fe;
-            --accent-glow: rgba(0, 242, 254, 0.2);
-
-            /* Colores de Pisos con Glow */
-            --color-piso1: #00c6ff;
-            --color-piso1-glow: rgba(0, 198, 255, 0.25);
-            
-            --color-piso2: #00f260;
-            --color-piso2-glow: rgba(0, 242, 96, 0.25);
-            
-            --color-piso3: #c084fc;
-            --color-piso3-glow: rgba(192, 132, 252, 0.25);
-            
-            --color-pisoComun: #f97316;
-            --color-pisoComun-glow: rgba(249, 115, 22, 0.25);
-
-            --color-clean: #10b981;
-            --color-process: #f59e0b;
-            --color-dirty: #ef4444;
-
-            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --border-radius-sm: 8px;
-            --border-radius-md: 16px;
-            --border-radius-lg: 24px;
-        }
-
-        /* ==========================================================================
-           2. ESTILOS GENERALES Y RESETS
-           ========================================================================== */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            scroll-behavior: smooth;
-        }
-
-        body {
-            background-color: var(--bg-main);
-            background-image: var(--bg-radial);
-            background-attachment: fixed;
-            color: var(--text-main);
-            font-family: var(--font-primary);
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        /* Utilidades de Scroll Margin */
-        section {
-            scroll-margin-top: 100px;
-        }
-
-        /* ==========================================================================
-           3. NAVBAR (STICKY Y GLASSMORPHIC)
-           ========================================================================== */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            background: rgba(7, 9, 19, 0.75);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--card-border);
-            transition: var(--transition-smooth);
-        }
-
-        .navbar-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1.25rem 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .logo-svg {
-            width: 32px;
-            height: 32px;
-            filter: drop-shadow(0 0 8px var(--accent-glow));
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-link {
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: var(--text-muted);
-            transition: var(--transition-smooth);
-        }
-
-        .nav-link:hover {
-            color: #fff;
-            text-shadow: 0 0 8px var(--primary-glow);
-        }
-
-        .nav-btn {
-            background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%);
-            padding: 0.6rem 1.25rem;
-            border-radius: var(--border-radius-sm);
-            font-weight: 600;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 12px var(--primary-glow);
-            transition: var(--transition-smooth);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .nav-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
-            background: linear-gradient(135deg, #4f46e5 0%, var(--primary) 100%);
-        }
-
-        /* ==========================================================================
-           4. HERO SECTION (PRIMERA IMPRESIÓN WOW)
-           ========================================================================== */
-        .hero {
-            min-height: 100vh;
-            padding: 9rem 2rem 5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        /* Fondo decorativo */
-        .hero-glow-1 {
-            position: absolute;
-            top: 20%;
-            left: 10%;
-            width: 450px;
-            height: 450px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
-            pointer-events: none;
-            filter: blur(40px);
-        }
-
-        .hero-glow-2 {
-            position: absolute;
-            bottom: 10%;
-            right: 10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(0, 242, 254, 0.1) 0%, transparent 70%);
-            pointer-events: none;
-            filter: blur(50px);
-        }
-
-        .hero-container {
-            max-width: 1200px;
-            width: 100%;
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 4rem;
-            align-items: center;
-            z-index: 2;
-        }
-
-        .hero-content {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .hero-badge {
-            align-self: flex-start;
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            color: #a5b4fc;
-            padding: 0.4rem 1rem;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.05);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .hero-badge::before {
-            content: '';
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background-color: var(--accent);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--accent);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(0, 242, 254, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 242, 254, 0); }
-        }
-
-        .hero-title {
-            font-family: var(--font-display);
-            font-size: 4rem;
-            font-weight: 800;
-            line-height: 1.1;
-            letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero-subtitle {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 500;
-            color: #e2e8f0;
-            line-height: 1.3;
-        }
-
-        .hero-description {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            max-width: 600px;
-        }
-
-        .hero-cta-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .btn-primary-lg {
-            background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%);
-            color: #fff;
-            font-weight: 700;
-            font-size: 1.1rem;
-            padding: 1rem 2.25rem;
-            border-radius: var(--border-radius-md);
-            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
-            transition: var(--transition-smooth);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .btn-primary-lg:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.6);
-            background: linear-gradient(135deg, #4f46e5 0%, var(--primary) 100%);
-        }
-
-        .btn-secondary-lg {
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
-            font-weight: 600;
-            font-size: 1.1rem;
-            padding: 1rem 2.25rem;
-            border-radius: var(--border-radius-md);
-            border: 1px solid var(--card-border);
-            transition: var(--transition-smooth);
-        }
-
-        .btn-secondary-lg:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.25);
-            transform: translateY(-2px);
-        }
-
-        /* Mockup de la plataforma en Hero */
-        .hero-mockup {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .mockup-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius-lg);
-            padding: 2rem;
-            width: 100%;
-            max-width: 420px;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-            transform: perspective(1000px) rotateY(-10deg) rotateX(5deg);
-            transition: var(--transition-smooth);
-            position: relative;
-        }
-
-        .mockup-card:hover {
-            transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
-            border-color: rgba(99, 102, 241, 0.4);
-            box-shadow: 0 20px 50px rgba(99, 102, 241, 0.25);
-        }
-
-        .mockup-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--card-border);
-            padding-bottom: 1rem;
-        }
-
-        .mockup-dots {
-            display: flex;
-            gap: 6px;
-        }
-
-        .mockup-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-
-        .mockup-dot.red { background-color: #ef4444; }
-        .mockup-dot.yellow { background-color: #f59e0b; }
-        .mockup-dot.green { background-color: #10b981; }
-
-        .mockup-title {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .mockup-stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .mockup-stat {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--card-border);
-            padding: 1rem;
-            border-radius: var(--border-radius-md);
-            text-align: center;
-        }
-
-        .mockup-stat-val {
-            font-family: var(--font-display);
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .mockup-stat-lbl {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .mockup-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .mockup-item {
-            background: rgba(255, 255, 255, 0.02);
-            border-left: 3px solid var(--color-piso1);
-            padding: 0.75rem;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 0.85rem;
-        }
-
-        .mockup-item.piso2 { border-left-color: var(--color-piso2); }
-        .mockup-item.piso3 { border-left-color: var(--color-piso3); }
-
-        .mockup-item-status {
-            color: var(--color-clean);
-            font-weight: 600;
-            font-size: 0.8rem;
-        }
-
-        /* ==========================================================================
-           5. SECCIÓN "EL PROBLEMA"
-           ========================================================================== */
-        .section-header {
-            text-align: center;
-            max-width: 700px;
-            margin: 0 auto 4rem;
-            padding: 0 1rem;
-        }
-
-        .section-tag {
-            color: var(--accent);
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.75rem;
-            display: block;
-        }
-
-        .section-title {
-            font-family: var(--font-display);
-            font-size: 2.5rem;
-            font-weight: 800;
-            letter-spacing: -0.01em;
-            margin-bottom: 1rem;
-        }
-
-        .section-desc {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-        }
-
-        .problema {
-            padding: 6rem 2rem;
-            position: relative;
-        }
-
-        .cards-grid {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
-        }
-
-        .card-premium {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius-lg);
-            padding: 2.5rem;
-            transition: var(--transition-smooth);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-
-        .card-premium::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, var(--primary), var(--accent), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.6s ease;
-        }
-
-        .card-premium:hover::before {
-            transform: translateX(100%);
-        }
-
-        .card-premium:hover {
-            transform: translateY(-8px);
-            background: var(--card-hover-bg);
-            border-color: var(--card-hover-border);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(99, 102, 241, 0.1);
-        }
-
-        .card-icon-wrapper {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            width: 54px;
-            height: 54px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--accent);
-            margin-bottom: 0.5rem;
-            font-size: 1.5rem;
-            transition: var(--transition-smooth);
-        }
-
-        .card-premium:hover .card-icon-wrapper {
-            background: var(--primary);
-            color: #fff;
-            box-shadow: 0 0 15px var(--primary-glow);
-            transform: scale(1.1);
-        }
-
-        .card-title {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .card-desc {
-            color: var(--text-muted);
-            font-size: 0.975rem;
-            line-height: 1.6;
-        }
-
-        /* ==========================================================================
-           6. SECCIÓN "BENEFICIOS COMPROBADOS"
-           ========================================================================== */
-        .beneficios {
-            padding: 6rem 2rem;
-            background: rgba(10, 12, 26, 0.5);
-            border-top: 1px solid rgba(255, 255, 255, 0.02);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-            position: relative;
-        }
-
-        /* ==========================================================================
-           7. BARRA DEL SIMULADOR DE ROLES (COMPONENTE PRINCIPAL PARA LA NUEVA DEMO)
-           ========================================================================== */
-        .simulator-role-bar {
-            background: linear-gradient(135deg, #111428 0%, #0c0f20 100%);
-            border: 1.5px solid rgba(99, 102, 241, 0.25);
-            border-radius: var(--border-radius-md);
-            padding: 1.25rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 15px rgba(99, 102, 241, 0.1);
-            position: relative;
-            z-index: 10;
-        }
-
-        .sim-title-group {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .sim-indicator {
-            width: 10px;
-            height: 10px;
-            background-color: var(--accent);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--accent);
-            animation: pulse-cyan 1.5s infinite;
-        }
-
-        @keyframes pulse-cyan {
-            0% { transform: scale(0.95); opacity: 0.6; }
-            50% { transform: scale(1.15); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.6; }
-        }
-
-        .sim-title {
-            font-family: var(--font-display);
-            font-size: 1.15rem;
-            font-weight: 800;
-            letter-spacing: 0.03em;
-            color: #fff;
-        }
-
-        .sim-role-buttons {
-            display: flex;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--card-border);
-            padding: 4px;
-            border-radius: 10px;
-            gap: 4px;
-        }
-
-        .role-tab-btn {
-            background: transparent;
-            border: none;
-            outline: none;
-            padding: 0.6rem 1.5rem;
-            font-family: var(--font-primary);
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .role-tab-btn.active {
-            background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%);
-            color: #fff;
-            box-shadow: 0 4px 12px var(--primary-glow);
-        }
-
-        .role-tab-btn:not(.active):hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
-        }
-
-        /* ==========================================================================
-           8. DEMO INTERACTIVA (PANEL DE ROL JEFE / ADMINISTRADOR)
-           ========================================================================== */
-        .demo-section {
-            padding: 7rem 2rem;
-            max-width: 1240px;
-            margin: 0 auto;
-        }
-
-        .view-pane {
-            display: none;
-        }
-
-        .view-pane.active {
-            display: block;
-        }
-
-        /* Layout Jefe */
-        .jefe-layout {
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 2rem;
-            align-items: start;
-        }
-
-        @media (max-width: 1024px) {
-            .jefe-layout {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .jefe-card {
-            background: rgba(10, 14, 28, 0.7);
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius-lg);
-            padding: 2rem;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .jefe-card-title {
-            font-family: var(--font-display);
-            font-size: 1.25rem;
-            font-weight: 700;
-            border-bottom: 1px solid var(--card-border);
-            padding-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #fff;
-        }
-
-        /* Formulario mensaje del dia */
-        .msg-form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .msg-textarea {
-            background: rgba(0, 0, 0, 0.25);
-            border: 1.5px solid var(--card-border);
-            border-radius: var(--border-radius-sm);
-            padding: 1rem;
-            color: #fff;
-            font-family: var(--font-primary);
-            font-size: 0.9rem;
-            resize: none;
-            outline: none;
-            transition: var(--transition-smooth);
-        }
-
-        .msg-textarea:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 10px var(--primary-glow);
-        }
-
-        .btn-action-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%);
-            border: none;
-            outline: none;
-            color: #fff;
-            font-weight: 700;
-            font-size: 0.9rem;
-            padding: 0.8rem 1.5rem;
-            border-radius: var(--border-radius-sm);
-            cursor: pointer;
-            box-shadow: 0 4px 12px var(--primary-glow);
-            transition: var(--transition-smooth);
-            align-self: flex-end;
-        }
-
-        .btn-action-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5);
-        }
-
-        /* Asignador de Zonas */
-        .assign-controls {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .assign-picker {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .assign-select {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--card-border);
-            color: #fff;
-            font-weight: 700;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            outline: none;
-            cursor: pointer;
-        }
-
-        .btn-group-sm {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn-action-sec-sm {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--card-border);
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            font-weight: 600;
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-        }
-
-        .btn-action-sec-sm:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.15);
-            color: #fff;
-        }
-
-        /* Lista de asignaciones */
-        .assign-list-scroll {
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 1rem;
-        }
-
-        .assign-grid-layout {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 0.75rem;
-        }
-
-        .assign-checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: rgba(255, 255, 255, 0.01);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            padding: 0.6rem 0.8rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: var(--transition-smooth);
-            user-select: none;
-        }
-
-        .assign-checkbox-item:hover {
-            background: rgba(255, 255, 255, 0.03);
-            border-color: rgba(255, 255, 255, 0.08);
-        }
-
-        .assign-checkbox-item input {
-            cursor: pointer;
-            accent-color: var(--accent);
-            width: 16px;
-            height: 16px;
-        }
-
-        /* Auditoria del Jefe */
-        .audit-card {
-            grid-column: 1 / -1;
-        }
-
-        .audit-table-container {
-            overflow-x: auto;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: var(--border-radius-md);
-            background: rgba(0, 0, 0, 0.25);
-        }
-
-        .audit-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-            text-align: left;
-        }
-
-        .audit-table th {
-            color: var(--text-muted);
-            font-weight: 600;
-            padding: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(12, 16, 32, 0.95);
-        }
-
-        .audit-table td {
-            padding: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-            color: var(--text-main);
-        }
-
-        .audit-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .audit-empty-state {
-            padding: 3rem;
-            text-align: center;
-            color: var(--text-muted);
-            font-style: italic;
-        }
-
-        /* Badges de Estado */
-        .badge-status {
-            padding: 0.25rem 0.6rem;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-            display: inline-block;
-        }
-
-        .badge-status.pendiente {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-muted);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .badge-status.en-proceso {
-            background: rgba(245, 158, 11, 0.15);
-            color: #fbd38d;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            animation: pulse-text-amber 2s infinite;
-        }
-
-        @keyframes pulse-text-amber {
-            0% { opacity: 0.7; }
-            50% { opacity: 1; }
-            100% { opacity: 0.7; }
-        }
-
-        .badge-status.limpio {
-            background: rgba(16, 185, 129, 0.15);
-            color: #6ee7b7;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        /* Reset all button */
-        .btn-reset-container {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 1rem;
-        }
-
-        /* ==========================================================================
-           9. DEMO INTERACTIVA (PANEL DE OPERARIO / TRABAJADOR)
-           ========================================================================== */
-        .phone-emulator-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
-        }
-
-        .phone-frame {
-            background: #1e293b;
-            border: 12px solid #0f172a;
-            border-radius: 40px;
-            width: 100%;
-            max-width: 440px;
-            min-height: 750px;
-            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6), 0 0 30px rgba(99, 102, 241, 0.08);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Notch del teléfono */
-        .phone-notch {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 140px;
-            height: 20px;
-            background-color: #0f172a;
-            border-radius: 0 0 16px 16px;
-            z-index: 100;
-        }
-
-        /* Contenido de la pantalla */
-        .phone-screen {
-            background-color: #080a14;
-            flex: 1;
-            padding: 2.2rem 1.25rem 1.5rem 1.25rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-            overflow-y: auto;
-            position: relative;
-        }
-
-        /* Status bar simulada */
-        .phone-status-bar {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-            padding: 0 0.5rem;
-        }
-
-        .phone-status-icons {
-            display: flex;
-            gap: 4px;
-        }
-
-        /* Header del operario */
-        .phone-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--card-border);
-            padding: 0.75rem 1rem;
-            border-radius: 12px;
-        }
-
-        .phone-header-user {
-            display: flex;
-            flex-direction: column;
-            gap: 0.1rem;
-        }
-
-        .phone-header-title {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .phone-header-name {
-            font-family: var(--font-display);
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .phone-operator-select {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #fff;
-            font-weight: 700;
-            font-size: 0.8rem;
-            padding: 0.35rem 0.6rem;
-            border-radius: 6px;
-            outline: none;
-            cursor: pointer;
-        }
-
-        /* Banner de Mensaje del Dia */
-        .phone-message-banner {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(0, 242, 254, 0.08) 100%);
-            border: 1px solid rgba(99, 102, 241, 0.25);
-            border-radius: 12px;
-            padding: 0.85rem 1.1rem;
-            display: flex;
-            gap: 0.75rem;
-            align-items: flex-start;
-        }
-
-        .phone-message-icon {
-            font-size: 1.2rem;
-            color: var(--accent);
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-4px); }
-        }
-
-        .phone-message-content {
-            display: flex;
-            flex-direction: column;
-            gap: 0.15rem;
-        }
-
-        .phone-message-title {
-            font-size: 0.75rem;
-            color: var(--accent);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .phone-message-text {
-            font-size: 0.825rem;
-            color: var(--text-main);
-            line-height: 1.4;
-            font-style: italic;
-        }
-
-        /* Grid de tareas del operario */
-        .phone-tasks-title {
-            font-family: var(--font-display);
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #fff;
-            margin-top: 0.5rem;
-            border-left: 3px solid var(--accent);
-            padding-left: 0.5rem;
-        }
-
-        .phone-tasks-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 0.85rem;
-            flex: 1;
-        }
-
-        /* Botón Táctil de Operario (Zero-Friction Card) */
-        .phone-task-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1.5px solid var(--card-border);
-            border-radius: 14px;
-            padding: 1.1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.85rem;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-            position: relative;
-            user-select: none;
-        }
-
-        .phone-task-card:hover {
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
-        }
-
-        .task-card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-        }
-
-        .task-card-meta {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .task-card-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.03);
-            color: var(--accent);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .task-card-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.1rem;
-        }
-
-        .task-card-name {
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: #fff;
-        }
-
-        .task-card-floor {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .task-card-status-badge {
-            font-size: 0.72rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 0.2rem 0.5rem;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-muted);
-        }
-
-        /* Estados de Tarjetas de Tareas */
-
-        /* 1er Piso */
-        .phone-task-card.floor-1 .task-card-icon { color: var(--color-piso1); border-color: rgba(0, 198, 255, 0.2); }
-        .phone-task-card.floor-1 { border-color: rgba(0, 198, 255, 0.12); }
-        /* 2do Piso */
-        .phone-task-card.floor-2 .task-card-icon { color: var(--color-piso2); border-color: rgba(0, 242, 96, 0.2); }
-        .phone-task-card.floor-2 { border-color: rgba(0, 242, 96, 0.12); }
-        /* 3er Piso */
-        .phone-task-card.floor-3 .task-card-icon { color: var(--color-piso3); border-color: rgba(192, 132, 252, 0.2); }
-        .phone-task-card.floor-3 { border-color: rgba(192, 132, 252, 0.12); }
-        /* Común */
-        .phone-task-card.floor-comun .task-card-icon { color: var(--color-pisoComun); border-color: rgba(249, 115, 22, 0.2); }
-        .phone-task-card.floor-comun { border-color: rgba(249, 115, 22, 0.12); }
-
-        /* Estado EN PROCESO (Operario en la sala) */
-        .phone-task-card.in-process {
-            background: rgba(245, 158, 11, 0.08) !important;
-            border-color: var(--color-process) !important;
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.15);
-            animation: pulse-yellow-border 2s infinite;
-        }
-
-        @keyframes pulse-yellow-border {
-            0% { border-color: rgba(245, 158, 11, 0.5); }
-            70% { border-color: rgba(245, 158, 11, 1); }
-            100% { border-color: rgba(245, 158, 11, 0.5); }
-        }
-
-        .phone-task-card.in-process .task-card-status-badge {
-            background: rgba(245, 158, 11, 0.2);
-            color: #fbd38d;
-        }
-
-        .task-card-details-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 0.6rem;
-            margin-top: 0.2rem;
-        }
-
-        .task-detail-time {
-            font-family: monospace;
-            font-weight: 600;
-            color: var(--accent);
-        }
-
-        .task-btn-finish {
-            width: 100%;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            border: none;
-            outline: none;
-            color: #fff;
-            font-weight: 700;
-            font-size: 0.85rem;
-            padding: 0.65rem;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
-            transition: var(--transition-smooth);
-            text-align: center;
-        }
-
-        .task-btn-finish:hover {
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-            box-shadow: 0 6px 14px rgba(16, 185, 129, 0.45);
-        }
-
-        /* Estado LIMPIO */
-        .phone-task-card.clean-status {
-            background: rgba(16, 185, 129, 0.06) !important;
-            border-color: var(--color-clean) !important;
-        }
-
-        .phone-task-card.clean-status .task-card-status-badge {
-            background: rgba(16, 185, 129, 0.2);
-            color: #6ee7b7;
-        }
-
-        .phone-task-card.clean-status .task-card-icon {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--color-clean);
-        }
-
-        /* Empty state móvil */
-        .phone-empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 3rem 1.5rem;
-            background: rgba(255, 255, 255, 0.01);
-            border: 1px dashed rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            gap: 1rem;
-            flex: 1;
-        }
-
-        .phone-empty-icon {
-            font-size: 3rem;
-            filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.2));
-        }
-
-        .phone-empty-title {
-            font-family: var(--font-display);
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .phone-empty-desc {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        /* ==========================================================================
-           10. MODAL DE DIAGNÓSTICO (TACTIL & EMOTIVO)
-           ========================================================================== */
-        .diag-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(4, 6, 15, 0.8);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-        }
-
-        .diag-modal-overlay.active {
-            display: flex;
-        }
-
-        .diag-modal {
-            background: #0d1127;
-            border: 1.5px solid rgba(99, 102, 241, 0.3);
-            border-radius: var(--border-radius-lg);
-            width: 90%;
-            max-width: 400px;
-            padding: 2.25rem 2rem;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 25px rgba(99, 102, 241, 0.2);
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            animation: modalScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes modalScale {
-            0% { transform: scale(0.9); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .diag-title-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.35rem;
-        }
-
-        .diag-title {
-            font-family: var(--font-display);
-            font-size: 1.35rem;
-            font-weight: 800;
-            color: #fff;
-        }
-
-        .diag-desc {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .diag-emojis-container {
-            display: flex;
-            justify-content: space-around;
-            gap: 1rem;
-            margin: 0.5rem 0;
-        }
-
-        .diag-emoji-btn {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1.5px solid rgba(255, 255, 255, 0.05);
-            border-radius: var(--border-radius-md);
-            padding: 1.25rem 1rem;
-            flex: 1;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            outline: none;
-        }
-
-        .diag-emoji-btn:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(255, 255, 255, 0.15);
-            transform: translateY(-4px);
-        }
-
-        .diag-emoji-face {
-            font-size: 2rem;
-            transition: var(--transition-smooth);
-        }
-
-        .diag-emoji-btn:hover .diag-emoji-face {
-            transform: scale(1.15);
-        }
-
-        .diag-emoji-lbl {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            transition: var(--transition-smooth);
-        }
-
-        /* Específicos para caritas al hover */
-        .diag-emoji-btn.excelente:hover {
-            border-color: #10b981;
-            box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
-        }
-        .diag-emoji-btn.excelente:hover .diag-emoji-lbl { color: #10b981; }
-
-        .diag-emoji-btn.regular:hover {
-            border-color: #f59e0b;
-            box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
-        }
-        .diag-emoji-btn.regular:hover .diag-emoji-lbl { color: #f59e0b; }
-
-        .diag-emoji-btn.malo:hover {
-            border-color: #ef4444;
-            box-shadow: 0 0 12px rgba(239, 104, 104, 0.3);
-        }
-        .diag-emoji-btn.malo:hover .diag-emoji-lbl { color: #ef4444; }
-
-        /* ==========================================================================
-           11. WIDGET DE EFICIENCIA Y TABLA DE AUDITORIA
-           ========================================================================== */
-        .supervisor-metrics {
-            margin-top: 3rem;
-            display: grid;
-            grid-template-columns: 0.7fr 1.3fr;
-            gap: 2rem;
-        }
-
-        @media (max-width: 900px) {
-            .supervisor-metrics {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .efficiency-widget {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius-md);
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 1.5rem;
-            position: relative;
-        }
-
-        .efficiency-title {
-            font-family: var(--font-display);
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #fff;
-            text-align: center;
-        }
-
-        .circle-progress-wrapper {
-            position: relative;
-            width: 150px;
-            height: 150px;
-        }
-
-        .circle-bg {
-            fill: none;
-            stroke: rgba(255, 255, 255, 0.03);
-            stroke-width: 10;
-        }
-
-        .circle-progress {
-            fill: none;
-            stroke: url(#progressGradient);
-            stroke-width: 10;
-            stroke-linecap: round;
-            stroke-dasharray: 440;
-            stroke-dashoffset: 440;
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-            transition: stroke-dashoffset 0.8s ease;
-        }
-
-        .efficiency-percentage-display {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-family: var(--font-display);
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            line-height: 1;
-        }
-
-        .efficiency-percentage-display span {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            font-weight: 500;
-            margin-top: 2px;
-        }
-
-        .efficiency-status-pill {
-            background: rgba(0, 242, 254, 0.1);
-            color: var(--accent);
-            border: 1px solid rgba(0, 242, 254, 0.25);
-            padding: 0.4rem 1rem;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        /* ==========================================================================
-           12. FOOTER E INTERFAZ GLOBAL
-           ========================================================================== */
-        .footer {
-            border-top: 1px solid var(--card-border);
-            background: rgba(5, 7, 16, 0.9);
-            padding: 4rem 2rem 2rem;
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 2.5rem;
-        }
-
-        .footer-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 2rem;
-        }
-
-        .footer-desc {
-            color: var(--text-muted);
-            max-width: 400px;
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .footer-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 2rem;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .git-branch-badge {
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.25);
-            padding: 0.2rem 0.6rem;
-            border-radius: 4px;
-            color: #818cf8;
-            font-family: monospace;
-            font-weight: 600;
-            font-size: 0.8rem;
-        }
-
-        /* Toast notifications */
-        .toast-container {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            z-index: 9999;
-        }
-
-        .toast {
-            background: #0f1426;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-left: 4px solid var(--accent);
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 0.85rem;
-            font-weight: 600;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            animation: toastSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.25);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        @keyframes toastSlideIn {
-            0% { transform: translateX(100%); opacity: 0; }
-            100% { transform: translateX(0); opacity: 1; }
-        }
-
-        .toast.success { border-left-color: var(--color-clean); }
-        .toast.info { border-left-color: var(--accent); }
-        .toast.warning { border-left-color: var(--color-process); }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Valtek Optima – Gestión Inteligente de Aseo Institucional</title>
+  <meta name="description" content="Valtek Optima: plataforma SaaS de optimización y trazabilidad de aseo para colegios y universidades.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       RESET & ROOT VARIABLES
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --font-body: 'Inter', sans-serif;
+      --font-display: 'Outfit', sans-serif;
+      --bg: #070913;
+      --bg2: #0d1124;
+      --card: rgba(15,21,46,0.75);
+      --border: rgba(255,255,255,0.08);
+      --border-glow: rgba(99,102,241,0.4);
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --accent: #00f2fe;
+      --clean: #10b981;
+      --process: #f59e0b;
+      --dirty: #ef4444;
+      --text: #e2e8f0;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+      --p1: #00c6ff;
+      --p2: #00f260;
+      --p3: #c084fc;
+      --common: #f97316;
+      --shadow: 0 8px 32px rgba(0,0,0,0.5);
+      --glow: 0 0 30px rgba(99,102,241,0.3);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    button { cursor: pointer; border: none; font-family: var(--font-body); }
+    input, select, textarea { font-family: var(--font-body); }
+    a { text-decoration: none; color: inherit; }
+
+    /* ============================================================
+       SCROLLBAR
+    ============================================================ */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+
+    /* ============================================================
+       NAVBAR
+    ============================================================ */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem;
+      height: 60px;
+      background: rgba(7,9,19,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.3rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav-links { display: flex; gap: 0.5rem; align-items: center; }
+    .nav-btn {
+      padding: 0.4rem 1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 500;
+      background: transparent; color: var(--text-dim);
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover { color: var(--text); border-color: var(--border); background: var(--card); }
+    .nav-btn.active { color: var(--primary); border-color: var(--border-glow); }
+    .nav-btn-primary {
+      padding: 0.4rem 1.2rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff; transition: all 0.2s;
+    }
+    .nav-btn-primary:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: var(--glow); }
+    #navbar-user-info {
+      display: none; align-items: center; gap: 0.75rem; font-size: 0.85rem; color: var(--text-dim);
+    }
+    .user-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.8rem; color: #fff;
+    }
+
+    /* ============================================================
+       VIEWS (show/hide system)
+    ============================================================ */
+    .app-view { display: none; padding-top: 60px; min-height: 100vh; }
+    .app-view.active { display: block; }
+
+    /* ============================================================
+       AUTH OVERLAY
+    ============================================================ */
+    #view-auth {
+      position: fixed; inset: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at 50% 50%, rgba(99,102,241,0.15) 0%, var(--bg) 70%);
+      padding: 1rem;
+    }
+    #view-auth.hidden { display: none; }
+    .auth-card {
+      width: 100%; max-width: 440px;
+      background: rgba(13,17,36,0.9);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      backdrop-filter: blur(30px);
+      box-shadow: 0 20px 80px rgba(0,0,0,0.6), 0 0 60px rgba(99,102,241,0.1);
+    }
+    .auth-logo {
+      text-align: center; margin-bottom: 0.5rem;
+      font-family: var(--font-display); font-size: 2rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .auth-tagline {
+      text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2rem;
+    }
+    .auth-tabs {
+      display: flex; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem;
+    }
+    .auth-tab {
+      flex: 1; padding: 0.75rem; background: none; color: var(--text-muted);
+      font-size: 0.9rem; font-weight: 600; border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .auth-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .auth-tab-content { display: none; }
+    .auth-tab-content.active { display: block; }
+    .form-group { margin-bottom: 1rem; }
+    .form-label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .form-input {
+      width: 100%; padding: 0.75rem 1rem; border-radius: 10px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      color: var(--text); font-size: 0.9rem;
+      transition: all 0.2s; outline: none;
+    }
+    .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+    .btn-full {
+      width: 100%; padding: 0.85rem; border-radius: 10px; font-size: 0.95rem; font-weight: 700;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+    }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: var(--glow); }
+    .btn-accent {
+      background: linear-gradient(135deg, #00f2fe, #4facfe);
+      color: #0d1124;
+    }
+    .btn-accent:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-outline {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text-dim);
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .auth-divider { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin: 1rem 0; }
+    .login-role-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .error-msg { color: var(--dirty); font-size: 0.8rem; margin-top: 0.4rem; display: none; }
+    .error-msg.show { display: block; }
+
+    /* ============================================================
+       LANDING PAGE
+    ============================================================ */
+    #view-landing { background: radial-gradient(circle at 30% 20%, rgba(99,102,241,0.12) 0%, transparent 50%), radial-gradient(circle at 70% 80%, rgba(0,242,254,0.06) 0%, transparent 50%), var(--bg); }
+    /* Hero */
+    .hero {
+      min-height: calc(100vh - 60px);
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 4rem 2rem;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(99,102,241,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.4rem 1rem; border-radius: 99px;
+      background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.3);
+      font-size: 0.8rem; font-weight: 600; color: var(--primary);
+      margin-bottom: 1.5rem;
+    }
+    .hero-badge span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; animation: pulse-dot 2s infinite; }
+    @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+    .hero-title {
+      font-family: var(--font-display); font-size: clamp(3rem, 8vw, 6rem); font-weight: 900;
+      line-height: 1.05; margin-bottom: 1rem;
+      background: linear-gradient(135deg, #fff 30%, var(--primary) 60%, var(--accent) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-subtitle { font-size: clamp(1rem, 2.5vw, 1.3rem); color: var(--text-dim); max-width: 600px; margin: 0 auto 1rem; line-height: 1.6; }
+    .hero-impact { font-size: 0.95rem; color: var(--text-muted); max-width: 560px; margin: 0 auto 2.5rem; line-height: 1.7; }
+    .hero-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-hero-primary {
+      padding: 1rem 2.5rem; border-radius: 12px; font-size: 1rem; font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff; transition: all 0.25s;
+      box-shadow: 0 4px 20px rgba(99,102,241,0.4);
+    }
+    .btn-hero-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(99,102,241,0.5); }
+    .btn-hero-outline {
+      padding: 1rem 2.5rem; border-radius: 12px; font-size: 1rem; font-weight: 700;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text-dim); transition: all 0.25s;
+    }
+    .btn-hero-outline:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
+    /* Sections */
+    .section { padding: 5rem 2rem; max-width: 1200px; margin: 0 auto; }
+    .section-tag {
+      display: inline-block; padding: 0.3rem 0.9rem; border-radius: 99px;
+      background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2);
+      font-size: 0.75rem; font-weight: 700; color: var(--primary);
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;
+    }
+    .section-title { font-family: var(--font-display); font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 0.75rem; }
+    .section-desc { color: var(--text-dim); max-width: 560px; line-height: 1.7; margin-bottom: 3rem; font-size: 1rem; }
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .feature-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 2rem;
+      transition: all 0.3s;
+      backdrop-filter: blur(10px);
+    }
+    .feature-card:hover { border-color: var(--border-glow); transform: translateY(-4px); box-shadow: var(--glow), var(--shadow); }
+    .card-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.2);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.25rem; color: var(--primary);
+    }
+    .card-icon svg { width: 26px; height: 26px; }
+    .card-icon.red { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.2); color: var(--dirty); }
+    .card-icon.green { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.2); color: var(--clean); }
+    .card-icon.orange { background: rgba(249,115,22,0.1); border-color: rgba(249,115,22,0.2); color: var(--common); }
+    .card-title { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .card-desc { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+
+    /* ============================================================
+       JEFE PANEL
+    ============================================================ */
+    #view-jefe { background: var(--bg); }
+    .jefe-header {
+      padding: 1.5rem 2rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .jefe-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; }
+    .jefe-tabs { display: flex; gap: 0.25rem; overflow-x: auto; }
+    .jefe-tab {
+      padding: 0.75rem 1.5rem; border-radius: 10px 10px 0 0;
+      background: transparent; color: var(--text-muted);
+      font-size: 0.9rem; font-weight: 600; white-space: nowrap;
+      border-bottom: 2px solid transparent; transition: all 0.2s;
+    }
+    .jefe-tab.active { color: var(--primary); border-bottom-color: var(--primary); background: rgba(99,102,241,0.05); }
+    .jefe-tab:hover:not(.active) { color: var(--text-dim); background: rgba(255,255,255,0.03); }
+    .jefe-body { padding: 2rem; max-width: 1200px; }
+    .jefe-tab-content { display: none; }
+    .jefe-tab-content.active { display: block; }
+    /* Cards */
+    .j-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 1.5rem;
+      backdrop-filter: blur(10px); margin-bottom: 1.5rem;
+    }
+    .j-card-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text); display: flex; align-items: center; gap: 0.5rem; }
+    .j-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media(max-width:768px){ .j-grid-2 { grid-template-columns: 1fr; } }
+    /* Form elements */
+    .f-group { margin-bottom: 1rem; }
+    .f-label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.35rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .f-input {
+      width: 100%; padding: 0.65rem 0.9rem; border-radius: 8px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      color: var(--text); font-size: 0.9rem; outline: none; transition: all 0.2s;
+    }
+    .f-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+    .f-select { -webkit-appearance: none; appearance: none; cursor: pointer; }
+    .btn-sm {
+      padding: 0.55rem 1.1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-green { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
+    .btn-green:hover { opacity: 0.85; transform: translateY(-1px); }
+    .btn-red { background: rgba(239,68,68,0.12); color: var(--dirty); border: 1px solid rgba(239,68,68,0.2); }
+    .btn-red:hover { background: rgba(239,68,68,0.2); }
+    .btn-blue { background: rgba(99,102,241,0.15); color: var(--primary); border: 1px solid rgba(99,102,241,0.3); }
+    .btn-blue:hover { background: rgba(99,102,241,0.25); }
+    /* Table */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .data-table th { padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
+    .data-table td { padding: 0.85rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text-dim); vertical-align: middle; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+    /* Status badges */
+    .badge {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.72rem; font-weight: 700;
+    }
+    .badge-clean { background: rgba(16,185,129,0.12); color: var(--clean); border: 1px solid rgba(16,185,129,0.2); }
+    .badge-process { background: rgba(245,158,11,0.12); color: var(--process); border: 1px solid rgba(245,158,11,0.2); }
+    .badge-pending { background: rgba(100,116,139,0.12); color: var(--text-muted); border: 1px solid var(--border); }
+    /* Onboarding steps */
+    .steps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+    @media(max-width:640px){ .steps-grid { grid-template-columns: 1fr; } }
+    .step-card {
+      background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.15);
+      border-radius: 12px; padding: 1.25rem; text-align: center;
+    }
+    .step-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff; font-weight: 800; font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 0.75rem;
+    }
+    .step-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.4rem; }
+    .step-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+    /* Zone assignment */
+    .zone-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.5rem; margin-top: 1rem; max-height: 420px; overflow-y: auto; padding-right: 0.25rem; }
+    .zone-check-item {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.5rem 0.7rem; border-radius: 8px;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      font-size: 0.82rem; color: var(--text-dim); cursor: pointer;
+      transition: all 0.15s;
+    }
+    .zone-check-item:hover { border-color: var(--border-glow); color: var(--text); }
+    .zone-check-item input[type=checkbox] { accent-color: var(--primary); width: 14px; height: 14px; cursor: pointer; }
+    .zone-check-item.checked { border-color: rgba(99,102,241,0.3); background: rgba(99,102,241,0.06); color: var(--text); }
+    /* Monitoring */
+    .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .kpi-box {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.25rem; text-align: center;
+    }
+    .kpi-value { font-family: var(--font-display); font-size: 2rem; font-weight: 800; }
+    .kpi-label { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .circle-wrapper { display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
+    .circle-svg-area { position: relative; }
+    .circle-center-text {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      text-align: center;
+    }
+    .circle-pct { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; }
+    .circle-sub { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+    .circle-bg { fill: none; stroke: rgba(255,255,255,0.07); stroke-width: 10; }
+    .circle-progress { fill: none; stroke: url(#progressGradient); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 440; stroke-dashoffset: 440; transition: stroke-dashoffset 0.8s ease; transform: rotate(-90deg); transform-origin: 50% 50%; }
+
+    /* ============================================================
+       WORKER PHONE VIEW
+    ============================================================ */
+    #view-trabajador {
+      display: none; padding-top: 60px; min-height: 100vh;
+      background: radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.12) 0%, var(--bg) 60%);
+      align-items: flex-start; justify-content: center; padding: 80px 1rem 2rem;
+    }
+    #view-trabajador.active { display: flex; }
+    .phone-frame {
+      width: 100%; max-width: 390px;
+      background: #111827;
+      border-radius: 42px; overflow: hidden;
+      border: 2px solid rgba(255,255,255,0.1);
+      box-shadow: 0 40px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05), var(--glow);
+      min-height: 700px; position: relative;
+    }
+    .phone-notch {
+      background: #111827; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      padding-top: 8px;
+    }
+    .notch-bar { width: 100px; height: 8px; border-radius: 99px; background: #1f2937; }
+    .phone-status-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 1.25rem 0.5rem; font-size: 0.72rem; color: var(--text-dim);
+    }
+    .phone-header {
+      background: linear-gradient(135deg, rgba(99,102,241,0.9), rgba(79,70,229,0.9));
+      padding: 1rem 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .phone-user-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: #fff; }
+    .phone-role-badge {
+      font-size: 0.7rem; background: rgba(255,255,255,0.2);
+      padding: 0.2rem 0.5rem; border-radius: 99px; color: rgba(255,255,255,0.9);
+    }
+    .worker-select-wrap { padding: 0.75rem 1.25rem; background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .worker-select-wrap select {
+      width: 100%; padding: 0.5rem 0.75rem; border-radius: 8px;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text); font-size: 0.85rem; outline: none; cursor: pointer;
+    }
+    .msg-banner {
+      margin: 0.75rem 1.25rem;
+      background: rgba(99,102,241,0.12); border-left: 3px solid var(--primary);
+      border-radius: 8px; padding: 0.7rem 0.9rem;
+      font-size: 0.82rem; color: var(--text-dim); line-height: 1.5;
+      display: none;
+    }
+    .msg-banner.show { display: block; }
+    .msg-banner strong { color: var(--primary); font-size: 0.75rem; display: block; margin-bottom: 0.2rem; }
+    .phone-body { padding: 0 1.25rem 1.25rem; overflow-y: auto; max-height: 520px; }
+    .phone-section-title {
+      font-family: var(--font-display); font-size: 0.95rem; font-weight: 700;
+      color: var(--text-dim); margin: 0.75rem 0 0.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .phone-counter { font-size: 0.78rem; color: var(--text-muted); }
+    /* Task cards */
+    .task-card {
+      border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 0.6rem;
+      border-left: 4px solid;
+      background: rgba(255,255,255,0.03);
+      transition: all 0.2s;
+    }
+    .task-card:hover { background: rgba(255,255,255,0.05); }
+    .task-card.p1 { border-color: var(--p1); }
+    .task-card.p2 { border-color: var(--p2); }
+    .task-card.p3 { border-color: var(--p3); }
+    .task-card.pc { border-color: var(--common); }
+    .task-card.limpio { border-color: var(--clean); background: rgba(16,185,129,0.06); }
+    .task-card.en-proceso { border-color: var(--process); background: rgba(245,158,11,0.06); }
+    .task-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+    .task-card-meta { display: flex; align-items: center; gap: 0.6rem; }
+    .task-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .task-icon svg { width: 18px; height: 18px; }
+    .task-icon.p1 { background: rgba(0,198,255,0.15); color: var(--p1); }
+    .task-icon.p2 { background: rgba(0,242,96,0.15); color: var(--p2); }
+    .task-icon.p3 { background: rgba(192,132,252,0.15); color: var(--p3); }
+    .task-icon.pc { background: rgba(249,115,22,0.15); color: var(--common); }
+    .task-name { font-weight: 600; font-size: 0.88rem; }
+    .task-floor { font-size: 0.72rem; color: var(--text-muted); }
+    .task-status-badge {
+      font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.55rem;
+      border-radius: 99px;
+    }
+    .task-status-badge.pendiente { background: rgba(100,116,139,0.15); color: var(--text-muted); }
+    .task-status-badge.en-proceso { background: rgba(245,158,11,0.15); color: var(--process); }
+    .task-status-badge.limpio { background: rgba(16,185,129,0.15); color: var(--clean); }
+    .task-action-row { display: flex; gap: 0.5rem; margin-top: 0.6rem; flex-wrap: wrap; }
+    .task-btn {
+      flex: 1; padding: 0.55rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 700;
+      transition: all 0.15s; text-align: center;
+    }
+    .task-btn-start {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+    }
+    .task-btn-start:hover { opacity: 0.88; }
+    .task-btn-finish {
+      background: linear-gradient(135deg, var(--clean), #059669);
+      color: #fff;
+    }
+    .task-btn-finish:hover { opacity: 0.88; }
+    .task-time-info { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem; }
+    .task-time-info span { color: var(--process); font-weight: 600; }
+    .empty-tasks {
+      text-align: center; padding: 2rem 1rem; color: var(--text-muted); font-size: 0.85rem;
+    }
+
+    /* ============================================================
+       DIAGNOSTIC MODAL
+    ============================================================ */
+    #diagnostic-modal {
+      position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(8px);
+      display: none; align-items: center; justify-content: center; padding: 1rem;
+    }
+    #diagnostic-modal.open { display: flex; }
+    .diag-card {
+      background: rgba(13,17,36,0.97); border: 1px solid var(--border);
+      border-radius: 20px; padding: 2rem; max-width: 360px; width: 100%;
+      text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+    }
+    .diag-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .diag-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.75rem; }
+    .diag-emojis { display: flex; gap: 1rem; justify-content: center; margin-bottom: 1.5rem; }
+    .diag-emoji-btn {
+      width: 80px; height: 80px; border-radius: 16px;
+      background: rgba(255,255,255,0.05); border: 2px solid var(--border);
+      font-size: 2rem; transition: all 0.2s; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 0.25rem;
+    }
+    .diag-emoji-btn:hover { transform: scale(1.08); }
+    .diag-emoji-btn.good:hover { border-color: var(--clean); background: rgba(16,185,129,0.12); }
+    .diag-emoji-btn.mid:hover { border-color: var(--process); background: rgba(245,158,11,0.12); }
+    .diag-emoji-btn.bad:hover { border-color: var(--dirty); background: rgba(239,68,68,0.12); }
+    .diag-emoji-label { font-size: 0.65rem; font-weight: 700; color: var(--text-muted); }
+    .diag-cancel { font-size: 0.82rem; color: var(--text-muted); cursor: pointer; }
+    .diag-cancel:hover { color: var(--text); }
+
+    /* ============================================================
+       TOAST NOTIFICATION
+    ============================================================ */
+    #toast {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 9999;
+      padding: 0.9rem 1.5rem; border-radius: 12px; font-size: 0.9rem; font-weight: 600;
+      background: rgba(16,185,129,0.9); color: #fff;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4); backdrop-filter: blur(10px);
+      transform: translateY(100px); opacity: 0;
+      transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      pointer-events: none;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.error { background: rgba(239,68,68,0.9); }
+
+    /* ============================================================
+       MISC UTILITIES
+    ============================================================ */
+    .flex-row { display: flex; gap: 0.75rem; align-items: flex-end; flex-wrap: wrap; }
+    .flex-row .f-group { flex: 1; min-width: 140px; margin-bottom: 0; }
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .text-muted { color: var(--text-muted); }
+    .text-sm { font-size: 0.85rem; }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+    .inline-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  </style>
 </head>
 <body>
 
-    <!-- ==========================================================================
-       BARRA DE NAVEGACIÓN
-       ========================================================================== -->
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="#" class="logo">
-                <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M50 5 L90 25 L90 75 L50 95 L10 75 L10 25 Z" fill="#0F1426" stroke="#00f2fe" stroke-width="6"/>
-                    <path d="M50 20 L78 35 L78 65 L50 80 L22 65 L22 35 Z" fill="rgba(99, 102, 241, 0.2)" stroke="#6366f1" stroke-width="4"/>
-                    <circle cx="50" cy="50" r="12" fill="#00f2fe"/>
-                    <path d="M50 35 V65 M35 50 H65" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
-                </svg>
-                <span>Valtek Optima</span>
-            </a>
-            
-            <div class="nav-links">
-                <a href="#problema" class="nav-link">El Problema</a>
-                <a href="#beneficios" class="nav-link">Beneficios</a>
-                <a href="#demo" class="nav-btn">Probar Demo</a>
-            </div>
-        </div>
-    </nav>
+<!-- ======================================================
+     NAVBAR
+====================================================== -->
+<nav id="navbar">
+  <span class="nav-logo">⬡ Valtek Optima</span>
+  <div class="nav-links">
+    <div id="navbar-user-info">
+      <div class="user-avatar" id="user-avatar-initials">?</div>
+      <span id="user-display-name" style="color:var(--text-dim);font-size:0.85rem;">Usuario</span>
+    </div>
+    <button class="nav-btn" id="nav-btn-landing" onclick="showView('landing')">Inicio</button>
+    <button class="nav-btn" id="nav-btn-jefe" onclick="showView('jefe')" style="display:none;">Panel Jefe</button>
+    <button class="nav-btn" id="nav-btn-trabajador" onclick="showView('trabajador')" style="display:none;">Vista Trabajador</button>
+    <button class="nav-btn-primary" id="nav-btn-login" onclick="showAuth()">Iniciar Sesión</button>
+    <button class="nav-btn" id="nav-btn-logout" onclick="logout()" style="display:none;">Salir</button>
+  </div>
+</nav>
 
-    <!-- ==========================================================================
-       SECCIÓN HERO (BIENVENIDA DE ALTO IMPACTO)
-       ========================================================================== -->
-    <section class="hero">
-        <div class="hero-glow-1"></div>
-        <div class="hero-glow-2"></div>
-        
-        <div class="hero-container">
-            <div class="hero-content">
-                <div class="hero-badge">SaaS Educativo Premium</div>
-                <h1 class="hero-title">Valtek Optima</h1>
-                <h2 class="hero-subtitle">La plataforma inteligente de gestión y optimización de aseo para instituciones educativas.</h2>
-                <p class="hero-description">
-                    Elimine la incertidumbre operativa. Controle el rendimiento real de su personal, reduzca los tiempos muertos y garantice campus 100% sanitizados con una interfaz táctil diseñada para el terreno.
-                </p>
-                <div class="hero-cta-group">
-                    <a href="#demo" class="btn-primary-lg">
-                        Probar Demo Interactiva
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
-                        </svg>
-                    </a>
-                    <a href="#problema" class="btn-secondary-lg">Saber más</a>
-                </div>
-            </div>
-            
-            <div class="hero-mockup">
-                <div class="mockup-card">
-                    <div class="mockup-header">
-                        <div class="mockup-dots">
-                            <span class="mockup-dot red"></span>
-                            <span class="mockup-dot yellow"></span>
-                            <span class="mockup-dot green"></span>
-                        </div>
-                        <div class="mockup-title">VALTEK OPTIMA SUPERVISOR</div>
-                    </div>
-                    <div class="mockup-stats-grid">
-                        <div class="mockup-stat">
-                            <div class="mockup-stat-val">94%</div>
-                            <div class="mockup-stat-lbl">Eficiencia Escolar</div>
-                        </div>
-                        <div class="mockup-stat">
-                            <div class="mockup-stat-val">51/51</div>
-                            <div class="mockup-stat-lbl">Zonas Auditadas</div>
-                        </div>
-                    </div>
-                    <div class="mockup-list">
-                        <div class="mockup-item">
-                            <span>Sala de Clases 12</span>
-                            <span class="mockup-item-status">Limpio</span>
-                        </div>
-                        <div class="mockup-item piso2">
-                            <span>Baño Hombres (Piso 2)</span>
-                            <span class="mockup-item-status">Limpio</span>
-                        </div>
-                        <div class="mockup-item piso3">
-                            <span>Laboratorio Química</span>
-                            <span class="mockup-item-status">Limpio</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==========================================================================
-       SECCIÓN "EL PROBLEMA"
-       ========================================================================== -->
-    <section id="problema" class="problema">
-        <div class="section-header">
-            <span class="section-tag">Los Desafíos Actuales</span>
-            <h2 class="section-title">¿Por qué fallan los planes de aseo tradicionales?</h2>
-            <p class="section-desc">Los campus educativos enfrentan problemas constantes debido a la falta de trazabilidad y herramientas diseñadas para el trabajo en el terreno.</p>
-        </div>
-        
-        <div class="cards-grid">
-            <div class="card-premium">
-                <div class="card-icon-wrapper">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                </div>
-                <h3 class="card-title">Pérdida de Tiempo</h3>
-                <p class="card-desc">Horas muertas provocadas por la falta de asignación clara y rutas ineficientes. El personal de aseo pierde hasta un 30% del día decidiendo qué zona limpiar.</p>
-            </div>
-            
-            <div class="card-premium">
-                <div class="card-icon-wrapper">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                        <polyline points="10 9 9 9 8 9"></polyline>
-                    </svg>
-                </div>
-                <h3 class="card-title">Falta de Trazabilidad</h3>
-                <p class="card-desc">Imposibilidad de auditar y verificar el historial. Los supervisores no pueden comprobar si un área se limpió hace 20 minutos o hace 4 horas, arriesgando la higiene del campus.</p>
-            </div>
-            
-            <div class="card-premium">
-                <div class="card-icon-wrapper">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
-                </div>
-                <h3 class="card-title">Injusticia Laboral</h3>
-                <p class="card-desc">Cargas de trabajo desequilibradas y desmotivación debido a la falta de visibilidad del rendimiento. El esfuerzo real no queda registrado y se sobrecarga a los operarios más eficientes.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==========================================================================
-       SECCIÓN "BENEFICIOS COMPROBADOS"
-       ========================================================================== -->
-    <section id="beneficios" class="beneficios">
-        <div class="section-header">
-            <span class="section-tag">Nuestras Soluciones</span>
-            <h2 class="section-title">Beneficios Comprobados de Valtek Optima</h2>
-            <p class="section-desc">Una suite integral que empodera al personal y entrega métricas en tiempo real a los tomadores de decisiones.</p>
-        </div>
-        
-        <div class="cards-grid">
-            <div class="card-premium">
-                <div class="card-icon-wrapper">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <line x1="18" y1="20" x2="18" y2="10"></line>
-                        <line x1="12" y1="20" x2="12" y2="4"></line>
-                        <line x1="6" y1="20" x2="6" y2="14"></line>
-                    </svg>
-                </div>
-                <h3 class="card-title">Control de Rendimiento</h3>
-                <p class="card-desc">Reportes automáticos integrados con "timestamps" para medir la productividad del campus y eliminar pérdidas de tiempo.</p>
-            </div>
-            
-            <div class="card-premium">
-                <div class="card-icon-wrapper">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
-                        <line x1="12" y1="18" x2="12.01" y2="18"></line>
-                    </svg>
-                </div>
-                <h3 class="card-title">Interfaz Zero-Friction</h3>
-                <p class="card-desc">Paneles colapsables táctiles optimizados para el uso en el terreno escolar que aumentan la motivación y facilitan la carga de datos del personal de aseo.</p>
-            </div>
-            
-            <div class="card-premium">
-                <div class="card-icon-wrapper">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    </svg>
-                </div>
-                <h3 class="card-title">Navegación Visual Universal</h3>
-                <p class="card-desc">Uso riguroso de iconografía SVG clara y simplificada para eliminar por completo las barreras de lectura e idioma en el equipo operativo.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==========================================================================
-       SECCIÓN DE DEMO INTERACTIVA (SIMULADOR DE ROLES MULTI-USUARIO)
-       ========================================================================== -->
-    <section id="demo" class="demo-section">
-        <div class="section-header">
-            <span class="section-tag">Simulador SaaS Multirrol</span>
-            <h2 class="section-title">Consola de Simulación Valtek Optima</h2>
-            <p class="section-desc">Selecciona un rol en la barra inferior para interactuar con la plataforma. El Jefe configura y audita; el Trabajador realiza la limpieza en terreno desde su celular.</p>
-        </div>
-        
-        <!-- Barra de Roles del Simulador -->
-        <div class="simulator-role-bar">
-            <div class="sim-title-group">
-                <span class="sim-indicator"></span>
-                <span class="sim-title">CONSOLA MULTI-ROL EN TIEMPO REAL</span>
-            </div>
-            <div class="sim-role-buttons">
-                <button class="role-tab-btn active" id="btn-role-jefe" onclick="switchRole('jefe')">
-                    👔 Vista Jefe (Administrador)
-                </button>
-                <button class="role-tab-btn" id="btn-role-trabajador" onclick="switchRole('trabajador')">
-                    📱 Vista Trabajador (Operario Celular)
-                </button>
-            </div>
-        </div>
-
-        <!-- ==========================================
-             A. PANELES ROL: JEFE (ADMINISTRADOR)
-             ========================================== -->
-        <div id="pane-jefe" class="view-pane active">
-            <div class="jefe-layout">
-                
-                <!-- Columna Izquierda: Configuración de Aseo -->
-                <div style="display: flex; flex-direction: column; gap: 2rem;">
-                    
-                    <!-- Tarjeta Mensaje del Dia -->
-                    <div class="jefe-card">
-                        <h4 class="jefe-card-title">
-                            📢 Redactar Mensaje General del Día
-                        </h4>
-                        <p class="card-desc" style="margin-top: -0.75rem;">Este aviso aparecerá en la pantalla superior de todos los trabajadores inmediatamente.</p>
-                        <div class="msg-form-group">
-                            <textarea id="msgInput" rows="3" class="msg-textarea" placeholder="Escribe un mensaje diario aquí..."></textarea>
-                            <button class="btn-action-primary" onclick="updateDailyMessage()">Publicar Mensaje</button>
-                        </div>
-                    </div>
-
-                    <!-- Tarjeta Asignador de Zonas -->
-                    <div class="jefe-card">
-                        <div class="jefe-card-title" style="justify-content: space-between; width: 100%;">
-                            <span>🎯 Asignar Zonas de Trabajo por Operario</span>
-                            <span class="panel-badge">Configurador</span>
-                        </div>
-                        <p class="card-desc" style="margin-top: -0.75rem;">Define qué áreas específicas verá y limpiará el trabajador seleccionado hoy.</p>
-                        
-                        <div class="assign-controls">
-                            <div class="assign-picker">
-                                <span class="operator-label">OPERARIO:</span>
-                                <select id="assignWorkerSelect" class="assign-select" onchange="loadWorkerAssignments()">
-                                    <option value="maria">Tía María</option>
-                                    <option value="carmen">Tía Carmen</option>
-                                    <option value="rosa">Tía Rosa</option>
-                                    <option value="patricia">Tía Patricia</option>
-                                </select>
-                            </div>
-                            <div class="btn-group-sm">
-                                <button class="btn-action-sec-sm" onclick="bulkAssign(true)">Asignar Todas</button>
-                                <button class="btn-action-sec-sm" onclick="bulkAssign(false)">Desasignar Todas</button>
-                            </div>
-                        </div>
-
-                        <!-- Lista de zonas con checkboxes -->
-                        <div class="assign-list-scroll">
-                            <div class="assign-grid-layout" id="assignGrid">
-                                <!-- Cargado dinámicamente -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Columna Derecha: KPI de Eficiencia Global -->
-                <div style="display: flex; flex-direction: column; gap: 2rem;">
-                    <div class="efficiency-widget" style="min-height: 250px;">
-                        <h4 class="efficiency-title">KPI Global del Campus (51 Zonas)</h4>
-                        <div class="circle-progress-wrapper">
-                            <svg width="150" height="150" viewBox="0 0 150 150">
-                                <defs>
-                                    <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#6366f1" />
-                                        <stop offset="100%" stop-color="#00f2fe" />
-                                    </linearGradient>
-                                </defs>
-                                <circle class="circle-bg" cx="75" cy="75" r="70" />
-                                <circle class="circle-progress" id="jefeEfficiencyCircle" cx="75" cy="75" r="70" />
-                            </svg>
-                            <div class="efficiency-percentage-display" id="jefeEfficiencyValue">
-                                0%
-                                <span>COMPLETADO</span>
-                            </div>
-                        </div>
-                        <span class="efficiency-status-pill" id="jefeEfficiencyLabel">Rendimiento Inicial</span>
-                    </div>
-
-                    <!-- Bitácora Rápida en panel Jefe -->
-                    <div class="jefe-card">
-                        <h4 class="jefe-card-title">💡 Resumen de Asignación de Recursos</h4>
-                        <p class="card-desc">Asignar zonas correctamente reduce las horas muertas. El personal ve únicamente las tareas asignadas para no generar fatiga ni confusión en terreno.</p>
-                        <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
-                            <div style="display: flex; justify-content: space-between;">
-                                <span>Tareas de Tía María:</span>
-                                <strong id="count-maria" style="color:#fff;">0</strong>
-                            </div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <span>Tareas de Tía Carmen:</span>
-                                <strong id="count-carmen" style="color:#fff;">0</strong>
-                            </div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <span>Tareas de Tía Rosa:</span>
-                                <strong id="count-rosa" style="color:#fff;">0</strong>
-                            </div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <span>Tareas de Tía Patricia:</span>
-                                <strong id="count-patricia" style="color:#fff;">0</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Panel Auditoria en Tiempo Real (Abajo en ancho completo) -->
-                <div class="jefe-card audit-card">
-                    <div class="jefe-card-title" style="justify-content: space-between;">
-                        <span>📊 Bitácora de Auditoría y Control de Tiempos (Supervisor)</span>
-                        <div class="btn-group-sm">
-                            <button class="btn-action-sec-sm" onclick="resetDemo()">Reiniciar Todo</button>
-                        </div>
-                    </div>
-                    <p class="card-desc" style="margin-top: -0.75rem;">Monitoreo en vivo de los timestamps de terreno, duración real calculada del aseo escolar y diagnóstico inicial de sanitización.</p>
-                    
-                    <div class="audit-table-container">
-                        <table class="audit-table">
-                            <thead>
-                                <tr>
-                                    <th>Zona / Área</th>
-                                    <th>Operario de Terreno</th>
-                                    <th>Entrada (Inicio)</th>
-                                    <th>Diagnóstico Inicial</th>
-                                    <th>Salida (Fin)</th>
-                                    <th>Duración Aseo</th>
-                                    <th>Estado de la Tarea</th>
-                                </tr>
-                            </thead>
-                            <tbody id="auditTableBody">
-                                <!-- Rellenado dinámicamente -->
-                                <tr>
-                                    <td colspan="7" class="audit-empty-state">No hay registros de auditoría aún. Cambie a la vista de operario y comience a limpiar.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- ==========================================
-             B. PANEL ROL: TRABAJADOR (EMULADOR MOVIL)
-             ========================================== -->
-        <div id="pane-trabajador" class="view-pane">
-            <div class="phone-emulator-container">
-                <div class="phone-frame">
-                    <div class="phone-notch"></div>
-                    
-                    <div class="phone-screen">
-                        
-                        <!-- Status Bar Simulado -->
-                        <div class="phone-status-bar">
-                            <span>09:41 AM</span>
-                            <div class="phone-status-icons">
-                                <span>📶</span>
-                                <span>🔋 100%</span>
-                            </div>
-                        </div>
-
-                        <!-- Header Operario Celular -->
-                        <div class="phone-header">
-                            <div class="phone-header-user">
-                                <span class="phone-header-title">Sesión activa</span>
-                                <span class="phone-header-name" id="workerNameHeader">Tía María</span>
-                            </div>
-                            <div>
-                                <select id="workerSelect" class="phone-operator-select" onchange="switchWorker()">
-                                    <option value="maria">Tía María</option>
-                                    <option value="carmen">Tía Carmen</option>
-                                    <option value="rosa">Tía Rosa</option>
-                                    <option value="patricia">Tía Patricia</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Mensaje del Dia (Reactivo) -->
-                        <div class="phone-message-banner">
-                            <span class="phone-message-icon">📢</span>
-                            <div class="phone-message-content">
-                                <span class="phone-message-title">Mensaje del Supervisor</span>
-                                <span class="phone-message-text" id="phoneMessageText">
-                                    Cargando mensaje del jefe...
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Tareas Asignadas -->
-                        <h4 class="phone-tasks-title">Mis Tareas Asignadas</h4>
-                        
-                        <!-- Contenedor dinámico de tareas -->
-                        <div class="phone-tasks-grid" id="phoneTasksGrid">
-                            <!-- Generado por JS -->
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </section>
-
-    <!-- Modal de Diagnóstico Visual con Caritas -->
-    <div class="diag-modal-overlay" id="diagModalOverlay">
-        <div class="diag-modal">
-            <div class="diag-title-group">
-                <h4 class="diag-title">Diagnóstico Inicial de Entrada</h4>
-                <p class="diag-desc">¿Cómo se encuentra el estado de la sala antes de empezar a limpiar?</p>
-            </div>
-            
-            <div class="diag-emojis-container">
-                <button class="diag-emoji-btn excelente" onclick="submitDiagnostic('bueno')">
-                    <span class="diag-emoji-face">🙂</span>
-                    <span class="diag-emoji-lbl">Excelente</span>
-                </button>
-                <button class="diag-emoji-btn regular" onclick="submitDiagnostic('regular')">
-                    <span class="diag-emoji-face">😐</span>
-                    <span class="diag-emoji-lbl">Regular</span>
-                </button>
-                <button class="diag-emoji-btn malo" onclick="submitDiagnostic('malo')">
-                    <span class="diag-emoji-face">🙁</span>
-                    <span class="diag-emoji-lbl">Malo</span>
-                </button>
-            </div>
-        </div>
+<!-- ======================================================
+     AUTH OVERLAY
+====================================================== -->
+<div id="view-auth">
+  <div class="auth-card">
+    <div class="auth-logo">Valtek Optima</div>
+    <div class="auth-tagline">Plataforma SaaS de Gestión de Aseo Institucional</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login-btn" onclick="switchAuthTab('login')">Iniciar Sesión</button>
+      <button class="auth-tab" id="tab-signup-btn" onclick="switchAuthTab('signup')">Registrarse</button>
     </div>
 
-    <!-- Contenedor Toast para Avisos -->
-    <div class="toast-container" id="toastContainer"></div>
+    <!-- LOGIN -->
+    <div class="auth-tab-content active" id="tab-login">
+      <div class="form-group">
+        <label class="form-label">Correo Electrónico</label>
+        <input class="form-input" type="email" id="login-email" placeholder="admin@institucion.cl">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <input class="form-input" type="password" id="login-password" placeholder="••••••••">
+      </div>
+      <div id="login-error" class="error-msg">✖ Credenciales incorrectas. Intenta de nuevo.</div>
+      <div style="margin-bottom:0.75rem;font-size:0.78rem;color:var(--text-muted);">
+        Demo: <strong style="color:var(--primary)">admin@valtek.cl</strong> / <strong style="color:var(--primary)">1234</strong>
+      </div>
+      <div class="login-role-btns">
+        <button class="btn-full btn-primary btn-sm" onclick="doLogin('jefe')">👔 Ingresar como Jefe</button>
+        <button class="btn-full btn-accent btn-sm" onclick="doLogin('trabajador')">📱 Ingresar como Trabajador</button>
+      </div>
+      <div class="auth-divider">— o —</div>
+      <button class="btn-full btn-outline btn-sm" onclick="demoLogin()">⚡ Demo Rápida (sin login)</button>
+    </div>
 
-    <!-- ==========================================================================
-       FOOTER
-       ========================================================================== -->
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-top">
-                <div>
-                    <a href="#" class="logo">
-                        <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M50 5 L90 25 L90 75 L50 95 L10 75 L10 25 Z" fill="#0F1426" stroke="#00f2fe" stroke-width="6"/>
-                            <path d="M50 20 L78 35 L78 65 L50 80 L22 65 L22 35 Z" fill="rgba(99, 102, 241, 0.2)" stroke="#6366f1" stroke-width="4"/>
-                            <circle cx="50" cy="50" r="12" fill="#00f2fe"/>
-                            <path d="M50 35 V65 M35 50 H65" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
-                        </svg>
-                        <span>Valtek Optima</span>
-                    </a>
-                    <p class="footer-desc">El primer software inteligente diseñado específicamente para optimizar y auditar el aseo y sanitización en instituciones educativas.</p>
-                </div>
-                <div style="font-size: 0.9rem;">
-                    <p style="margin-bottom: 0.5rem; font-weight: 600;">Desarrollo Comercial y SaaS</p>
-                    <p style="color: var(--text-muted);">Diseñado con componentes de alta fidelidad.</p>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2026 Valtek Optima. Todos los derechos reservados.</p>
-                <div>
-                    Rama Git activa: <span class="git-branch-badge">juanjo</span>
-                </div>
-            </div>
+    <!-- SIGNUP -->
+    <div class="auth-tab-content" id="tab-signup">
+      <div class="form-group">
+        <label class="form-label">Nombre Completo del Administrador</label>
+        <input class="form-input" type="text" id="signup-name" placeholder="Ej: Juan González">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Correo Electrónico Institucional</label>
+        <input class="form-input" type="email" id="signup-email" placeholder="admin@colegio.cl">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <input class="form-input" type="password" id="signup-password" placeholder="Mínimo 6 caracteres">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmar Contraseña</label>
+        <input class="form-input" type="password" id="signup-confirm" placeholder="Repite tu contraseña">
+      </div>
+      <div id="signup-error" class="error-msg"></div>
+      <button class="btn-full btn-primary" onclick="doSignup()">Crear Cuenta</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================
+     LANDING PAGE
+====================================================== -->
+<div id="view-landing" class="app-view">
+  <!-- HERO -->
+  <section class="hero">
+    <div style="position:relative;z-index:1;">
+      <div class="hero-badge"><span></span> SaaS para Instituciones Educativas</div>
+      <h1 class="hero-title">Valtek Optima</h1>
+      <p class="hero-subtitle">La plataforma inteligente de gestión y optimización de aseo institucional.</p>
+      <p class="hero-impact">Elimine la incertidumbre operativa. Controle el rendimiento real de su personal, reduzca los tiempos muertos y garantice campus 100% sanitizados con una interfaz táctil diseñada para el terreno.</p>
+      <div class="hero-ctas">
+        <button class="btn-hero-primary" onclick="showView('jefe')">🚀 Probar Demo Interactiva</button>
+        <button class="btn-hero-outline" onclick="showView('trabajador')">📱 Vista del Trabajador</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- EL PROBLEMA -->
+  <div style="background:rgba(239,68,68,0.03);border-top:1px solid rgba(239,68,68,0.08);border-bottom:1px solid rgba(239,68,68,0.08);">
+    <div class="section">
+      <div class="section-tag" style="background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.2);color:var(--dirty);">El Problema</div>
+      <h2 class="section-title">¿Qué está fallando en tu institución?</h2>
+      <p class="section-desc">Cada día, millones de minutos de trabajo se pierden sin control ni registro. Así es la realidad operativa de la mayoría de los campus.</p>
+      <div class="cards-grid">
+        <div class="feature-card">
+          <div class="card-icon red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="card-title">Pérdida de Tiempo</div>
+          <div class="card-desc">Sin un sistema de registro, el personal no sabe exactamente cuánto tiempo debe invertir en cada zona, generando inactividad invisible.</div>
         </div>
-    </footer>
+        <div class="feature-card">
+          <div class="card-icon red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="card-title">Falta de Trazabilidad</div>
+          <div class="card-desc">No existe un historial digital. Si un área no se limpió, nadie puede probarlo ni rendirle cuentas a nadie. El jefe opera a ciegas.</div>
+        </div>
+        <div class="feature-card">
+          <div class="card-icon orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="card-title">Injusticia Laboral</div>
+          <div class="card-desc">Algunos trabajadores cargan con más zonas que otros sin que el administrador lo sepa. El desequilibrio genera desmotivación y rotación.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <!-- ==========================================================================
-       CÓDIGO DE LOGICA REACTIVA (JAVASCRIPT INTEGRADO)
-       ========================================================================== -->
-    <script>
-        // Iconografía SVG Inline
-        const ICONS = {
-            sala: `<svg class="zone-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" /></svg>`,
-            cancha: `<svg class="zone-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M6.2 6.2c2.4 2.4 2.4 6.4 0 8.8" /><path d="M17.8 6.2c-2.4 2.4-2.4 6.4 0 8.8" /><path d="M2 12h20" /><path d="M12 2v20" /></svg>`,
-            bano: `<svg class="zone-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2h10v4H7z" /><path d="M5 6h14v5a7 7 0 0 1-7 7H12a7 7 0 0 1-7-7V6z" /><path d="M12 18v4" /><path d="M9 22h6" /></svg>`,
-            camarin: `<svg class="zone-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 1 3 3h-6a3 3 0 0 1 3-3z" /><path d="M22 19H2L12 5z" /></svg>`
-        };
+  <!-- BENEFICIOS -->
+  <div class="section">
+    <div class="section-tag">Beneficios Valtek</div>
+    <h2 class="section-title">La solución que tu campus necesita</h2>
+    <p class="section-desc">Diseñada desde el terreno, para el terreno. Cero papel, cero fricción, máximo control.</p>
+    <div class="cards-grid">
+      <div class="feature-card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+        <div class="card-title">Control de Rendimiento</div>
+        <div class="card-desc">Timestamps exactos de entrada y salida por zona. El jefe audita en tiempo real cuánto tardó cada trabajador y cómo encontró cada área.</div>
+      </div>
+      <div class="feature-card">
+        <div class="card-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        </div>
+        <div class="card-title">Interfaz Zero-Friction</div>
+        <div class="card-desc">El trabajador solo ve sus zonas del día. Un toque para entrar, un toque para salir. Sin capacitación técnica, sin barreras de idioma.</div>
+      </div>
+      <div class="feature-card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="card-title">Iconografía SVG Universal</div>
+        <div class="card-desc">Iconos diseñados sin texto para eliminar barreras de lectura e idioma. Cualquier persona puede usar la app sin instrucciones previas.</div>
+      </div>
+    </div>
+  </div>
 
-        // Estado de la Aplicación
-        let state = {
-            mensajeDelDia: "Hoy supervisión externa a las 14:00. Por favor, priorizar sanitización de baños y camarines.",
-            activeRole: 'jefe',
-            activeWorker: 'maria',       // Operario activo en el celular
-            assigningWorker: 'maria',    // Operario que se está configurando en el panel del Jefe
-            
-            // Trabajadores
-            workers: {
-                maria: { name: "Tía María", assignedZones: [] },
-                carmen: { name: "Tía Carmen", assignedZones: [] },
-                rosa: { name: "Tía Rosa", assignedZones: [] },
-                patricia: { name: "Tía Patricia", assignedZones: [] }
-            },
-            
-            // 51 Zonas de aseo
-            zones: [],
-            
-            // Registro histórico para la auditoría (logs)
-            logs: [],
-            
-            // Modal de diagnóstico auxiliar
-            pendingDiagnosticZoneId: null
-        };
+  <!-- CTA Final -->
+  <div style="text-align:center;padding:4rem 2rem;border-top:1px solid var(--border);">
+    <h2 style="font-family:var(--font-display);font-size:2rem;font-weight:800;margin-bottom:1rem;">¿Listo para transformar el aseo de tu institución?</h2>
+    <p style="color:var(--text-muted);margin-bottom:2rem;">Prueba la demo completa ahora mismo, sin registro.</p>
+    <button class="btn-hero-primary" onclick="showView('jefe')">🚀 Abrir Panel de Administración</button>
+  </div>
+</div>
 
-        // Inicializar las 51 zonas
-        function initZones() {
-            state.zones = [];
-            
-            // 1. 30 Salas de clases (piso 1: 1-10, piso 2: 11-20, piso 3: 21-30)
-            for (let i = 1; i <= 30; i++) {
-                let floor = 1;
-                if (i > 10 && i <= 20) floor = 2;
-                if (i > 20) floor = 3;
-                
-                state.zones.push({
-                    id: `sala-${i}`,
-                    name: `Sala ${i}`,
-                    type: 'sala',
-                    floor: floor,
-                    status: 'pendiente', // 'pendiente', 'en-proceso', 'limpio'
-                    entradaTime: null,
-                    salidaTime: null,
-                    diagnostic: null,
-                    operator: null,
-                    lastDuration: null
-                });
-            }
+<!-- ======================================================
+     JEFE PANEL
+====================================================== -->
+<div id="view-jefe" class="app-view">
+  <div class="jefe-header">
+    <div class="jefe-title">Panel de Administración — Jefe</div>
+    <div class="jefe-tabs">
+      <button class="jefe-tab active" onclick="switchJefeTab('institucion')">🏫 Institución</button>
+      <button class="jefe-tab" onclick="switchJefeTab('personal')">👥 Personal</button>
+      <button class="jefe-tab" onclick="switchJefeTab('asignacion')">📋 Asignación</button>
+      <button class="jefe-tab" onclick="switchJefeTab('monitoreo')">📊 Monitoreo</button>
+    </div>
+  </div>
+  <div class="jefe-body">
 
-            // 2. 3 Canchas deportivas (comunes / exterior)
-            const canchaNames = ["Cancha Fútbol", "Cancha Básquet", "Gimnasio Techado"];
-            canchaNames.forEach((name, index) => {
-                state.zones.push({
-                    id: `cancha-${index + 1}`,
-                    name: name,
-                    type: 'cancha',
-                    floor: 'comun',
-                    status: 'pendiente',
-                    entradaTime: null,
-                    salidaTime: null,
-                    diagnostic: null,
-                    operator: null,
-                    lastDuration: null
-                });
-            });
+    <!-- TAB: INSTITUCIÓN -->
+    <div class="jefe-tab-content active" id="jefe-tab-institucion">
+      <div class="j-card">
+        <div class="j-card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Información del Campus
+        </div>
+        <div class="j-grid-2">
+          <div>
+            <div class="f-group"><label class="f-label">Nombre de la Institución</label><input class="f-input" id="inst-name" value="Colegio San Nicolás de Myra"></div>
+            <div class="f-group"><label class="f-label">Dirección</label><input class="f-input" id="inst-address" value="Av. Principal 1234, Santiago"></div>
+            <div class="f-group">
+              <label class="f-label">Número de Sedes</label>
+              <select class="f-input f-select" id="inst-sedes">
+                <option>1 Sede</option><option selected>2 Sedes</option><option>3 Sedes</option><option>4+ Sedes</option>
+              </select>
+            </div>
+            <div class="f-group"><label class="f-label">Correo del Administrador</label><input class="f-input" id="inst-email" value="admin@sannicolas.cl"></div>
+            <button class="btn-sm btn-green" onclick="saveInstitution()">💾 Guardar Cambios</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:1rem;">
+            <div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.15);border-radius:14px;padding:1.5rem;text-align:center;">
+              <div style="font-size:3.5rem;margin-bottom:0.5rem;">🏫</div>
+              <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:800;">San Nicolás</div>
+              <div style="font-size:0.78rem;color:var(--text-muted);">Logo Institucional</div>
+            </div>
+            <div class="kpi-row" style="margin-bottom:0;">
+              <div class="kpi-box">
+                <div class="kpi-value" style="color:var(--primary);">51</div>
+                <div class="kpi-label">Zonas Totales</div>
+              </div>
+              <div class="kpi-box">
+                <div class="kpi-value" id="inst-workers-count" style="color:var(--accent);">4</div>
+                <div class="kpi-label">Trabajadores</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-            // 3. 12 Baños simétricos (P1, P2, P3)
-            const floors = [1, 2, 3];
-            const banoTypes = [
-                { suffix: "Mujeres", type: "bano" },
-                { suffix: "Hombres", type: "bano" },
-                { suffix: "Profesores", type: "bano" },
-                { suffix: "Discapacitados", type: "bano" }
-            ];
+    <!-- TAB: PERSONAL -->
+    <div class="jefe-tab-content" id="jefe-tab-personal">
+      <div class="j-card">
+        <div class="j-card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+          Registrar Nuevo Trabajador
+        </div>
+        <div class="flex-row">
+          <div class="f-group"><label class="f-label">Nombre Completo</label><input class="f-input" id="worker-name" placeholder="Tía María González"></div>
+          <div class="f-group"><label class="f-label">ID / RUT</label><input class="f-input" id="worker-id" placeholder="12.345.678-9"></div>
+          <div class="f-group">
+            <label class="f-label">Turno</label>
+            <select class="f-input f-select" id="worker-shift">
+              <option>Mañana</option><option>Tarde</option><option>Completo</option>
+            </select>
+          </div>
+          <button class="btn-sm btn-green" style="margin-bottom:1rem;" onclick="addWorker()">+ Agregar</button>
+        </div>
+      </div>
+      <div class="j-card">
+        <div class="j-card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Nómina del Personal
+        </div>
+        <table class="data-table">
+          <thead><tr><th>Nombre</th><th>ID</th><th>Turno</th><th>Zonas Asignadas</th><th>Acciones</th></tr></thead>
+          <tbody id="workers-table-body"></tbody>
+        </table>
+      </div>
+      <div class="j-card">
+        <div class="j-card-title">📋 Guía de Onboarding — 3 Pasos para Entrenar a tu Personal</div>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-title">Compartir el Link</div>
+            <div class="step-desc">Envía el enlace de la app por WhatsApp a cada trabajador. No necesita descargar nada, funciona en el navegador del celular.</div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-title">Seleccionar su Nombre</div>
+            <div class="step-desc">En la vista trabajador, el operario selecciona su nombre del menú desplegable y automáticamente ve solo sus zonas asignadas.</div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-title">Comenzar a Marcar</div>
+            <div class="step-desc">Toca la zona para iniciar. Selecciona la carita de diagnóstico. Al terminar, toca "Finalizar Aseo". ¡Eso es todo!</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-            floors.forEach(floor => {
-                banoTypes.forEach(def => {
-                    state.zones.push({
-                        id: `bano-p${floor}-${def.suffix.toLowerCase()}`,
-                        name: `Baño ${def.suffix} (P${floor})`,
-                        type: def.type,
-                        floor: floor,
-                        status: 'pendiente',
-                        entradaTime: null,
-                        salidaTime: null,
-                        diagnostic: null,
-                        operator: null,
-                        lastDuration: null
-                    });
-                });
-            });
+    <!-- TAB: ASIGNACIÓN -->
+    <div class="jefe-tab-content" id="jefe-tab-asignacion">
+      <div class="j-card">
+        <div class="j-card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Mensaje del Día
+        </div>
+        <div class="f-group"><textarea class="f-input" id="msg-input" rows="3" placeholder="Escribe aquí el mensaje para todo el personal de hoy...">¡Buenos días equipo! Recuerden revisar con especial cuidado los baños del 2do piso. Hay visita institucional esta tarde. ¡Muchas gracias! 💪</textarea></div>
+        <button class="btn-sm btn-green" onclick="publishMessage()">📢 Publicar Mensaje del Día</button>
+      </div>
+      <div class="j-card">
+        <div class="j-card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Asignación de Zonas por Trabajador
+        </div>
+        <div class="flex-row" style="margin-bottom:1rem;">
+          <div class="f-group" style="flex:2;margin-bottom:0;">
+            <label class="f-label">Seleccionar Trabajador</label>
+            <select class="f-input f-select" id="assign-worker-select" onchange="renderAssignGrid()"></select>
+          </div>
+          <button class="btn-sm btn-blue" onclick="assignAll()">✅ Asignar Todas</button>
+          <button class="btn-sm btn-red" onclick="unassignAll()">❌ Desasignar Todas</button>
+        </div>
+        <div id="assign-counter" style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.75rem;"></div>
+        <div class="zone-grid" id="assign-grid"></div>
+      </div>
+    </div>
 
-            // 4. Áreas comunes / 6 puntos adicionales entre comunes y camarines
-            const commonAreas = [
-                { id: "camarin-varones", name: "Camarín Varones", type: "camarin" },
-                { id: "camarin-damas", name: "Camarín Damas", type: "camarin" },
-                { id: "bano-personal", name: "Baño Personal", type: "bano" },
-                { id: "bano-casino", name: "Baño Casino", type: "bano" },
-                { id: "bano-kiosco", name: "Baño Kiosco", type: "bano" },
-                { id: "camarin-profesores", name: "Camarín Profesores EF", type: "camarin" }
-            ];
+    <!-- TAB: MONITOREO -->
+    <div class="jefe-tab-content" id="jefe-tab-monitoreo">
+      <div class="kpi-row">
+        <div class="kpi-box"><div class="kpi-value" id="kpi-total" style="color:var(--primary);">51</div><div class="kpi-label">Zonas Totales</div></div>
+        <div class="kpi-box"><div class="kpi-value" id="kpi-clean" style="color:var(--clean);">0</div><div class="kpi-label">Limpias</div></div>
+        <div class="kpi-box"><div class="kpi-value" id="kpi-process" style="color:var(--process);">0</div><div class="kpi-label">En Proceso</div></div>
+        <div class="kpi-box"><div class="kpi-value" id="kpi-pending" style="color:var(--text-muted);">51</div><div class="kpi-label">Pendientes</div></div>
+      </div>
+      <div class="j-card">
+        <div class="j-card-title">KPI Global de Eficiencia del Campus</div>
+        <div class="circle-wrapper">
+          <div class="circle-svg-area">
+            <svg width="160" height="160" viewBox="0 0 160 160">
+              <defs>
+                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#6366f1"/>
+                  <stop offset="100%" stop-color="#00f2fe"/>
+                </linearGradient>
+              </defs>
+              <circle class="circle-bg" cx="80" cy="80" r="70"/>
+              <circle class="circle-progress" id="efficiency-circle" cx="80" cy="80" r="70"/>
+            </svg>
+            <div class="circle-center-text">
+              <div class="circle-pct" id="efficiency-pct">0%</div>
+              <div class="circle-sub">COMPLETADO</div>
+            </div>
+          </div>
+          <div style="flex:1;min-width:200px;">
+            <div style="font-size:0.85rem;color:var(--text-muted);line-height:1.9;">
+              <div>🟢 Limpias: <strong id="kpi-clean2" style="color:var(--clean);">0</strong> zonas</div>
+              <div>🟡 En proceso: <strong id="kpi-process2" style="color:var(--process);">0</strong> zonas</div>
+              <div>⚪ Pendientes: <strong id="kpi-pending2" style="color:var(--text-muted);">51</strong> zonas</div>
+            </div>
+            <button class="btn-sm btn-red" style="margin-top:1rem;" onclick="resetDemo()">🔄 Reiniciar Demo</button>
+          </div>
+        </div>
+      </div>
+      <div class="j-card">
+        <div class="j-card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Bitácora de Actividad en Tiempo Real
+        </div>
+        <div id="audit-empty" style="text-align:center;padding:2rem;color:var(--text-muted);font-size:0.9rem;">
+          ⏳ Sin actividad registrada aún. Los trabajadores comenzarán a aparecer aquí cuando inicien una zona.
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="audit-table" style="display:none;">
+            <thead>
+              <tr>
+                <th>Zona</th><th>Operario</th><th>Entrada</th><th>Diagnóstico</th><th>Salida</th><th>Duración</th><th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="audit-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
-            commonAreas.forEach(area => {
-                state.zones.push({
-                    id: area.id,
-                    name: area.name,
-                    type: area.type,
-                    floor: 'comun',
-                    status: 'pendiente',
-                    entradaTime: null,
-                    salidaTime: null,
-                    diagnostic: null,
-                    operator: null,
-                    lastDuration: null
-                });
-            });
-        }
+  </div><!-- /jefe-body -->
+</div>
 
-        // Asignaciones por defecto al cargar el demo para que no esté vacío
-        function initDefaultAssignments() {
-            state.workers.maria.assignedZones = [
-                'sala-1', 'sala-2', 'sala-3', 'sala-4', 'sala-5', 'sala-6', 'sala-7', 'sala-8', 'sala-9', 'sala-10',
-                'cancha-1', 'bano-p1-mujeres'
-            ];
-            state.workers.carmen.assignedZones = [
-                'sala-11', 'sala-12', 'sala-13', 'sala-14', 'sala-15', 'sala-16', 'sala-17', 'sala-18', 'sala-19', 'sala-20',
-                'cancha-2', 'bano-p1-hombres', 'bano-p1-profesores', 'bano-p1-discapacitados'
-            ];
-            state.workers.rosa.assignedZones = [
-                'sala-21', 'sala-22', 'sala-23', 'sala-24', 'sala-25', 'sala-26', 'sala-27', 'sala-28', 'sala-29', 'sala-30',
-                'cancha-3', 'bano-p2-mujeres', 'bano-p2-hombres', 'bano-p2-profesores', 'bano-p2-discapacitados'
-            ];
-            state.workers.patricia.assignedZones = [
-                'bano-p3-mujeres', 'bano-p3-hombres', 'bano-p3-profesores', 'bano-p3-discapacitados',
-                'camarin-varones', 'camarin-damas', 'bano-personal', 'bano-casino', 'bano-kiosco', 'camarin-profesores'
-            ];
-        }
+<!-- ======================================================
+     TRABAJADOR PHONE VIEW
+====================================================== -->
+<div id="view-trabajador" class="app-view">
+  <div class="phone-frame">
+    <div class="phone-notch"><div class="notch-bar"></div></div>
+    <div class="phone-status-bar">
+      <span id="phone-time">10:30</span>
+      <span>📶 🔋 87%</span>
+    </div>
+    <div class="phone-header">
+      <div>
+        <div class="phone-user-name" id="phone-worker-name">Tía María</div>
+        <div class="phone-role-badge">Operaria de Aseo</div>
+      </div>
+      <div style="font-size:1.5rem;">📱</div>
+    </div>
+    <div class="worker-select-wrap">
+      <select id="phone-worker-select" onchange="changePhoneWorker()"></select>
+    </div>
+    <div class="msg-banner" id="msg-banner">
+      <strong>📢 Mensaje del Jefe:</strong>
+      <span id="msg-banner-text"></span>
+    </div>
+    <div class="phone-body" id="phone-body">
+      <!-- Rendered dynamically -->
+    </div>
+  </div>
+</div>
 
-        // ==========================================
-        // CONTROL DE VISTAS (ROLES)
-        // ==========================================
-        function switchRole(role) {
-            state.activeRole = role;
-            
-            // Actualizar botones de la barra superior
-            document.getElementById('btn-role-jefe').classList.toggle('active', role === 'jefe');
-            document.getElementById('btn-role-trabajador').classList.toggle('active', role === 'trabajador');
-            
-            // Mostrar panel correcto
-            document.getElementById('pane-jefe').classList.toggle('active', role === 'jefe');
-            document.getElementById('pane-trabajador').classList.toggle('active', role === 'trabajador');
-            
-            renderAll();
-        }
+<!-- ======================================================
+     DIAGNOSTIC MODAL
+====================================================== -->
+<div id="diagnostic-modal">
+  <div class="diag-card">
+    <div class="diag-title">¿Cómo encontraste esta zona?</div>
+    <div class="diag-subtitle" id="diag-zone-name">Sala 1</div>
+    <div class="diag-emojis">
+      <button class="diag-emoji-btn good" onclick="selectDiagnostic('excelente')">
+        <span>🙂</span><span class="diag-emoji-label">Excelente</span>
+      </button>
+      <button class="diag-emoji-btn mid" onclick="selectDiagnostic('regular')">
+        <span>😐</span><span class="diag-emoji-label">Regular</span>
+      </button>
+      <button class="diag-emoji-btn bad" onclick="selectDiagnostic('malo')">
+        <span>🙁</span><span class="diag-emoji-label">Malo</span>
+      </button>
+    </div>
+    <div class="diag-cancel" onclick="closeDiagnostic()">✕ Cancelar</div>
+  </div>
+</div>
 
-        // ==========================================
-        // ROL JEFE: ASIGNACIÓN Y MENSAJES
-        // ==========================================
-        function updateDailyMessage() {
-            const inputVal = document.getElementById('msgInput').value.trim();
-            if (inputVal === '') {
-                showToast("Por favor redacta un mensaje válido.", "warning");
-                return;
-            }
-            state.mensajeDelDia = inputVal;
-            showToast("Mensaje general del día actualizado y publicado en tiempo real.", "success");
-            renderAll();
-        }
+<!-- TOAST -->
+<div id="toast"></div>
 
-        function loadWorkerAssignments() {
-            state.assigningWorker = document.getElementById('assignWorkerSelect').value;
-            renderAssignGrid();
-        }
+<!-- ======================================================
+     JAVASCRIPT
+====================================================== -->
+<script>
+  // ============================================================
+  // STATE
+  // ============================================================
+  const state = {
+    currentView: 'auth',
+    currentUser: null,
+    mensajeDelDia: '¡Buenos días equipo! Recuerden revisar con especial cuidado los baños del 2do piso. Hay visita institucional esta tarde. ¡Muchas gracias! 💪',
+    users: [{ email: 'admin@valtek.cl', password: '1234', name: 'Admin Demo' }],
+    workers: [],
+    zones: [],
+    activePhoneWorker: null,
+    pendingDiagnosticZone: null,
+    activeJefeTab: 'institucion',
+    auditLog: []
+  };
 
-        // Renderizar cuadrícula de asignación para el Jefe (checkboxes)
-        function renderAssignGrid() {
-            const grid = document.getElementById('assignGrid');
-            grid.innerHTML = '';
-            
-            const worker = state.workers[state.assigningWorker];
+  // ============================================================
+  // SVG ICONS
+  // ============================================================
+  const ICONS = {
+    sala: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+    cancha: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2v20"/></svg>',
+    bano: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2h10v4H7z"/><path d="M5 6h14v5a7 7 0 0 1-7 7 7 7 0 0 1-7-7V6z"/><path d="M12 18v4"/><path d="M9 22h6"/></svg>',
+    camarin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>'
+  };
 
-            state.zones.forEach(zone => {
-                const label = document.createElement('label');
-                label.className = 'assign-checkbox-item';
-                
-                const isChecked = worker.assignedZones.includes(zone.id);
-                
-                label.innerHTML = `
-                    <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleAssignZone('${zone.id}', this.checked)">
-                    <span>${zone.name}</span>
-                `;
-                grid.appendChild(label);
-            });
-            
-            // Actualizar contadores de tareas en panel jefe
-            updateWorkerCounts();
-        }
+  // ============================================================
+  // INIT DATA
+  // ============================================================
+  function initZones() {
+    const zones = [];
+    // Salas 1-30 (floors 1-3, 10 each)
+    for (let i = 1; i <= 30; i++) {
+      const floor = i <= 10 ? 1 : i <= 20 ? 2 : 3;
+      zones.push({ id: 'z' + i, name: 'Sala ' + i, type: 'sala', floor, status: 'pendiente', assignedTo: null, entradaTime: null, salidaTime: null, diagnostic: null });
+    }
+    // Canchas
+    const canchas = [{ id: 'c1', name: 'Cancha Fútbol' }, { id: 'c2', name: 'Cancha Básquet' }, { id: 'c3', name: 'Gimnasio' }];
+    canchas.forEach(c => zones.push({ ...c, type: 'cancha', floor: 'comun', status: 'pendiente', assignedTo: null, entradaTime: null, salidaTime: null, diagnostic: null }));
+    // Baños P1-P3
+    ['P1','P2','P3'].forEach((p, pi) => {
+      const fl = pi + 1;
+      ['Mujeres','Hombres','Profesores','Discapacitados'].forEach((tipo, ti) => {
+        zones.push({ id: 'b' + p + ti, name: 'Baño ' + tipo + ' ' + p, type: 'bano', floor: fl, status: 'pendiente', assignedTo: null, entradaTime: null, salidaTime: null, diagnostic: null });
+      });
+    });
+    // Camarines comunes
+    ['Camarin Norte','Camarin Sur','Camarin Deportes'].forEach((n, i) => {
+      zones.push({ id: 'cam' + i, name: n, type: 'camarin', floor: 'comun', status: 'pendiente', assignedTo: null, entradaTime: null, salidaTime: null, diagnostic: null });
+    });
+    // Baños comunes
+    ['Baño Patio Norte','Baño Patio Sur','Baño Cancha'].forEach((n, i) => {
+      zones.push({ id: 'bpc' + i, name: n, type: 'bano', floor: 'comun', status: 'pendiente', assignedTo: null, entradaTime: null, salidaTime: null, diagnostic: null });
+    });
+    state.zones = zones;
+  }
 
-        function toggleAssignZone(zoneId, isAssigned) {
-            const worker = state.workers[state.assigningWorker];
-            
-            if (isAssigned) {
-                if (!worker.assignedZones.includes(zoneId)) {
-                    worker.assignedZones.push(zoneId);
-                }
-            } else {
-                worker.assignedZones = worker.assignedZones.filter(id => id !== zoneId);
-            }
-            
-            updateWorkerCounts();
-        }
+  function initWorkers() {
+    state.workers = [
+      { id: 'w1', name: 'Tía María', rut: '11.111.111-1', shift: 'Mañana' },
+      { id: 'w2', name: 'Tía Carmen', rut: '22.222.222-2', shift: 'Mañana' },
+      { id: 'w3', name: 'Tía Rosa', rut: '33.333.333-3', shift: 'Tarde' },
+      { id: 'w4', name: 'Tía Patricia', rut: '44.444.444-4', shift: 'Completo' }
+    ];
+    // Default assignments
+    state.zones.forEach(z => {
+      if (['z1','z2','z3','z4','z5','z6','z7','z8','z9','z10','c1','bP10'].includes(z.id)) z.assignedTo = 'w1';
+      if (['z11','z12','z13','z14','z15','z16','z17','z18','z19','z20','c2','bP11','bP12','bP13'].includes(z.id)) z.assignedTo = 'w2';
+      if (['z21','z22','z23','z24','z25','z26','z27','z28','z29','z30','c3','bP20','bP21','bP22','bP23'].includes(z.id)) z.assignedTo = 'w3';
+      if (['bP30','bP31','bP32','bP33','cam0','cam1','cam2','bpc0','bpc1','bpc2'].includes(z.id)) z.assignedTo = 'w4';
+    });
+    // Assign María: salas 1-10
+    state.zones.filter(z => ['z1','z2','z3','z4','z5','z6','z7','z8','z9','z10'].includes(z.id)).forEach(z => z.assignedTo = 'w1');
+    state.zones.find(z => z.id === 'c1').assignedTo = 'w1';
+    state.zones.find(z => z.id === 'bP10').assignedTo = 'w1';
+    // Carmen: salas 11-20
+    state.zones.filter(z => ['z11','z12','z13','z14','z15','z16','z17','z18','z19','z20'].includes(z.id)).forEach(z => z.assignedTo = 'w2');
+    state.zones.find(z => z.id === 'c2').assignedTo = 'w2';
+    ['bP11','bP12','bP13'].forEach(id => { const z = state.zones.find(z2 => z2.id === id); if (z) z.assignedTo = 'w2'; });
+    // Rosa: salas 21-30
+    state.zones.filter(z => ['z21','z22','z23','z24','z25','z26','z27','z28','z29','z30'].includes(z.id)).forEach(z => z.assignedTo = 'w3');
+    state.zones.find(z => z.id === 'c3').assignedTo = 'w3';
+    ['bP20','bP21','bP22','bP23'].forEach(id => { const z = state.zones.find(z2 => z2.id === id); if (z) z.assignedTo = 'w3'; });
+    // Patricia: P3 baños + comunes
+    ['bP30','bP31','bP32','bP33'].forEach(id => { const z = state.zones.find(z2 => z2.id === id); if (z) z.assignedTo = 'w4'; });
+    ['cam0','cam1','cam2','bpc0','bpc1','bpc2'].forEach(id => { const z = state.zones.find(z2 => z2.id === id); if (z) z.assignedTo = 'w4'; });
+    state.activePhoneWorker = 'w1';
+  }
 
-        function bulkAssign(shouldAssignAll) {
-            const worker = state.workers[state.assigningWorker];
-            if (shouldAssignAll) {
-                worker.assignedZones = state.zones.map(z => z.id);
-            } else {
-                worker.assignedZones = [];
-            }
-            renderAssignGrid();
-            showToast(`Zonas actualizadas para ${worker.name}`, "info");
-        }
+  // ============================================================
+  // AUTH
+  // ============================================================
+  function showAuth() {
+    document.getElementById('view-auth').classList.remove('hidden');
+  }
+  function hideAuth() {
+    document.getElementById('view-auth').classList.add('hidden');
+  }
+  function switchAuthTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.auth-tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById('tab-' + tab + '-btn').classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+  }
+  function doSignup() {
+    const name = document.getElementById('signup-name').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
+    const pass = document.getElementById('signup-password').value;
+    const confirm = document.getElementById('signup-confirm').value;
+    const err = document.getElementById('signup-error');
+    if (!name || !email || !pass || !confirm) { err.textContent = '✖ Por favor completa todos los campos.'; err.classList.add('show'); return; }
+    if (pass.length < 6) { err.textContent = '✖ La contraseña debe tener al menos 6 caracteres.'; err.classList.add('show'); return; }
+    if (pass !== confirm) { err.textContent = '✖ Las contraseñas no coinciden. Verifica e intenta nuevamente.'; err.classList.add('show'); return; }
+    if (state.users.find(u => u.email === email)) { err.textContent = '✖ Este correo ya está registrado.'; err.classList.add('show'); return; }
+    state.users.push({ email, password: pass, name });
+    err.classList.remove('show');
+    showToast('✅ Cuenta creada exitosamente. ¡Bienvenido/a!');
+    switchAuthTab('login');
+    document.getElementById('login-email').value = email;
+  }
+  function doLogin(role) {
+    const email = document.getElementById('login-email').value.trim();
+    const pass = document.getElementById('login-password').value;
+    const user = state.users.find(u => u.email === email && u.password === pass);
+    if (!user) { document.getElementById('login-error').classList.add('show'); return; }
+    document.getElementById('login-error').classList.remove('show');
+    loginSuccess(user, role);
+  }
+  function demoLogin() {
+    loginSuccess({ name: 'Admin Demo', email: 'admin@valtek.cl' }, 'jefe');
+  }
+  function loginSuccess(user, role) {
+    state.currentUser = { ...user, role };
+    hideAuth();
+    // Update navbar
+    document.getElementById('navbar-user-info').style.display = 'flex';
+    document.getElementById('user-display-name').textContent = user.name;
+    document.getElementById('user-avatar-initials').textContent = user.name.charAt(0).toUpperCase();
+    document.getElementById('nav-btn-login').style.display = 'none';
+    document.getElementById('nav-btn-logout').style.display = 'inline-flex';
+    document.getElementById('nav-btn-jefe').style.display = 'inline-flex';
+    document.getElementById('nav-btn-trabajador').style.display = 'inline-flex';
+    showToast('👋 ¡Bienvenido/a ' + user.name + '!');
+    showView(role === 'trabajador' ? 'trabajador' : 'jefe');
+  }
+  function logout() {
+    state.currentUser = null;
+    document.getElementById('navbar-user-info').style.display = 'none';
+    document.getElementById('nav-btn-login').style.display = 'inline-flex';
+    document.getElementById('nav-btn-logout').style.display = 'none';
+    document.getElementById('nav-btn-jefe').style.display = 'none';
+    document.getElementById('nav-btn-trabajador').style.display = 'none';
+    showView('landing');
+    showAuth();
+    switchAuthTab('login');
+  }
 
-        function updateWorkerCounts() {
-            document.getElementById('count-maria').innerText = state.workers.maria.assignedZones.length;
-            document.getElementById('count-carmen').innerText = state.workers.carmen.assignedZones.length;
-            document.getElementById('count-rosa').innerText = state.workers.rosa.assignedZones.length;
-            document.getElementById('count-patricia').innerText = state.workers.patricia.assignedZones.length;
-        }
+  // ============================================================
+  // VIEWS
+  // ============================================================
+  function showView(view) {
+    document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+    const el = document.getElementById('view-' + view);
+    if (el) el.classList.add('active');
+    state.currentView = view;
+    // Update nav active states
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    const nb = document.getElementById('nav-btn-' + view);
+    if (nb) nb.classList.add('active');
+    if (view === 'jefe') { renderJefeAll(); }
+    if (view === 'trabajador') { renderPhoneView(); }
+  }
 
-        // ==========================================
-        // ROL TRABAJADOR: INTERFAZ MÓVIL
-        // ==========================================
-        function switchWorker() {
-            state.activeWorker = document.getElementById('workerSelect').value;
-            renderAll();
-            showToast(`Cargada la agenda diaria de ${state.workers[state.activeWorker].name}`, "info");
-        }
+  // ============================================================
+  // JEFE TABS
+  // ============================================================
+  function switchJefeTab(tab) {
+    document.querySelectorAll('.jefe-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.jefe-tab-content').forEach(c => c.classList.remove('active'));
+    const tabs = ['institucion','personal','asignacion','monitoreo'];
+    const idx = tabs.indexOf(tab);
+    document.querySelectorAll('.jefe-tab')[idx].classList.add('active');
+    document.getElementById('jefe-tab-' + tab).classList.add('active');
+    state.activeJefeTab = tab;
+    renderJefeAll();
+  }
+  function renderJefeAll() {
+    renderWorkersTable();
+    renderWorkersSelect();
+    renderAssignGrid();
+    updateMonitoreo();
+  }
 
-        function renderPhoneScreen() {
-            // Sincronizar nombres y mensajes
-            document.getElementById('workerNameHeader').innerText = state.workers[state.activeWorker].name;
-            document.getElementById('workerSelect').value = state.activeWorker;
-            document.getElementById('phoneMessageText').innerText = state.mensajeDelDia;
+  // ============================================================
+  // INSTITUTION
+  // ============================================================
+  function saveInstitution() {
+    showToast('💾 Cambios guardados exitosamente.');
+  }
 
-            const grid = document.getElementById('phoneTasksGrid');
-            grid.innerHTML = '';
+  // ============================================================
+  // WORKERS
+  // ============================================================
+  function addWorker() {
+    const name = document.getElementById('worker-name').value.trim();
+    const id = document.getElementById('worker-id').value.trim();
+    const shift = document.getElementById('worker-shift').value;
+    if (!name) { showToast('⚠ Ingresa el nombre del trabajador.', true); return; }
+    const newW = { id: 'w' + Date.now(), name, rut: id || 'Sin ID', shift };
+    state.workers.push(newW);
+    document.getElementById('worker-name').value = '';
+    document.getElementById('worker-id').value = '';
+    renderWorkersTable();
+    renderWorkersSelect();
+    updateInstKpis();
+    showToast('✅ Trabajador ' + name + ' agregado.');
+  }
+  function deleteWorker(wid) {
+    state.workers = state.workers.filter(w => w.id !== wid);
+    state.zones.forEach(z => { if (z.assignedTo === wid) z.assignedTo = null; });
+    if (state.activePhoneWorker === wid) state.activePhoneWorker = state.workers[0]?.id || null;
+    renderWorkersTable();
+    renderWorkersSelect();
+    renderPhoneSelects();
+    updateInstKpis();
+    showToast('🗑 Trabajador eliminado.');
+  }
+  function renderWorkersTable() {
+    const tbody = document.getElementById('workers-table-body');
+    if (!tbody) return;
+    if (state.workers.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:1.5rem;">No hay trabajadores registrados.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = state.workers.map(w => {
+      const count = state.zones.filter(z => z.assignedTo === w.id).length;
+      return '<tr><td><strong>' + w.name + '</strong></td><td style="color:var(--text-muted);">' + w.rut + '</td><td><span class="badge badge-pending">' + w.shift + '</span></td><td><span style="color:var(--primary);font-weight:700;">' + count + ' zonas</span></td><td><button class="btn-sm btn-red" onclick="deleteWorker(\'' + w.id + '\')">🗑 Eliminar</button></td></tr>';
+    }).join('');
+  }
+  function renderWorkersSelect() {
+    const sel = document.getElementById('assign-worker-select');
+    if (!sel) return;
+    const prev = sel.value;
+    sel.innerHTML = state.workers.map(w => '<option value="' + w.id + '">' + w.name + '</option>').join('');
+    if (prev && state.workers.find(w => w.id === prev)) sel.value = prev;
+    renderAssignGrid();
+  }
+  function renderPhoneSelects() {
+    const sel = document.getElementById('phone-worker-select');
+    if (!sel) return;
+    sel.innerHTML = state.workers.map(w => '<option value="' + w.id + '">' + w.name + '</option>').join('');
+    if (state.activePhoneWorker) sel.value = state.activePhoneWorker;
+    renderPhoneView();
+  }
+  function updateInstKpis() {
+    const el = document.getElementById('inst-workers-count');
+    if (el) el.textContent = state.workers.length;
+  }
 
-            const assignedIds = state.workers[state.activeWorker].assignedZones;
-            const myTasks = state.zones.filter(z => assignedIds.includes(z.id));
+  // ============================================================
+  // ZONE ASSIGNMENT
+  // ============================================================
+  function getFloorClass(zone) {
+    if (zone.floor === 'comun') return 'pc';
+    if (zone.floor === 1) return 'p1';
+    if (zone.floor === 2) return 'p2';
+    return 'p3';
+  }
+  function getFloorLabel(zone) {
+    if (zone.floor === 'comun') return zone.type === 'cancha' ? 'Deportes' : 'Área Común';
+    return zone.floor + 'º Piso';
+  }
+  function renderAssignGrid() {
+    const sel = document.getElementById('assign-worker-select');
+    if (!sel || !sel.value) return;
+    const wid = sel.value;
+    const grid = document.getElementById('assign-grid');
+    const counter = document.getElementById('assign-counter');
+    if (!grid) return;
+    const assigned = state.zones.filter(z => z.assignedTo === wid).length;
+    if (counter) counter.innerHTML = '<strong style="color:var(--primary);">' + assigned + '</strong> de 51 zonas asignadas a este trabajador.';
+    grid.innerHTML = state.zones.map(z => {
+      const checked = z.assignedTo === wid;
+      const flCls = getFloorClass(z);
+      const color = flCls === 'p1' ? 'var(--p1)' : flCls === 'p2' ? 'var(--p2)' : flCls === 'p3' ? 'var(--p3)' : 'var(--common)';
+      return '<label class="zone-check-item' + (checked ? ' checked' : '') + '" onclick="toggleZoneAssign(\'' + z.id + '\',\'' + wid + '\')">' +
+        '<input type="checkbox" ' + (checked ? 'checked' : '') + ' onclick="event.stopPropagation();toggleZoneAssign(\'' + z.id + '\',\'' + wid + '\')">' +
+        '<span style="width:8px;height:8px;border-radius:50%;background:' + color + ';display:inline-block;flex-shrink:0;"></span>' +
+        '<span>' + z.name + '</span>' +
+        '</label>';
+    }).join('');
+  }
+  function toggleZoneAssign(zid, wid) {
+    const z = state.zones.find(z2 => z2.id === zid);
+    if (!z) return;
+    z.assignedTo = z.assignedTo === wid ? null : wid;
+    renderAssignGrid();
+    renderWorkersTable();
+    renderPhoneView();
+  }
+  function assignAll() {
+    const wid = document.getElementById('assign-worker-select').value;
+    state.zones.forEach(z => z.assignedTo = wid);
+    renderAssignGrid(); renderWorkersTable(); renderPhoneView();
+    showToast('✅ Todas las zonas asignadas.');
+  }
+  function unassignAll() {
+    const wid = document.getElementById('assign-worker-select').value;
+    state.zones.forEach(z => { if (z.assignedTo === wid) z.assignedTo = null; });
+    renderAssignGrid(); renderWorkersTable(); renderPhoneView();
+    showToast('❌ Zonas desasignadas.');
+  }
 
-            if (myTasks.length === 0) {
-                grid.innerHTML = `
-                    <div class="phone-empty-state">
-                        <span class="phone-empty-icon">✨</span>
-                        <h4 class="phone-empty-title">¡Todo al día!</h4>
-                        <p class="phone-empty-desc">No tienes salas ni áreas asignadas para hoy. Puedes descansar o consultar a tu supervisor.</p>
-                    </div>
-                `;
-                return;
-            }
+  // ============================================================
+  // MESSAGE
+  // ============================================================
+  function publishMessage() {
+    const txt = document.getElementById('msg-input').value.trim();
+    state.mensajeDelDia = txt;
+    renderPhoneView();
+    showToast('📢 Mensaje publicado a todos los trabajadores.');
+  }
 
-            myTasks.forEach(task => {
-                const card = document.createElement('div');
-                
-                // Clases base
-                let cardClass = `phone-task-card`;
-                if (task.status === 'en-proceso') cardClass += ' in-process';
-                else if (task.status === 'limpio') cardClass += ' clean-status';
-                
-                // Piso class
-                if (task.floor === 1) cardClass += ' floor-1';
-                else if (task.floor === 2) cardClass += ' floor-2';
-                else if (task.floor === 3) cardClass += ' floor-3';
-                else cardClass += ' floor-comun';
+  // ============================================================
+  // PHONE / WORKER VIEW
+  // ============================================================
+  function changePhoneWorker() {
+    const sel = document.getElementById('phone-worker-select');
+    state.activePhoneWorker = sel.value;
+    const w = state.workers.find(w2 => w2.id === state.activePhoneWorker);
+    document.getElementById('phone-worker-name').textContent = w ? w.name : 'Trabajador';
+    renderPhoneBody();
+  }
+  function renderPhoneView() {
+    renderPhoneSelects();
+    const w = state.workers.find(w2 => w2.id === state.activePhoneWorker);
+    document.getElementById('phone-worker-name').textContent = w ? w.name : 'Trabajador';
+    // Message banner
+    const banner = document.getElementById('msg-banner');
+    const bannerText = document.getElementById('msg-banner-text');
+    if (state.mensajeDelDia) {
+      banner.classList.add('show');
+      bannerText.textContent = state.mensajeDelDia;
+    } else {
+      banner.classList.remove('show');
+    }
+    renderPhoneBody();
+  }
+  function renderPhoneBody() {
+    const body = document.getElementById('phone-body');
+    if (!body) return;
+    const myZones = state.zones.filter(z => z.assignedTo === state.activePhoneWorker);
+    if (myZones.length === 0) {
+      body.innerHTML = '<div class="empty-tasks"><div style="font-size:2rem;margin-bottom:0.5rem;">📋</div><div>No hay zonas asignadas hoy.</div><div style="margin-top:0.3rem;font-size:0.78rem;">El jefe aún no te asignó áreas.</div></div>';
+      return;
+    }
+    const clean = myZones.filter(z => z.status === 'limpio').length;
+    let html = '<div class="phone-section-title">Mis Tareas Asignadas <span class="phone-counter">' + clean + ' / ' + myZones.length + ' Limpias</span></div>';
+    myZones.forEach(z => {
+      const fc = getFloorClass(z);
+      const icon = ICONS[z.type] || ICONS.sala;
+      const floorLabel = getFloorLabel(z);
+      let statusBadge = '';
+      let actionArea = '';
+      if (z.status === 'pendiente') {
+        statusBadge = '<span class="task-status-badge pendiente">⚪ Pendiente</span>';
+        actionArea = '<div class="task-action-row"><button class="task-btn task-btn-start" onclick="startZone(\'' + z.id + '\')">▶ Iniciar Aseo</button></div>';
+      } else if (z.status === 'en-proceso') {
+        statusBadge = '<span class="task-status-badge en-proceso">🟡 En Proceso</span>';
+        const t = new Date(z.entradaTime);
+        const timeStr = t.getHours().toString().padStart(2,'0') + ':' + t.getMinutes().toString().padStart(2,'0') + ':' + t.getSeconds().toString().padStart(2,'0');
+        const diagEmoji = z.diagnostic === 'excelente' ? '🙂' : z.diagnostic === 'regular' ? '😐' : '🙁';
+        actionArea = '<div class="task-time-info">Entrada: <span>' + timeStr + '</span> · Diagnóstico: ' + diagEmoji + '</div><div class="task-action-row"><button class="task-btn task-btn-finish" onclick="finishZone(\'' + z.id + '\')">✅ Finalizar Aseo</button></div>';
+      } else {
+        statusBadge = '<span class="task-status-badge limpio">🟢 Limpio</span>';
+        const entrada = new Date(z.entradaTime);
+        const salida = new Date(z.salidaTime);
+        const dur = Math.round((z.salidaTime - z.entradaTime) / 1000);
+        const durStr = dur >= 60 ? Math.floor(dur/60) + 'min ' + (dur%60) + 's' : dur + 's';
+        const sStr = salida.getHours().toString().padStart(2,'0') + ':' + salida.getMinutes().toString().padStart(2,'0');
+        const diagEmoji = z.diagnostic === 'excelente' ? '🙂' : z.diagnostic === 'regular' ? '😐' : '🙁';
+        actionArea = '<div class="task-time-info">Salida: <span style="color:var(--clean)">' + sStr + '</span> · Duración: <span style="color:var(--clean)">' + durStr + '</span> · ' + diagEmoji + '</div>';
+      }
+      html += '<div class="task-card ' + fc + ' ' + z.status + '">' +
+        '<div class="task-card-header">' +
+          '<div class="task-card-meta">' +
+            '<div class="task-icon ' + fc + '">' + icon + '</div>' +
+            '<div><div class="task-name">' + z.name + '</div><div class="task-floor">' + floorLabel + '</div></div>' +
+          '</div>' +
+          statusBadge +
+        '</div>' +
+        actionArea +
+        '</div>';
+    });
+    body.innerHTML = html;
+  }
 
-                card.className = cardClass;
-                
-                // Detalle del botón interno o detalles de tiempo
-                let actionArea = '';
-                let statusLabel = 'Pendiente';
-                
-                if (task.status === 'pendiente') {
-                    statusLabel = 'Pendiente';
-                    card.onclick = () => openDiagnosticModal(task.id);
-                } else if (task.status === 'en-proceso') {
-                    statusLabel = 'En Proceso';
-                    
-                    const entryTimeFormatted = formatTime(task.entradaTime);
-                    const emojiFace = getDiagnosticEmoji(task.diagnostic);
-                    
-                    actionArea = `
-                        <div class="task-card-details-row">
-                            <span>Entrada: <span class="task-detail-time">${entryTimeFormatted}</span></span>
-                            <span>Diagnóstico: ${emojiFace}</span>
-                        </div>
-                        <button class="task-btn-finish" onclick="finishCleaning('${task.id}', event)">
-                            Finalizar Aseo (Check)
-                        </button>
-                    `;
-                } else if (task.status === 'limpio') {
-                    statusLabel = 'Limpio';
-                    
-                    const entryTimeFormatted = formatTime(task.entradaTime);
-                    const exitTimeFormatted = formatTime(task.salidaTime);
-                    const emojiFace = getDiagnosticEmoji(task.diagnostic);
-                    
-                    actionArea = `
-                        <div class="task-card-details-row">
-                            <span>Entrada: <span class="task-detail-time">${entryTimeFormatted}</span></span>
-                            <span>Salida: <span class="task-detail-time">${exitTimeFormatted}</span></span>
-                        </div>
-                        <div class="task-card-details-row" style="border:none; margin:0; padding:0;">
-                            <span>Diagnóstico: ${emojiFace}</span>
-                            <span style="font-weight:700; color:var(--color-clean);">Duración: ${task.lastDuration}s</span>
-                        </div>
-                    `;
-                }
+  // ============================================================
+  // WORKFLOW: START / DIAGNOSTIC / FINISH
+  // ============================================================
+  function startZone(zid) {
+    state.pendingDiagnosticZone = zid;
+    const z = state.zones.find(z2 => z2.id === zid);
+    document.getElementById('diag-zone-name').textContent = z ? z.name : '';
+    document.getElementById('diagnostic-modal').classList.add('open');
+  }
+  function closeDiagnostic() {
+    state.pendingDiagnosticZone = null;
+    document.getElementById('diagnostic-modal').classList.remove('open');
+  }
+  function selectDiagnostic(diag) {
+    const zid = state.pendingDiagnosticZone;
+    if (!zid) return;
+    const z = state.zones.find(z2 => z2.id === zid);
+    if (!z) return;
+    z.status = 'en-proceso';
+    z.entradaTime = Date.now();
+    z.diagnostic = diag;
+    closeDiagnostic();
+    addAuditEntry(z);
+    renderPhoneBody();
+    updateMonitoreo();
+    showToast('▶ Aseo iniciado en ' + z.name);
+  }
+  function finishZone(zid) {
+    const z = state.zones.find(z2 => z2.id === zid);
+    if (!z || z.status !== 'en-proceso') return;
+    z.salidaTime = Date.now();
+    z.status = 'limpio';
+    updateAuditEntry(z);
+    renderPhoneBody();
+    updateMonitoreo();
+    renderWorkersTable();
+    showToast('✅ ¡' + z.name + ' marcada como LIMPIA!');
+  }
 
-                let floorLabel = `${task.floor}º Piso`;
-                if (task.floor === 'comun') {
-                    floorLabel = task.type === 'cancha' ? 'Deportes' : 'Área Común';
-                }
+  // ============================================================
+  // AUDIT LOG
+  // ============================================================
+  function addAuditEntry(z) {
+    const w = state.workers.find(w2 => w2.id === z.assignedTo);
+    const entry = state.auditLog.find(e => e.zid === z.id);
+    if (!entry) {
+      state.auditLog.push({ zid: z.id, zoneName: z.name, workerName: w ? w.name : 'Sin asignar', entradaTime: z.entradaTime, diagnostic: z.diagnostic, salidaTime: null, status: 'en-proceso' });
+    }
+    renderAuditTable();
+  }
+  function updateAuditEntry(z) {
+    const entry = state.auditLog.find(e => e.zid === z.id);
+    if (entry) { entry.salidaTime = z.salidaTime; entry.status = 'limpio'; }
+    renderAuditTable();
+  }
+  function renderAuditTable() {
+    const empty = document.getElementById('audit-empty');
+    const table = document.getElementById('audit-table');
+    const tbody = document.getElementById('audit-tbody');
+    if (!tbody) return;
+    if (state.auditLog.length === 0) {
+      if (empty) empty.style.display = 'block';
+      if (table) table.style.display = 'none';
+      return;
+    }
+    if (empty) empty.style.display = 'none';
+    if (table) table.style.display = 'table';
+    tbody.innerHTML = state.auditLog.map(e => {
+      const fmtTime = (ts) => {
+        if (!ts) return '–';
+        const d = new Date(ts);
+        return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0') + ':' + d.getSeconds().toString().padStart(2,'0');
+      };
+      const dur = (e.entradaTime && e.salidaTime) ? Math.round((e.salidaTime - e.entradaTime) / 1000) : null;
+      const durStr = dur !== null ? (dur >= 60 ? Math.floor(dur/60) + 'min ' + (dur%60) + 's' : dur + 's') : '–';
+      const diagEmoji = e.diagnostic === 'excelente' ? '🙂 Excelente' : e.diagnostic === 'regular' ? '😐 Regular' : '🙁 Malo';
+      const badge = e.status === 'limpio' ? '<span class="badge badge-clean">🟢 Limpio</span>' : '<span class="badge badge-process">🟡 En Proceso</span>';
+      return '<tr><td><strong>' + e.zoneName + '</strong></td><td>' + e.workerName + '</td><td style="color:var(--process);">' + fmtTime(e.entradaTime) + '</td><td>' + diagEmoji + '</td><td style="color:var(--clean);">' + fmtTime(e.salidaTime) + '</td><td>' + durStr + '</td><td>' + badge + '</td></tr>';
+    }).join('');
+  }
 
-                card.innerHTML = `
-                    <div class="task-card-header">
-                        <div class="task-card-meta">
-                            <div class="task-card-icon">${ICONS[task.type] || ICONS.sala}</div>
-                            <div class="task-card-info">
-                                <span class="task-card-name">${task.name}</span>
-                                <span class="task-card-floor">${floorLabel}</span>
-                            </div>
-                        </div>
-                        <span class="task-card-status-badge">${statusLabel}</span>
-                    </div>
-                    ${actionArea}
-                `;
+  // ============================================================
+  // MONITOREO KPIs
+  // ============================================================
+  function updateMonitoreo() {
+    const total = state.zones.length;
+    const clean = state.zones.filter(z => z.status === 'limpio').length;
+    const proc = state.zones.filter(z => z.status === 'en-proceso').length;
+    const pend = state.zones.filter(z => z.status === 'pendiente').length;
+    const pct = Math.round((clean / total) * 100);
+    const setEl = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+    setEl('kpi-total', total);
+    setEl('kpi-clean', clean); setEl('kpi-clean2', clean);
+    setEl('kpi-process', proc); setEl('kpi-process2', proc);
+    setEl('kpi-pending', pend); setEl('kpi-pending2', pend);
+    setEl('efficiency-pct', pct + '%');
+    const circle = document.getElementById('efficiency-circle');
+    if (circle) {
+      const circ = 2 * Math.PI * 70;
+      circle.style.strokeDasharray = circ;
+      circle.style.strokeDashoffset = circ - (circ * pct / 100);
+    }
+    renderAuditTable();
+  }
 
-                grid.appendChild(card);
-            });
-        }
+  // ============================================================
+  // RESET DEMO
+  // ============================================================
+  function resetDemo() {
+    state.zones.forEach(z => {
+      z.status = 'pendiente';
+      z.entradaTime = null;
+      z.salidaTime = null;
+      z.diagnostic = null;
+    });
+    state.auditLog = [];
+    renderPhoneBody();
+    updateMonitoreo();
+    renderWorkersTable();
+    showToast('🔄 Demo reiniciada. Todas las zonas en estado Pendiente.');
+  }
 
-        // ==========================================
-        // FLUJO DE TIEMPOS Y DIAGNÓSTICO EN TERRENO
-        // ==========================================
-        function openDiagnosticModal(zoneId) {
-            state.pendingDiagnosticZoneId = zoneId;
-            document.getElementById('diagModalOverlay').classList.add('active');
-        }
+  // ============================================================
+  // PHONE CLOCK
+  // ============================================================
+  function updateClock() {
+    const el = document.getElementById('phone-time');
+    if (!el) return;
+    const now = new Date();
+    el.textContent = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  }
 
-        function submitDiagnostic(rating) {
-            const zoneId = state.pendingDiagnosticZoneId;
-            const zone = state.zones.find(z => z.id === zoneId);
-            
-            if (zone) {
-                // Registrar Entrada
-                zone.status = 'en-proceso';
-                zone.entradaTime = Date.now();
-                zone.diagnostic = rating;
-                zone.operator = state.workers[state.activeWorker].name;
-                
-                // Registrar log
-                const timestampStr = new Date().toLocaleTimeString('es-CL');
-                const emojiFace = getDiagnosticEmoji(rating);
-                
-                state.logs.unshift({
-                    zoneName: zone.name,
-                    operator: zone.operator,
-                    entrada: timestampStr,
-                    diagnostic: emojiFace,
-                    salida: '-',
-                    duracion: '-',
-                    status: 'en-proceso',
-                    badgeClass: 'en-proceso'
-                });
-                
-                showToast(`Entrada registrada en ${zone.name}. Limpieza iniciada.`, "info");
-            }
+  // ============================================================
+  // TOAST
+  // ============================================================
+  function showToast(msg, isError) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = isError ? 'error show' : 'show';
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => { t.classList.remove('show'); }, 3000);
+  }
 
-            // Cerrar modal
-            document.getElementById('diagModalOverlay').classList.remove('active');
-            state.pendingDiagnosticZoneId = null;
-            
-            renderAll();
-        }
-
-        function finishCleaning(zoneId, event) {
-            // Evitar propagación a la tarjeta
-            if (event) event.stopPropagation();
-
-            const zone = state.zones.find(z => z.id === zoneId);
-            if (zone && zone.status === 'en-proceso') {
-                // Registrar Salida
-                zone.status = 'limpio';
-                zone.salidaTime = Date.now();
-                
-                // Calcular duración exacta (segundos reales)
-                const durationSecs = Math.round((zone.salidaTime - zone.entradaTime) / 1000);
-                zone.lastDuration = durationSecs;
-
-                const entradaStr = formatTime(zone.entradaTime);
-                const salidaStr = formatTime(zone.salidaTime);
-                const emojiFace = getDiagnosticEmoji(zone.diagnostic);
-
-                // Actualizar log en la tabla (buscar el que estaba en proceso y completarlo)
-                const existingLogIndex = state.logs.findIndex(l => l.zoneName === zone.name && l.status === 'en-proceso');
-                
-                if (existingLogIndex !== -1) {
-                    state.logs[existingLogIndex].salida = salidaStr;
-                    state.logs[existingLogIndex].duracion = `${durationSecs} segundos`;
-                    state.logs[existingLogIndex].status = 'limpio';
-                    state.logs[existingLogIndex].badgeClass = 'limpio';
-                } else {
-                    // Si no se encuentra, insertar uno nuevo
-                    state.logs.unshift({
-                        zoneName: zone.name,
-                        operator: zone.operator,
-                        entrada: entradaStr,
-                        diagnostic: emojiFace,
-                        salida: salidaStr,
-                        duracion: `${durationSecs}s`,
-                        status: 'limpio',
-                        badgeClass: 'limpio'
-                    });
-                }
-
-                showToast(`Aseo finalizado en ${zone.name}. Trazabilidad guardada con éxito.`, "success");
-            }
-
-            renderAll();
-        }
-
-        // ==========================================
-        // AUDITORÍA Y TABLA DE MONITOREO (ROL JEFE)
-        // ==========================================
-        function renderAuditTable() {
-            const tbody = document.getElementById('auditTableBody');
-            tbody.innerHTML = '';
-
-            if (state.logs.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="audit-empty-state">No hay registros de auditoría aún. Cambie a la vista de operario y comience a limpiar.</td>
-                    </tr>
-                `;
-                return;
-            }
-
-            state.logs.forEach(log => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="feed-zone-badge">${log.zoneName}</td>
-                    <td class="feed-operator">${log.operator}</td>
-                    <td class="feed-timestamp">${log.entrada}</td>
-                    <td><span style="font-size: 1.15rem;">${log.diagnostic}</span></td>
-                    <td class="feed-timestamp">${log.salida}</td>
-                    <td style="font-weight: 700; color: ${log.duracion !== '-' ? 'var(--accent)' : 'var(--text-muted)'}">${log.duracion}</td>
-                    <td><span class="badge-status ${log.badgeClass}">${log.status}</span></td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // ==========================================
-        // CALCULO DE EFICIENCIA GLOBAL
-        // ==========================================
-        function updateGlobalEfficiency() {
-            const total = state.zones.length; // 51
-            const cleanCount = state.zones.filter(z => z.status === 'limpio').length;
-            const percentage = Math.round((cleanCount / total) * 100) || 0;
-
-            // Actualizar visual del Jefe
-            document.getElementById('jefeEfficiencyValue').innerHTML = `${percentage}% <span>COMPLETADO</span>`;
-            
-            const circle = document.getElementById('jefeEfficiencyCircle');
-            const circumference = 440;
-            const offset = circumference - (percentage / 100) * circumference;
-            circle.style.strokeDashoffset = offset;
-
-            // Actualizar badge cualitativo
-            const label = document.getElementById('jefeEfficiencyLabel');
-            if (percentage === 0) {
-                label.innerText = 'Rendimiento Inicial';
-                label.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                label.style.color = '#fff';
-            } else if (percentage < 35) {
-                label.innerText = 'Requiere Sanitización';
-                label.style.borderColor = 'rgba(239, 68, 68, 0.4)';
-                label.style.color = '#f87171';
-            } else if (percentage < 75) {
-                label.innerText = 'Limpieza Favorable';
-                label.style.borderColor = 'rgba(249, 115, 22, 0.4)';
-                label.style.color = '#fb923c';
-            } else {
-                label.innerText = 'Campus Sanitizado';
-                label.style.borderColor = 'rgba(16, 185, 129, 0.4)';
-                label.style.color = '#34d399';
-            }
-        }
-
-        // ==========================================
-        // UTILIDADES Y RESET
-        // ==========================================
-        function formatTime(timestamp) {
-            if (!timestamp) return '-';
-            const date = new Date(timestamp);
-            return date.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        }
-
-        function getDiagnosticEmoji(diag) {
-            if (diag === 'bueno') return '🙂';
-            if (diag === 'regular') return '😐';
-            if (diag === 'malo') return '🙁';
-            return '-';
-        }
-
-        function showToast(message, type = "info") {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            
-            let icon = "ℹ️";
-            if (type === "success") icon = "✅";
-            if (type === "warning") icon = "⚠️";
-
-            toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
-            container.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateY(10px)';
-                setTimeout(() => toast.remove(), 300);
-            }, 4000);
-        }
-
-        function resetDemo() {
-            if (confirm("¿Deseas reiniciar la simulación completa? Se borrará el historial de auditoría y se restablecerán las asignaciones originales.")) {
-                initZones();
-                initDefaultAssignments();
-                state.logs = [];
-                state.mensajeDelDia = "Hoy supervisión externa a las 14:00. Por favor, priorizar sanitización de baños y camarines.";
-                document.getElementById('msgInput').value = state.mensajeDelDia;
-                showToast("Simulador reiniciado correctamente.", "success");
-                renderAll();
-            }
-        }
-
-        // ==========================================
-        // RENDERIZADO GLOBAL
-        // ==========================================
-        function renderAll() {
-            if (state.activeRole === 'jefe') {
-                renderAssignGrid();
-                renderAuditTable();
-                updateGlobalEfficiency();
-            } else {
-                renderPhoneScreen();
-            }
-        }
-
-        // Ejecutar al cargar el documento
-        document.addEventListener("DOMContentLoaded", () => {
-            initZones();
-            initDefaultAssignments();
-            
-            // Inicializar textarea
-            document.getElementById('msgInput').value = state.mensajeDelDia;
-            
-            // Render inicial
-            renderAll();
-        });
-    </script>
+  // ============================================================
+  // BOOTSTRAP
+  // ============================================================
+  document.addEventListener('DOMContentLoaded', () => {
+    initZones();
+    initWorkers();
+    updateClock();
+    setInterval(updateClock, 30000);
+    // Init textarea from state
+    const msgInput = document.getElementById('msg-input');
+    if (msgInput) msgInput.value = state.mensajeDelDia;
+  });
+</script>
 </body>
 </html>
