@@ -760,6 +760,24 @@
       </div>
     </div>
 
+    <!-- USUARIOS REGISTRADOS -->
+    <div class="j-card">
+      <div class="j-card-title" style="justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
+        <span style="display:flex;align-items:center;gap:0.5rem;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Usuarios Registrados en el Sistema
+        </span>
+        <span style="font-size:0.72rem;color:var(--text-muted);font-weight:400;">💾 Guardados en tu navegador</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr><th>#</th><th>Nombre</th><th>Correo Electrónico</th><th>Contraseña</th><th>Fecha Registro</th><th>Acciones</th></tr>
+        </thead>
+        <tbody id="users-table-body"></tbody>
+      </table>
+    </div>
+    </div>
+
     <!-- TAB: PERSONAL -->
     <div class="jefe-tab-content" id="jefe-tab-personal">
       <div class="j-card">
@@ -966,7 +984,7 @@
     currentView: 'auth',
     currentUser: null,
     mensajeDelDia: '¡Buenos días equipo! Recuerden revisar con especial cuidado los baños del 2do piso. Hay visita institucional esta tarde. ¡Muchas gracias! 💪',
-    users: [{ email: 'admin@valtek.cl', password: '1234', name: 'Admin Demo' }],
+    users: [],
     workers: [],
     zones: [],
     activePhoneWorker: null,
@@ -1073,8 +1091,10 @@
     if (pass.length < 6) { err.textContent = '✖ La contraseña debe tener al menos 6 caracteres.'; err.classList.add('show'); return; }
     if (pass !== confirm) { err.textContent = '✖ Las contraseñas no coinciden. Verifica e intenta nuevamente.'; err.classList.add('show'); return; }
     if (state.users.find(u => u.email === email)) { err.textContent = '✖ Este correo ya está registrado.'; err.classList.add('show'); return; }
-    state.users.push({ email, password: pass, name });
+    state.users.push({ email, password: pass, name, role: 'jefe', createdAt: new Date().toLocaleDateString('es-CL') });
+    saveUsers();
     err.classList.remove('show');
+    renderUsersTable();
     showToast('✅ Cuenta creada exitosamente. ¡Bienvenido/a!');
     switchAuthTab('login');
     document.getElementById('login-email').value = email;
@@ -1146,10 +1166,62 @@
     renderJefeAll();
   }
   function renderJefeAll() {
+    renderUsersTable();
     renderWorkersTable();
     renderWorkersSelect();
     renderAssignGrid();
     updateMonitoreo();
+  }
+
+  // ============================================================
+  // INSTITUTION
+  // ============================================================
+  // ============================================================
+  // PERSISTENCIA DE USUARIOS (localStorage)
+  // ============================================================
+  const DEMO_USER = { email: 'admin@valtek.cl', password: '1234', name: 'Admin Demo', role: 'jefe', createdAt: 'Demo' };
+
+  function saveUsers() {
+    const toSave = state.users.filter(u => u.email !== 'admin@valtek.cl');
+    localStorage.setItem('valtek_users', JSON.stringify(toSave));
+  }
+  function loadUsers() {
+    const stored = localStorage.getItem('valtek_users');
+    const parsed = stored ? JSON.parse(stored) : [];
+    state.users = [DEMO_USER, ...parsed];
+  }
+  function renderUsersTable() {
+    const tbody = document.getElementById('users-table-body');
+    if (!tbody) return;
+    if (state.users.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:1.5rem;">Sin usuarios registrados.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = state.users.map((u, i) => {
+      const isDemo = u.email === 'admin@valtek.cl';
+      const passMask = isDemo ? '••••' : '•'.repeat(Math.min(u.password.length, 8));
+      const badge = u.role === 'jefe'
+        ? '<span class="badge badge-process">👔 Jefe</span>'
+        : '<span class="badge badge-clean">📱 Trabajador</span>';
+      const deleteBtn = isDemo
+        ? '<span style="color:var(--text-muted);font-size:0.78rem;">Demo (protegido)</span>'
+        : '<button class="btn-sm btn-red" onclick="deleteUser(\'' + u.email + '\')">🗑 Eliminar</button>';
+      return '<tr>' +
+        '<td style="color:var(--text-muted);">' + (i + 1) + '</td>' +
+        '<td><strong>' + u.name + '</strong>' + (isDemo ? ' <span style="font-size:0.7rem;color:var(--accent);">★ Demo</span>' : '') + '</td>' +
+        '<td style="color:var(--primary);">' + u.email + '</td>' +
+        '<td style="letter-spacing:0.1em;color:var(--text-muted);">' + passMask + '</td>' +
+        '<td style="color:var(--text-muted);">' + (u.createdAt || '–') + '</td>' +
+        '<td>' + deleteBtn + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+  function deleteUser(email) {
+    if (email === 'admin@valtek.cl') return;
+    state.users = state.users.filter(u => u.email !== email);
+    saveUsers();
+    renderUsersTable();
+    showToast('🗑 Usuario eliminado del sistema.');
   }
 
   // ============================================================
@@ -1503,8 +1575,10 @@
   // BOOTSTRAP
   // ============================================================
   document.addEventListener('DOMContentLoaded', () => {
+    loadUsers();
     initZones();
     initWorkers();
+    renderUsersTable();
     updateClock();
     setInterval(updateClock, 30000);
     // Init textarea from state
