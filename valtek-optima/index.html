@@ -56,6 +56,7 @@
             --color-pisoComun-glow: rgba(249, 115, 22, 0.25);
 
             --color-clean: #10b981;
+            --color-process: #f59e0b;
             --color-dirty: #ef4444;
 
             --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -170,24 +171,6 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
             background: linear-gradient(135deg, #4f46e5 0%, var(--primary) 100%);
-        }
-
-        /* Hamburger menu */
-        .menu-toggle {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-            border: none;
-            background: transparent;
-        }
-
-        .menu-toggle span {
-            width: 25px;
-            height: 3px;
-            background-color: var(--text-main);
-            border-radius: 3px;
-            transition: var(--transition-smooth);
         }
 
         /* ==========================================================================
@@ -345,7 +328,7 @@
             transform: translateY(-2px);
         }
 
-        /* Mockup 3D de la Plataforma en Hero */
+        /* Mockup de la plataforma en Hero */
         .hero-mockup {
             position: relative;
             display: flex;
@@ -518,7 +501,6 @@
             -webkit-backdrop-filter: blur(10px);
         }
 
-        /* Efecto de borde neón al hover */
         .card-premium::before {
             content: '';
             position: absolute;
@@ -588,389 +570,859 @@
         }
 
         /* ==========================================================================
-           7. DEMO INTERACTIVA (PANEL DE CONTROL DE ALTA FIDELIDAD)
+           7. BARRA DEL SIMULADOR DE ROLES (COMPONENTE PRINCIPAL PARA LA NUEVA DEMO)
+           ========================================================================== */
+        .simulator-role-bar {
+            background: linear-gradient(135deg, #111428 0%, #0c0f20 100%);
+            border: 1.5px solid rgba(99, 102, 241, 0.25);
+            border-radius: var(--border-radius-md);
+            padding: 1.25rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 15px rgba(99, 102, 241, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .sim-title-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sim-indicator {
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent);
+            animation: pulse-cyan 1.5s infinite;
+        }
+
+        @keyframes pulse-cyan {
+            0% { transform: scale(0.95); opacity: 0.6; }
+            50% { transform: scale(1.15); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.6; }
+        }
+
+        .sim-title {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            color: #fff;
+        }
+
+        .sim-role-buttons {
+            display: flex;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            padding: 4px;
+            border-radius: 10px;
+            gap: 4px;
+        }
+
+        .role-tab-btn {
+            background: transparent;
+            border: none;
+            outline: none;
+            padding: 0.6rem 1.5rem;
+            font-family: var(--font-primary);
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .role-tab-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%);
+            color: #fff;
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+
+        .role-tab-btn:not(.active):hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        /* ==========================================================================
+           8. DEMO INTERACTIVA (PANEL DE ROL JEFE / ADMINISTRADOR)
            ========================================================================== */
         .demo-section {
             padding: 7rem 2rem;
-            max-width: 1200px;
+            max-width: 1240px;
             margin: 0 auto;
         }
 
-        .demo-card {
-            background: rgba(10, 14, 28, 0.7);
-            border: 1px solid rgba(99, 102, 241, 0.15);
-            border-radius: var(--border-radius-lg);
-            padding: 3rem 2.5rem;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(99, 102, 241, 0.05);
-            margin-bottom: 3rem;
-            position: relative;
+        .view-pane {
+            display: none;
         }
 
-        /* Encabezado del panel */
-        .demo-panel-header {
+        .view-pane.active {
+            display: block;
+        }
+
+        /* Layout Jefe */
+        .jefe-layout {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .jefe-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .jefe-card {
+            background: rgba(10, 14, 28, 0.7);
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .jefe-card-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #fff;
+        }
+
+        /* Formulario mensaje del dia */
+        .msg-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .msg-textarea {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--border-radius-sm);
+            padding: 1rem;
+            color: #fff;
+            font-family: var(--font-primary);
+            font-size: 0.9rem;
+            resize: none;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .msg-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .btn-action-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%);
+            border: none;
+            outline: none;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            box-shadow: 0 4px 12px var(--primary-glow);
+            transition: var(--transition-smooth);
+            align-self: flex-end;
+        }
+
+        .btn-action-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Asignador de Zonas */
+        .assign-controls {
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 1.5rem;
-            border-bottom: 1px solid var(--card-border);
-            padding-bottom: 2rem;
-            margin-bottom: 2rem;
+            gap: 1rem;
         }
 
-        .panel-meta-info {
+        .assign-picker {
             display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
+            align-items: center;
+            gap: 0.75rem;
         }
 
-        .panel-badge {
-            background: linear-gradient(135deg, rgba(0, 242, 254, 0.15) 0%, rgba(99, 102, 241, 0.15) 100%);
-            border: 1px solid rgba(0, 242, 254, 0.3);
-            color: var(--accent);
-            padding: 0.3rem 0.8rem;
-            border-radius: 4px;
+        .assign-select {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            color: #fff;
+            font-weight: 700;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .btn-group-sm {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-action-sec-sm {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-action-sec-sm:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        /* Lista de asignaciones */
+        .assign-list-scroll {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+        }
+
+        .assign-grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .assign-checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 0.6rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: var(--transition-smooth);
+            user-select: none;
+        }
+
+        .assign-checkbox-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .assign-checkbox-item input {
+            cursor: pointer;
+            accent-color: var(--accent);
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Auditoria del Jefe */
+        .audit-card {
+            grid-column: 1 / -1;
+        }
+
+        .audit-table-container {
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: var(--border-radius-md);
+            background: rgba(0, 0, 0, 0.25);
+        }
+
+        .audit-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            text-align: left;
+        }
+
+        .audit-table th {
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(12, 16, 32, 0.95);
+        }
+
+        .audit-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            color: var(--text-main);
+        }
+
+        .audit-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .audit-empty-state {
+            padding: 3rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Badges de Estado */
+        .badge-status {
+            padding: 0.25rem 0.6rem;
+            border-radius: 50px;
             font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            align-self: flex-start;
+            letter-spacing: 0.02em;
+            display: inline-block;
         }
 
-        .panel-title {
-            font-family: var(--font-display);
-            font-size: 2rem;
-            font-weight: 800;
-        }
-
-        .panel-subtitle {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        /* Selector de Operaria */
-        .operator-selector {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--card-border);
-            padding: 0.6rem 1.25rem;
-            border-radius: var(--border-radius-md);
-        }
-
-        .operator-label {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .operator-select {
-            background: transparent;
-            border: none;
-            color: #fff;
-            font-weight: 700;
-            font-size: 0.95rem;
-            outline: none;
-            cursor: pointer;
-            padding-right: 0.5rem;
-            font-family: var(--font-primary);
-        }
-
-        .operator-select option {
-            background: var(--bg-main);
-            color: #fff;
-        }
-
-        /* Acordeones */
-        .accordion-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-        }
-
-        .accordion-item {
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius-md);
-            overflow: hidden;
-            background: rgba(255, 255, 255, 0.01);
-            transition: var(--transition-smooth);
-        }
-
-        .accordion-item.active {
-            border-color: rgba(99, 102, 241, 0.3);
-            background: rgba(255, 255, 255, 0.02);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .accordion-header {
-            width: 100%;
-            padding: 1.25rem 1.5rem;
-            background: rgba(255, 255, 255, 0.02);
-            border: none;
-            outline: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            color: #fff;
-            transition: var(--transition-smooth);
-        }
-
-        .accordion-header:hover {
-            background: rgba(255, 255, 255, 0.04);
-        }
-
-        .accordion-header-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .accordion-icon-wrapper {
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-        }
-
-        .accordion-title {
-            font-family: var(--font-display);
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
-
-        .accordion-header-right {
-            display: flex;
-            align-items: center;
-            gap: 1.25rem;
-        }
-
-        .accordion-progress-badge {
-            background: rgba(99, 102, 241, 0.15);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            color: #a5b4fc;
-            padding: 0.25rem 0.75rem;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            transition: var(--transition-smooth);
-        }
-
-        .accordion-item.active .accordion-progress-badge {
-            background: var(--primary);
-            color: #fff;
-            border-color: transparent;
-            box-shadow: 0 0 10px var(--primary-glow);
-        }
-
-        .accordion-chevron {
-            font-size: 0.9rem;
-            transition: transform 0.3s ease;
-            color: var(--text-muted);
-        }
-
-        .accordion-item.active .accordion-chevron {
-            transform: rotate(180deg);
-            color: #fff;
-        }
-
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .accordion-item.active .accordion-content {
-            max-height: 2000px; /* Suficiente para acomodar las zonas */
-        }
-
-        .accordion-inner-panel {
-            padding: 1.5rem;
-            border-top: 1px solid var(--card-border);
-        }
-
-        /* Cuadrículas de botones */
-        .zones-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 1rem;
-        }
-
-        /* Botón de Zona de Aseo */
-        .zone-btn {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1.5px solid var(--card-border);
-            border-radius: var(--border-radius-sm);
-            padding: 1rem 0.5rem;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--text-muted);
-            transition: var(--transition-smooth);
-            position: relative;
-            outline: none;
-        }
-
-        .zone-btn:hover {
+        .badge-status.pendiente {
             background: rgba(255, 255, 255, 0.05);
-            transform: translateY(-2px);
-        }
-
-        .zone-floor-tag {
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 0.15rem 0.4rem;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .zone-svg {
-            width: 24px;
-            height: 24px;
-            transition: var(--transition-smooth);
-            stroke-width: 2.2;
-        }
-
-        .zone-name {
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: #fff;
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%;
-        }
-
-        .zone-status-text {
-            font-size: 0.72rem;
-            font-weight: 600;
-            padding: 0.2rem 0.5rem;
-            border-radius: 50px;
-            background: rgba(239, 68, 68, 0.15);
-            color: #fc8181;
-            transition: var(--transition-smooth);
-        }
-
-        .zone-time {
-            font-size: 0.65rem;
             color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Código de Colores / Estilos Específicos de los Pisos */
-        
-        /* 1er Piso - Azul */
-        .zone-btn.floor-1 {
-            border-color: rgba(0, 198, 255, 0.2);
-        }
-        .zone-btn.floor-1:hover {
-            box-shadow: 0 0 10px var(--color-piso1-glow);
-            border-color: rgba(0, 198, 255, 0.4);
-        }
-        .zone-btn.floor-1 .zone-floor-tag {
-            color: var(--color-piso1);
-            background: rgba(0, 198, 255, 0.1);
-        }
-        .zone-btn.floor-1 .zone-svg {
-            color: var(--color-piso1);
+        .badge-status.en-proceso {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbd38d;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            animation: pulse-text-amber 2s infinite;
         }
 
-        /* 2do Piso - Verde */
-        .zone-btn.floor-2 {
-            border-color: rgba(0, 242, 96, 0.2);
-        }
-        .zone-btn.floor-2:hover {
-            box-shadow: 0 0 10px var(--color-piso2-glow);
-            border-color: rgba(0, 242, 96, 0.4);
-        }
-        .zone-btn.floor-2 .zone-floor-tag {
-            color: var(--color-piso2);
-            background: rgba(0, 242, 96, 0.1);
-        }
-        .zone-btn.floor-2 .zone-svg {
-            color: var(--color-piso2);
+        @keyframes pulse-text-amber {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
         }
 
-        /* 3er Piso - Morado */
-        .zone-btn.floor-3 {
-            border-color: rgba(192, 132, 252, 0.2);
-        }
-        .zone-btn.floor-3:hover {
-            box-shadow: 0 0 10px var(--color-piso3-glow);
-            border-color: rgba(192, 132, 252, 0.4);
-        }
-        .zone-btn.floor-3 .zone-floor-tag {
-            color: var(--color-piso3);
-            background: rgba(192, 132, 252, 0.1);
-        }
-        .zone-btn.floor-3 .zone-svg {
-            color: var(--color-piso3);
+        .badge-status.limpio {
+            background: rgba(16, 185, 129, 0.15);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
-        /* Áreas Comunes & Deportes - Naranja */
-        .zone-btn.floor-comun {
-            border-color: rgba(249, 115, 22, 0.2);
-        }
-        .zone-btn.floor-comun:hover {
-            box-shadow: 0 0 10px var(--color-pisoComun-glow);
-            border-color: rgba(249, 115, 22, 0.4);
-        }
-        .zone-btn.floor-comun .zone-floor-tag {
-            color: var(--color-pisoComun);
-            background: rgba(249, 115, 22, 0.1);
-        }
-        .zone-btn.floor-comun .zone-svg {
-            color: var(--color-pisoComun);
-        }
-
-        /* ESTADO LIMPIO (Modificaciones Dinámicas) */
-        .zone-btn.clean {
-            background: rgba(16, 185, 129, 0.08) !important;
-            border-color: var(--color-clean) !important;
-        }
-
-        .zone-btn.clean.floor-1 { box-shadow: 0 0 15px rgba(0, 198, 255, 0.3) !important; }
-        .zone-btn.clean.floor-2 { box-shadow: 0 0 15px rgba(0, 242, 96, 0.3) !important; }
-        .zone-btn.clean.floor-3 { box-shadow: 0 0 15px rgba(192, 132, 252, 0.3) !important; }
-        .zone-btn.clean.floor-comun { box-shadow: 0 0 15px rgba(249, 115, 22, 0.3) !important; }
-
-        .zone-btn.clean .zone-status-text {
-            background: rgba(16, 185, 129, 0.15) !important;
-            color: #6ee7b7 !important;
-        }
-
-        .zone-btn.clean .zone-svg {
-            transform: scale(1.1);
-            filter: drop-shadow(0 0 5px currentColor);
-        }
-
-        /* Agrupamientos específicos de Baños (Sub-secciones internas) */
-        .bathroom-subgroup-title {
-            grid-column: 1 / -1;
-            font-family: var(--font-display);
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            margin: 1.5rem 0 0.5rem 0;
+        /* Reset all button */
+        .btn-reset-container {
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding-bottom: 0.25rem;
-        }
-
-        .bathroom-subgroup-title:first-child {
-            margin-top: 0;
+            justify-content: flex-end;
+            margin-top: 1rem;
         }
 
         /* ==========================================================================
-           8. PANEL DEL SUPERVISOR EN TIEMPO REAL (MÉTRICAS Y FEED)
+           9. DEMO INTERACTIVA (PANEL DE OPERARIO / TRABAJADOR)
+           ========================================================================== */
+        .phone-emulator-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .phone-frame {
+            background: #1e293b;
+            border: 12px solid #0f172a;
+            border-radius: 40px;
+            width: 100%;
+            max-width: 440px;
+            min-height: 750px;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6), 0 0 30px rgba(99, 102, 241, 0.08);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Notch del teléfono */
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 20px;
+            background-color: #0f172a;
+            border-radius: 0 0 16px 16px;
+            z-index: 100;
+        }
+
+        /* Contenido de la pantalla */
+        .phone-screen {
+            background-color: #080a14;
+            flex: 1;
+            padding: 2.2rem 1.25rem 1.5rem 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* Status bar simulada */
+        .phone-status-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            padding: 0 0.5rem;
+        }
+
+        .phone-status-icons {
+            display: flex;
+            gap: 4px;
+        }
+
+        /* Header del operario */
+        .phone-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+        }
+
+        .phone-header-user {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
+        }
+
+        .phone-header-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .phone-header-name {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .phone-operator-select {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.8rem;
+            padding: 0.35rem 0.6rem;
+            border-radius: 6px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Banner de Mensaje del Dia */
+        .phone-message-banner {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(0, 242, 254, 0.08) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: 12px;
+            padding: 0.85rem 1.1rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+
+        .phone-message-icon {
+            font-size: 1.2rem;
+            color: var(--accent);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        .phone-message-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .phone-message-title {
+            font-size: 0.75rem;
+            color: var(--accent);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .phone-message-text {
+            font-size: 0.825rem;
+            color: var(--text-main);
+            line-height: 1.4;
+            font-style: italic;
+        }
+
+        /* Grid de tareas del operario */
+        .phone-tasks-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            margin-top: 0.5rem;
+            border-left: 3px solid var(--accent);
+            padding-left: 0.5rem;
+        }
+
+        .phone-tasks-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            flex: 1;
+        }
+
+        /* Botón Táctil de Operario (Zero-Friction Card) */
+        .phone-task-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1.5px solid var(--card-border);
+            border-radius: 14px;
+            padding: 1.1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            position: relative;
+            user-select: none;
+        }
+
+        .phone-task-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .task-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .task-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .task-card-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--accent);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .task-card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
+        }
+
+        .task-card-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #fff;
+        }
+
+        .task-card-floor {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .task-card-status-badge {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+        }
+
+        /* Estados de Tarjetas de Tareas */
+
+        /* 1er Piso */
+        .phone-task-card.floor-1 .task-card-icon { color: var(--color-piso1); border-color: rgba(0, 198, 255, 0.2); }
+        .phone-task-card.floor-1 { border-color: rgba(0, 198, 255, 0.12); }
+        /* 2do Piso */
+        .phone-task-card.floor-2 .task-card-icon { color: var(--color-piso2); border-color: rgba(0, 242, 96, 0.2); }
+        .phone-task-card.floor-2 { border-color: rgba(0, 242, 96, 0.12); }
+        /* 3er Piso */
+        .phone-task-card.floor-3 .task-card-icon { color: var(--color-piso3); border-color: rgba(192, 132, 252, 0.2); }
+        .phone-task-card.floor-3 { border-color: rgba(192, 132, 252, 0.12); }
+        /* Común */
+        .phone-task-card.floor-comun .task-card-icon { color: var(--color-pisoComun); border-color: rgba(249, 115, 22, 0.2); }
+        .phone-task-card.floor-comun { border-color: rgba(249, 115, 22, 0.12); }
+
+        /* Estado EN PROCESO (Operario en la sala) */
+        .phone-task-card.in-process {
+            background: rgba(245, 158, 11, 0.08) !important;
+            border-color: var(--color-process) !important;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.15);
+            animation: pulse-yellow-border 2s infinite;
+        }
+
+        @keyframes pulse-yellow-border {
+            0% { border-color: rgba(245, 158, 11, 0.5); }
+            70% { border-color: rgba(245, 158, 11, 1); }
+            100% { border-color: rgba(245, 158, 11, 0.5); }
+        }
+
+        .phone-task-card.in-process .task-card-status-badge {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbd38d;
+        }
+
+        .task-card-details-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 0.6rem;
+            margin-top: 0.2rem;
+        }
+
+        .task-detail-time {
+            font-family: monospace;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .task-btn-finish {
+            width: 100%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            outline: none;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 0.65rem;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+            transition: var(--transition-smooth);
+            text-align: center;
+        }
+
+        .task-btn-finish:hover {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            box-shadow: 0 6px 14px rgba(16, 185, 129, 0.45);
+        }
+
+        /* Estado LIMPIO */
+        .phone-task-card.clean-status {
+            background: rgba(16, 185, 129, 0.06) !important;
+            border-color: var(--color-clean) !important;
+        }
+
+        .phone-task-card.clean-status .task-card-status-badge {
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+        }
+
+        .phone-task-card.clean-status .task-card-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-clean);
+        }
+
+        /* Empty state móvil */
+        .phone-empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 3rem 1.5rem;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px dashed rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .phone-empty-icon {
+            font-size: 3rem;
+            filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.2));
+        }
+
+        .phone-empty-title {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .phone-empty-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* ==========================================================================
+           10. MODAL DE DIAGNÓSTICO (TACTIL & EMOTIVO)
+           ========================================================================== */
+        .diag-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(4, 6, 15, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .diag-modal-overlay.active {
+            display: flex;
+        }
+
+        .diag-modal {
+            background: #0d1127;
+            border: 1.5px solid rgba(99, 102, 241, 0.3);
+            border-radius: var(--border-radius-lg);
+            width: 90%;
+            max-width: 400px;
+            padding: 2.25rem 2rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 25px rgba(99, 102, 241, 0.2);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            animation: modalScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalScale {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .diag-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .diag-title {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .diag-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .diag-emojis-container {
+            display: flex;
+            justify-content: space-around;
+            gap: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .diag-emoji-btn {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1.5px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius-md);
+            padding: 1.25rem 1rem;
+            flex: 1;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            outline: none;
+        }
+
+        .diag-emoji-btn:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .diag-emoji-face {
+            font-size: 2rem;
+            transition: var(--transition-smooth);
+        }
+
+        .diag-emoji-btn:hover .diag-emoji-face {
+            transform: scale(1.15);
+        }
+
+        .diag-emoji-lbl {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            transition: var(--transition-smooth);
+        }
+
+        /* Específicos para caritas al hover */
+        .diag-emoji-btn.excelente:hover {
+            border-color: #10b981;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+        }
+        .diag-emoji-btn.excelente:hover .diag-emoji-lbl { color: #10b981; }
+
+        .diag-emoji-btn.regular:hover {
+            border-color: #f59e0b;
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+        }
+        .diag-emoji-btn.regular:hover .diag-emoji-lbl { color: #f59e0b; }
+
+        .diag-emoji-btn.malo:hover {
+            border-color: #ef4444;
+            box-shadow: 0 0 12px rgba(239, 104, 104, 0.3);
+        }
+        .diag-emoji-btn.malo:hover .diag-emoji-lbl { color: #ef4444; }
+
+        /* ==========================================================================
+           11. WIDGET DE EFICIENCIA Y TABLA DE AUDITORIA
            ========================================================================== */
         .supervisor-metrics {
             margin-top: 3rem;
@@ -985,7 +1437,6 @@
             }
         }
 
-        /* Widget de Eficiencia */
         .efficiency-widget {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--card-border);
@@ -1001,13 +1452,12 @@
 
         .efficiency-title {
             font-family: var(--font-display);
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 700;
             color: #fff;
             text-align: center;
         }
 
-        /* Indicador circular */
         .circle-progress-wrapper {
             position: relative;
             width: 150px;
@@ -1064,150 +1514,8 @@
             font-weight: 600;
         }
 
-        /* Feed en vivo */
-        .live-feed-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius-md);
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-        }
-
-        .feed-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .feed-title {
-            font-family: var(--font-display);
-            font-size: 1.15rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .feed-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--color-clean);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--color-clean);
-            animation: pulse-green 1.5s infinite;
-        }
-
-        @keyframes pulse-green {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
-        }
-
-        .feed-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn-clear-feed {
-            background: transparent;
-            border: 1px solid var(--card-border);
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.35rem 0.75rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-        }
-
-        .btn-clear-feed:hover {
-            border-color: rgba(255, 255, 255, 0.15);
-            color: #fff;
-        }
-
-        .feed-table-container {
-            overflow-y: auto;
-            max-height: 250px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
-            background: rgba(0, 0, 0, 0.15);
-            padding-right: 4px;
-        }
-
-        /* Scrollbar styling */
-        .feed-table-container::-webkit-scrollbar {
-            width: 6px;
-        }
-        .feed-table-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .feed-table-container::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-        }
-        .feed-table-container::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.25);
-        }
-
-        .feed-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.825rem;
-            text-align: left;
-        }
-
-        .feed-table th {
-            color: var(--text-muted);
-            font-weight: 600;
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            position: sticky;
-            top: 0;
-            background: rgba(10, 14, 28, 0.95);
-        }
-
-        .feed-table td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-            color: var(--text-main);
-        }
-
-        .feed-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .feed-timestamp {
-            color: var(--accent);
-            font-family: monospace;
-            font-weight: 600;
-        }
-
-        .feed-zone-badge {
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .feed-operator {
-            color: var(--text-muted);
-        }
-
-        .feed-status {
-            color: var(--color-clean);
-            font-weight: 600;
-        }
-
-        .feed-empty {
-            padding: 2rem;
-            text-align: center;
-            color: var(--text-muted);
-            font-style: italic;
-            font-size: 0.85rem;
-        }
-
         /* ==========================================================================
-           9. FOOTER
+           12. FOOTER E INTERFAZ GLOBAL
            ========================================================================== */
         .footer {
             border-top: 1px solid var(--card-border);
@@ -1261,41 +1569,41 @@
             font-size: 0.8rem;
         }
 
-        /* ==========================================================================
-           10. RESPONSIVE MEDIA QUERIES
-           ========================================================================== */
-        @media (max-width: 1024px) {
-            .hero-title { font-size: 3rem; }
-            .hero-subtitle { font-size: 1.3rem; }
-            .hero-container { gap: 2rem; }
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            z-index: 9999;
         }
 
-        @media (max-width: 768px) {
-            .navbar-container { padding: 1rem 1.5rem; }
-            .nav-links {
-                display: none; /* Se simplifica para la demo */
-            }
-            .menu-toggle { display: flex; }
-            .hero { padding-top: 7rem; }
-            .hero-container {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            .hero-content {
-                align-items: center;
-            }
-            .hero-badge { align-self: center; }
-            .hero-cta-group { justify-content: center; }
-            .hero-mockup { display: none; } /* Ocultar mockup en móviles para priorizar espacio */
-            .section-title { font-size: 2rem; }
-            .demo-card { padding: 1.5rem 1rem; }
-            .zones-grid {
-                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            }
-            .zone-btn {
-                padding: 0.75rem 0.25rem;
-            }
+        .toast {
+            background: #0f1426;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            animation: toastSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
+
+        @keyframes toastSlideIn {
+            0% { transform: translateX(100%); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        .toast.success { border-left-color: var(--color-clean); }
+        .toast.info { border-left-color: var(--accent); }
+        .toast.warning { border-left-color: var(--color-process); }
     </style>
 </head>
 <body>
@@ -1306,7 +1614,6 @@
     <nav class="navbar">
         <div class="navbar-container">
             <a href="#" class="logo">
-                <!-- SVG Logo personalizado para Valtek Optima -->
                 <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M50 5 L90 25 L90 75 L50 95 L10 75 L10 25 Z" fill="#0F1426" stroke="#00f2fe" stroke-width="6"/>
                     <path d="M50 20 L78 35 L78 65 L50 80 L22 65 L22 35 Z" fill="rgba(99, 102, 241, 0.2)" stroke="#6366f1" stroke-width="4"/>
@@ -1352,7 +1659,6 @@
             </div>
             
             <div class="hero-mockup">
-                <!-- Card de previsualización animada / 3D mockup del panel -->
                 <div class="mockup-card">
                     <div class="mockup-header">
                         <div class="mockup-dots">
@@ -1393,7 +1699,7 @@
 
     <!-- ==========================================================================
        SECCIÓN "EL PROBLEMA"
-       ========================================================================== */ -->
+       ========================================================================== -->
     <section id="problema" class="problema">
         <div class="section-header">
             <span class="section-tag">Los Desafíos Actuales</span>
@@ -1402,7 +1708,6 @@
         </div>
         
         <div class="cards-grid">
-            <!-- Tarjeta 1: Pérdida de Tiempo -->
             <div class="card-premium">
                 <div class="card-icon-wrapper">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -1414,7 +1719,6 @@
                 <p class="card-desc">Horas muertas provocadas por la falta de asignación clara y rutas ineficientes. El personal de aseo pierde hasta un 30% del día decidiendo qué zona limpiar.</p>
             </div>
             
-            <!-- Tarjeta 2: Falta de Trazabilidad -->
             <div class="card-premium">
                 <div class="card-icon-wrapper">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -1429,7 +1733,6 @@
                 <p class="card-desc">Imposibilidad de auditar y verificar el historial. Los supervisores no pueden comprobar si un área se limpió hace 20 minutos o hace 4 horas, arriesgando la higiene del campus.</p>
             </div>
             
-            <!-- Tarjeta 3: Injusticia Laboral -->
             <div class="card-premium">
                 <div class="card-icon-wrapper">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -1447,7 +1750,7 @@
 
     <!-- ==========================================================================
        SECCIÓN "BENEFICIOS COMPROBADOS"
-       ========================================================================== */ -->
+       ========================================================================== -->
     <section id="beneficios" class="beneficios">
         <div class="section-header">
             <span class="section-tag">Nuestras Soluciones</span>
@@ -1456,7 +1759,6 @@
         </div>
         
         <div class="cards-grid">
-            <!-- Beneficio 1: Control de Rendimiento -->
             <div class="card-premium">
                 <div class="card-icon-wrapper">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -1469,7 +1771,6 @@
                 <p class="card-desc">Reportes automáticos integrados con "timestamps" para medir la productividad del campus y eliminar pérdidas de tiempo.</p>
             </div>
             
-            <!-- Beneficio 2: Interfaz Zero-Friction -->
             <div class="card-premium">
                 <div class="card-icon-wrapper">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -1481,7 +1782,6 @@
                 <p class="card-desc">Paneles colapsables táctiles optimizados para el uso en el terreno escolar que aumentan la motivación y facilitan la carga de datos del personal de aseo.</p>
             </div>
             
-            <!-- Beneficio 3: Navegación Visual Universal -->
             <div class="card-premium">
                 <div class="card-icon-wrapper">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -1495,191 +1795,255 @@
     </section>
 
     <!-- ==========================================================================
-       SECCIÓN DE DEMO INTERACTIVA (PANEL DE CONTROL)
-       ========================================================================== */ -->
+       SECCIÓN DE DEMO INTERACTIVA (SIMULADOR DE ROLES MULTI-USUARIO)
+       ========================================================================== -->
     <section id="demo" class="demo-section">
         <div class="section-header">
-            <span class="section-tag">Demostración en Vivo</span>
-            <h2 class="section-title">Panel Táctil de Operaciones</h2>
-            <p class="section-desc">Interactúe con el panel digital simulado de 51 zonas de aseo. Presione cualquier botón para marcar una zona como limpia y vea cómo reacciona el Panel de Supervisión.</p>
+            <span class="section-tag">Simulador SaaS Multirrol</span>
+            <h2 class="section-title">Consola de Simulación Valtek Optima</h2>
+            <p class="section-desc">Selecciona un rol en la barra inferior para interactuar con la plataforma. El Jefe configura y audita; el Trabajador realiza la limpieza en terreno desde su celular.</p>
         </div>
         
-        <div class="demo-card">
-            <!-- Encabezado del Panel -->
-            <div class="demo-panel-header">
-                <div class="panel-meta-info">
-                    <span class="panel-badge">MODO DEMO INTERACTIVO</span>
-                    <h3 class="panel-title">Consola del Operario</h3>
-                    <p class="panel-subtitle">Campus Central - Educación Superior / Escolar</p>
-                </div>
-                
-                <div class="operator-selector">
-                    <span class="operator-label">OPERARIO:</span>
-                    <select id="operatorSelect" class="operator-select">
-                        <option value="Tía María">Tía María</option>
-                        <option value="Tía Carmen">Tía Carmen</option>
-                        <option value="Tía Rosa">Tía Rosa</option>
-                        <option value="Tía Patricia">Tía Patricia</option>
-                    </select>
-                </div>
+        <!-- Barra de Roles del Simulador -->
+        <div class="simulator-role-bar">
+            <div class="sim-title-group">
+                <span class="sim-indicator"></span>
+                <span class="sim-title">CONSOLA MULTI-ROL EN TIEMPO REAL</span>
             </div>
-            
-            <!-- Contenedor de Acordeones -->
-            <div class="accordion-container">
-                
-                <!-- ACORDEÓN 1: SALAS DE CLASES -->
-                <div class="accordion-item active" id="accordion-salas">
-                    <button class="accordion-header" onclick="toggleAccordion('accordion-salas')">
-                        <div class="accordion-header-left">
-                            <span class="accordion-icon-wrapper">
-                                <!-- Icono Pizarra SVG -->
-                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-                                    <line x1="8" y1="21" x2="16" y2="21" />
-                                    <line x1="12" y1="17" x2="12" y2="21" />
-                                </svg>
-                            </span>
-                            <span class="accordion-title">Salas de Clases</span>
-                        </div>
-                        <div class="accordion-header-right">
-                            <span class="accordion-progress-badge" id="badge-salas">0 / 30 Limpios</span>
-                            <span class="accordion-chevron">▼</span>
-                        </div>
-                    </button>
-                    <div class="accordion-content">
-                        <div class="accordion-inner-panel">
-                            <div class="zones-grid" id="grid-salas">
-                                <!-- Generado por JS -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- ACORDEÓN 2: CANCHAS DEPORTIVAS -->
-                <div class="accordion-item" id="accordion-canchas">
-                    <button class="accordion-header" onclick="toggleAccordion('accordion-canchas')">
-                        <div class="accordion-header-left">
-                            <span class="accordion-icon-wrapper">
-                                <!-- Icono Balón SVG -->
-                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <path d="M6.2 6.2c2.4 2.4 2.4 6.4 0 8.8" />
-                                    <path d="M17.8 6.2c-2.4 2.4-2.4 6.4 0 8.8" />
-                                    <path d="M2 12h20" />
-                                    <path d="M12 2v20" />
-                                </svg>
-                            </span>
-                            <span class="accordion-title">Canchas y Campos Deportivos</span>
-                        </div>
-                        <div class="accordion-header-right">
-                            <span class="accordion-progress-badge" id="badge-canchas">0 / 3 Limpios</span>
-                            <span class="accordion-chevron">▼</span>
-                        </div>
-                    </button>
-                    <div class="accordion-content">
-                        <div class="accordion-inner-panel">
-                            <div class="zones-grid" id="grid-canchas">
-                                <!-- Generado por JS -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- ACORDEÓN 3: BAÑOS Y CAMARINES -->
-                <div class="accordion-item" id="accordion-banos">
-                    <button class="accordion-header" onclick="toggleAccordion('accordion-banos')">
-                        <div class="accordion-header-left">
-                            <span class="accordion-icon-wrapper">
-                                <!-- Icono Inodoro SVG -->
-                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M7 2h10v4H7z" />
-                                    <path d="M5 6h14v5a7 7 0 0 1-7 7H12a7 7 0 0 1-7-7V6z" />
-                                    <path d="M12 18v4" />
-                                    <path d="M9 22h6" />
-                                </svg>
-                            </span>
-                            <span class="accordion-title">Baños y Camarines</span>
-                        </div>
-                        <div class="accordion-header-right">
-                            <span class="accordion-progress-badge" id="badge-banos">0 / 18 Limpios</span>
-                            <span class="accordion-chevron">▼</span>
-                        </div>
-                    </button>
-                    <div class="accordion-content">
-                        <div class="accordion-inner-panel">
-                            <div class="zones-grid" id="grid-banos">
-                                <!-- Generado por JS -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
+            <div class="sim-role-buttons">
+                <button class="role-tab-btn active" id="btn-role-jefe" onclick="switchRole('jefe')">
+                    👔 Vista Jefe (Administrador)
+                </button>
+                <button class="role-tab-btn" id="btn-role-trabajador" onclick="switchRole('trabajador')">
+                    📱 Vista Trabajador (Operario Celular)
+                </button>
             </div>
-            
-            <!-- PANEL DE MÉTRICAS PARA EL SUPERVISOR (NUEVA FUNCIÓN COMERCIAL) -->
-            <div id="metrics" class="supervisor-metrics">
+        </div>
+
+        <!-- ==========================================
+             A. PANELES ROL: JEFE (ADMINISTRADOR)
+             ========================================== -->
+        <div id="pane-jefe" class="view-pane active">
+            <div class="jefe-layout">
                 
-                <!-- Eficiencia Global -->
-                <div class="efficiency-widget">
-                    <h4 class="efficiency-title">Eficiencia del Campus</h4>
-                    <div class="circle-progress-wrapper">
-                        <svg width="150" height="150" viewBox="0 0 150 150">
-                            <defs>
-                                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#6366f1" />
-                                    <stop offset="100%" stop-color="#00f2fe" />
-                                </linearGradient>
-                            </defs>
-                            <circle class="circle-bg" cx="75" cy="75" r="70" />
-                            <circle class="circle-progress" id="efficiencyCircle" cx="75" cy="75" r="70" />
-                        </svg>
-                        <div class="efficiency-percentage-display" id="efficiencyValue">
-                            0%
-                            <span>COMPLETADO</span>
-                        </div>
-                    </div>
-                    <span class="efficiency-status-pill" id="efficiencyLabel">Rendimiento Inicial</span>
-                </div>
-                
-                <!-- Feed / Logs en Vivo -->
-                <div class="live-feed-card">
-                    <div class="feed-header">
-                        <h4 class="feed-title">
-                            <span class="feed-dot"></span>
-                            Bitácora del Supervisor (Feed en Vivo)
-                        </h4>
-                        <div class="feed-actions">
-                            <button class="btn-clear-feed" onclick="clearFeed()">Limpiar Historial</button>
-                        </div>
-                    </div>
+                <!-- Columna Izquierda: Configuración de Aseo -->
+                <div style="display: flex; flex-direction: column; gap: 2rem;">
                     
-                    <div class="feed-table-container">
-                        <table class="feed-table">
+                    <!-- Tarjeta Mensaje del Dia -->
+                    <div class="jefe-card">
+                        <h4 class="jefe-card-title">
+                            📢 Redactar Mensaje General del Día
+                        </h4>
+                        <p class="card-desc" style="margin-top: -0.75rem;">Este aviso aparecerá en la pantalla superior de todos los trabajadores inmediatamente.</p>
+                        <div class="msg-form-group">
+                            <textarea id="msgInput" rows="3" class="msg-textarea" placeholder="Escribe un mensaje diario aquí..."></textarea>
+                            <button class="btn-action-primary" onclick="updateDailyMessage()">Publicar Mensaje</button>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta Asignador de Zonas -->
+                    <div class="jefe-card">
+                        <div class="jefe-card-title" style="justify-content: space-between; width: 100%;">
+                            <span>🎯 Asignar Zonas de Trabajo por Operario</span>
+                            <span class="panel-badge">Configurador</span>
+                        </div>
+                        <p class="card-desc" style="margin-top: -0.75rem;">Define qué áreas específicas verá y limpiará el trabajador seleccionado hoy.</p>
+                        
+                        <div class="assign-controls">
+                            <div class="assign-picker">
+                                <span class="operator-label">OPERARIO:</span>
+                                <select id="assignWorkerSelect" class="assign-select" onchange="loadWorkerAssignments()">
+                                    <option value="maria">Tía María</option>
+                                    <option value="carmen">Tía Carmen</option>
+                                    <option value="rosa">Tía Rosa</option>
+                                    <option value="patricia">Tía Patricia</option>
+                                </select>
+                            </div>
+                            <div class="btn-group-sm">
+                                <button class="btn-action-sec-sm" onclick="bulkAssign(true)">Asignar Todas</button>
+                                <button class="btn-action-sec-sm" onclick="bulkAssign(false)">Desasignar Todas</button>
+                            </div>
+                        </div>
+
+                        <!-- Lista de zonas con checkboxes -->
+                        <div class="assign-list-scroll">
+                            <div class="assign-grid-layout" id="assignGrid">
+                                <!-- Cargado dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: KPI de Eficiencia Global -->
+                <div style="display: flex; flex-direction: column; gap: 2rem;">
+                    <div class="efficiency-widget" style="min-height: 250px;">
+                        <h4 class="efficiency-title">KPI Global del Campus (51 Zonas)</h4>
+                        <div class="circle-progress-wrapper">
+                            <svg width="150" height="150" viewBox="0 0 150 150">
+                                <circle class="circle-bg" cx="75" cy="75" r="70" />
+                                <circle class="circle-progress" id="jefeEfficiencyCircle" cx="75" cy="75" r="70" />
+                            </svg>
+                            <div class="efficiency-percentage-display" id="jefeEfficiencyValue">
+                                0%
+                                <span>COMPLETADO</span>
+                            </div>
+                        </div>
+                        <span class="efficiency-status-pill" id="jefeEfficiencyLabel">Rendimiento Inicial</span>
+                    </div>
+
+                    <!-- Bitácora Rápida en panel Jefe -->
+                    <div class="jefe-card">
+                        <h4 class="jefe-card-title">💡 Resumen de Asignación de Recursos</h4>
+                        <p class="card-desc">Asignar zonas correctamente reduce las horas muertas. El personal ve únicamente las tareas asignadas para no generar fatiga ni confusión en terreno.</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Tareas de Tía María:</span>
+                                <strong id="count-maria" style="color:#fff;">0</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Tareas de Tía Carmen:</span>
+                                <strong id="count-carmen" style="color:#fff;">0</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Tareas de Tía Rosa:</span>
+                                <strong id="count-rosa" style="color:#fff;">0</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Tareas de Tía Patricia:</span>
+                                <strong id="count-patricia" style="color:#fff;">0</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel Auditoria en Tiempo Real (Abajo en ancho completo) -->
+                <div class="jefe-card audit-card">
+                    <div class="jefe-card-title" style="justify-content: space-between;">
+                        <span>📊 Bitácora de Auditoría y Control de Tiempos (Supervisor)</span>
+                        <div class="btn-group-sm">
+                            <button class="btn-action-sec-sm" onclick="resetDemo()">Reiniciar Todo</button>
+                        </div>
+                    </div>
+                    <p class="card-desc" style="margin-top: -0.75rem;">Monitoreo en vivo de los timestamps de terreno, duración real calculada del aseo escolar y diagnóstico inicial de sanitización.</p>
+                    
+                    <div class="audit-table-container">
+                        <table class="audit-table">
                             <thead>
                                 <tr>
-                                    <th>Timestamp</th>
-                                    <th>Zona Sanitizada</th>
-                                    <th>Operario</th>
-                                    <th>Estado / Guardado</th>
+                                    <th>Zona / Área</th>
+                                    <th>Operario de Terreno</th>
+                                    <th>Entrada (Inicio)</th>
+                                    <th>Diagnóstico Inicial</th>
+                                    <th>Salida (Fin)</th>
+                                    <th>Duración Aseo</th>
+                                    <th>Estado de la Tarea</th>
                                 </tr>
                             </thead>
-                            <tbody id="feedTableBody">
-                                <!-- Logs generados en JS -->
+                            <tbody id="auditTableBody">
+                                <!-- Rellenado dinámicamente -->
                                 <tr>
-                                    <td colspan="4" class="feed-empty">No hay registros de aseo en esta sesión de demo. Presione botones en la consola superior.</td>
+                                    <td colspan="7" class="audit-empty-state">No hay registros de auditoría aún. Cambie a la vista de operario y comience a limpiar.</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-                
+
             </div>
         </div>
+
+        <!-- ==========================================
+             B. PANEL ROL: TRABAJADOR (EMULADOR MOVIL)
+             ========================================== -->
+        <div id="pane-trabajador" class="view-pane">
+            <div class="phone-emulator-container">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    
+                    <div class="phone-screen">
+                        
+                        <!-- Status Bar Simulado -->
+                        <div class="phone-status-bar">
+                            <span>09:41 AM</span>
+                            <div class="phone-status-icons">
+                                <span>📶</span>
+                                <span>🔋 100%</span>
+                            </div>
+                        </div>
+
+                        <!-- Header Operario Celular -->
+                        <div class="phone-header">
+                            <div class="phone-header-user">
+                                <span class="phone-header-title">Sesión activa</span>
+                                <span class="phone-header-name" id="workerNameHeader">Tía María</span>
+                            </div>
+                            <div>
+                                <select id="workerSelect" class="phone-operator-select" onchange="switchWorker()">
+                                    <option value="maria">Tía María</option>
+                                    <option value="carmen">Tía Carmen</option>
+                                    <option value="rosa">Tía Rosa</option>
+                                    <option value="patricia">Tía Patricia</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Mensaje del Dia (Reactivo) -->
+                        <div class="phone-message-banner">
+                            <span class="phone-message-icon">📢</span>
+                            <div class="phone-message-content">
+                                <span class="phone-message-title">Mensaje del Supervisor</span>
+                                <span class="phone-message-text" id="phoneMessageText">
+                                    Cargando mensaje del jefe...
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Tareas Asignadas -->
+                        <h4 class="phone-tasks-title">Mis Tareas Asignadas</h4>
+                        
+                        <!-- Contenedor dinámico de tareas -->
+                        <div class="phone-tasks-grid" id="phoneTasksGrid">
+                            <!-- Generado por JS -->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </section>
+
+    <!-- Modal de Diagnóstico Visual con Caritas -->
+    <div class="diag-modal-overlay" id="diagModalOverlay">
+        <div class="diag-modal">
+            <div class="diag-title-group">
+                <h4 class="diag-title">Diagnóstico Inicial de Entrada</h4>
+                <p class="diag-desc">¿Cómo se encuentra el estado de la sala antes de empezar a limpiar?</p>
+            </div>
+            
+            <div class="diag-emojis-container">
+                <button class="diag-emoji-btn excelente" onclick="submitDiagnostic('bueno')">
+                    <span class="diag-emoji-face">🙂</span>
+                    <span class="diag-emoji-lbl">Excelente</span>
+                </button>
+                <button class="diag-emoji-btn regular" onclick="submitDiagnostic('regular')">
+                    <span class="diag-emoji-face">😐</span>
+                    <span class="diag-emoji-lbl">Regular</span>
+                </button>
+                <button class="diag-emoji-btn malo" onclick="submitDiagnostic('malo')">
+                    <span class="diag-emoji-face">🙁</span>
+                    <span class="diag-emoji-lbl">Malo</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor Toast para Avisos -->
+    <div class="toast-container" id="toastContainer"></div>
 
     <!-- ==========================================================================
        FOOTER
-       ========================================================================== */ -->
+       ========================================================================== -->
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-top">
@@ -1712,9 +2076,9 @@
 
     <!-- ==========================================================================
        CÓDIGO DE LOGICA REACTIVA (JAVASCRIPT INTEGRADO)
-       ========================================================================== */ -->
+       ========================================================================== -->
     <script>
-        // Iconografía vectorial SVG inline en variables para inyección dinámica
+        // Iconografía SVG Inline
         const ICONS = {
             sala: `<svg class="zone-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" /></svg>`,
             cancha: `<svg class="zone-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M6.2 6.2c2.4 2.4 2.4 6.4 0 8.8" /><path d="M17.8 6.2c-2.4 2.4-2.4 6.4 0 8.8" /><path d="M2 12h20" /><path d="M12 2v20" /></svg>`,
@@ -1722,44 +2086,73 @@
             camarin: `<svg class="zone-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 1 3 3h-6a3 3 0 0 1 3-3z" /><path d="M22 19H2L12 5z" /></svg>`
         };
 
-        // Estado de las 51 Zonas de Aseo
-        let zones = [];
-        let logs = [];
-
-        // Inicializar zonas al cargar la página
-        function initZones() {
-            zones = [];
+        // Estado de la Aplicación
+        let state = {
+            mensajeDelDia: "Hoy supervisión externa a las 14:00. Por favor, priorizar sanitización de baños y camarines.",
+            activeRole: 'jefe',
+            activeWorker: 'maria',       // Operario activo en el celular
+            assigningWorker: 'maria',    // Operario que se está configurando en el panel del Jefe
             
-            // 1. Acordeón 1: 30 Salas de clases (piso 1: 1-10, piso 2: 11-20, piso 3: 21-30)
+            // Trabajadores
+            workers: {
+                maria: { name: "Tía María", assignedZones: [] },
+                carmen: { name: "Tía Carmen", assignedZones: [] },
+                rosa: { name: "Tía Rosa", assignedZones: [] },
+                patricia: { name: "Tía Patricia", assignedZones: [] }
+            },
+            
+            // 51 Zonas de aseo
+            zones: [],
+            
+            // Registro histórico para la auditoría (logs)
+            logs: [],
+            
+            // Modal de diagnóstico auxiliar
+            pendingDiagnosticZoneId: null
+        };
+
+        // Inicializar las 51 zonas
+        function initZones() {
+            state.zones = [];
+            
+            // 1. 30 Salas de clases (piso 1: 1-10, piso 2: 11-20, piso 3: 21-30)
             for (let i = 1; i <= 30; i++) {
                 let floor = 1;
                 if (i > 10 && i <= 20) floor = 2;
                 if (i > 20) floor = 3;
                 
-                zones.push({
+                state.zones.push({
                     id: `sala-${i}`,
                     name: `Sala ${i}`,
                     type: 'sala',
                     floor: floor,
-                    isClean: false,
-                    lastCleanedTime: null
+                    status: 'pendiente', // 'pendiente', 'en-proceso', 'limpio'
+                    entradaTime: null,
+                    salidaTime: null,
+                    diagnostic: null,
+                    operator: null,
+                    lastDuration: null
                 });
             }
 
-            // 2. Acordeón 1: 3 Canchas deportivas (comunes / exterior)
+            // 2. 3 Canchas deportivas (comunes / exterior)
             const canchaNames = ["Cancha Fútbol", "Cancha Básquet", "Gimnasio Techado"];
             canchaNames.forEach((name, index) => {
-                zones.push({
+                state.zones.push({
                     id: `cancha-${index + 1}`,
                     name: name,
                     type: 'cancha',
-                    floor: 'comun', // Naranja
-                    isClean: false,
-                    lastCleanedTime: null
+                    floor: 'comun',
+                    status: 'pendiente',
+                    entradaTime: null,
+                    salidaTime: null,
+                    diagnostic: null,
+                    operator: null,
+                    lastDuration: null
                 });
             });
 
-            // 3. Acordeón 2 (simetría de Baños por piso: 4 por piso * 3 pisos = 12)
+            // 3. 12 Baños simétricos (P1, P2, P3)
             const floors = [1, 2, 3];
             const banoTypes = [
                 { suffix: "Mujeres", type: "bano" },
@@ -1769,19 +2162,23 @@
             ];
 
             floors.forEach(floor => {
-                banoTypes.forEach((def, index) => {
-                    zones.push({
+                banoTypes.forEach(def => {
+                    state.zones.push({
                         id: `bano-p${floor}-${def.suffix.toLowerCase()}`,
                         name: `Baño ${def.suffix} (P${floor})`,
                         type: def.type,
                         floor: floor,
-                        isClean: false,
-                        lastCleanedTime: null
+                        status: 'pendiente',
+                        entradaTime: null,
+                        salidaTime: null,
+                        diagnostic: null,
+                        operator: null,
+                        lastDuration: null
                     });
                 });
             });
 
-            // 4. Áreas comunes / 6 puntos adicionales entre zonas comunes y camarines
+            // 4. Áreas comunes / 6 puntos adicionales entre comunes y camarines
             const commonAreas = [
                 { id: "camarin-varones", name: "Camarín Varones", type: "camarin" },
                 { id: "camarin-damas", name: "Camarín Damas", type: "camarin" },
@@ -1792,237 +2189,393 @@
             ];
 
             commonAreas.forEach(area => {
-                zones.push({
+                state.zones.push({
                     id: area.id,
                     name: area.name,
                     type: area.type,
                     floor: 'comun',
-                    isClean: false,
-                    lastCleanedTime: null
+                    status: 'pendiente',
+                    entradaTime: null,
+                    salidaTime: null,
+                    diagnostic: null,
+                    operator: null,
+                    lastDuration: null
                 });
             });
         }
 
-        // Renderizar los botones en los acordeones correspondientes
-        function renderPanel() {
-            const gridSalas = document.getElementById('grid-salas');
-            const gridCanchas = document.getElementById('grid-canchas');
-            const gridBanos = document.getElementById('grid-banos');
-
-            gridSalas.innerHTML = '';
-            gridCanchas.innerHTML = '';
-            gridBanos.innerHTML = '';
-
-            // Filtrar zonas por acordeón
-            const salas = zones.filter(z => z.type === 'sala');
-            const canchas = zones.filter(z => z.type === 'cancha');
-            
-            // Organizar el acordeón 2 de Baños y Camarines
-            // Dividiremos internamente por piso para una visualización premium
-            const banosFloor1 = zones.filter(z => (z.type === 'bano' || z.type === 'camarin') && z.floor === 1);
-            const banosFloor2 = zones.filter(z => (z.type === 'bano' || z.type === 'camarin') && z.floor === 2);
-            const banosFloor3 = zones.filter(z => (z.type === 'bano' || z.type === 'camarin') && z.floor === 3);
-            const banosComunes = zones.filter(z => (z.type === 'bano' || z.type === 'camarin') && z.floor === 'comun');
-
-            // Renderizar Salas de clases
-            salas.forEach(sala => {
-                gridSalas.appendChild(createZoneButton(sala));
-            });
-
-            // Renderizar Canchas
-            canchas.forEach(cancha => {
-                gridCanchas.appendChild(createZoneButton(cancha));
-            });
-
-            // Renderizar Baños y Camarines por subgrupos estructurados
-            if (banosFloor1.length > 0) {
-                const title = document.createElement('div');
-                title.className = 'bathroom-subgroup-title';
-                title.innerText = 'Primer Piso';
-                gridBanos.appendChild(title);
-                banosFloor1.forEach(b => gridBanos.appendChild(createZoneButton(b)));
-            }
-
-            if (banosFloor2.length > 0) {
-                const title = document.createElement('div');
-                title.className = 'bathroom-subgroup-title';
-                title.innerText = 'Segundo Piso';
-                gridBanos.appendChild(title);
-                banosFloor2.forEach(b => gridBanos.appendChild(createZoneButton(b)));
-            }
-
-            if (banosFloor3.length > 0) {
-                const title = document.createElement('div');
-                title.className = 'bathroom-subgroup-title';
-                title.innerText = 'Tercer Piso';
-                gridBanos.appendChild(title);
-                banosFloor3.forEach(b => gridBanos.appendChild(createZoneButton(b)));
-            }
-
-            if (banosComunes.length > 0) {
-                const title = document.createElement('div');
-                title.className = 'bathroom-subgroup-title';
-                title.innerText = 'Áreas Comunes y Camarines';
-                gridBanos.appendChild(title);
-                banosComunes.forEach(b => gridBanos.appendChild(createZoneButton(b)));
-            }
-
-            // Actualizar contadores y métricas globales
-            updateCounters();
+        // Asignaciones por defecto al cargar el demo para que no esté vacío
+        function initDefaultAssignments() {
+            state.workers.maria.assignedZones = [
+                'sala-1', 'sala-2', 'sala-3', 'sala-4', 'sala-5', 'sala-6', 'sala-7', 'sala-8', 'sala-9', 'sala-10',
+                'cancha-1', 'bano-p1-mujeres'
+            ];
+            state.workers.carmen.assignedZones = [
+                'sala-11', 'sala-12', 'sala-13', 'sala-14', 'sala-15', 'sala-16', 'sala-17', 'sala-18', 'sala-19', 'sala-20',
+                'cancha-2', 'bano-p1-hombres', 'bano-p1-profesores', 'bano-p1-discapacitados'
+            ];
+            state.workers.rosa.assignedZones = [
+                'sala-21', 'sala-22', 'sala-23', 'sala-24', 'sala-25', 'sala-26', 'sala-27', 'sala-28', 'sala-29', 'sala-30',
+                'cancha-3', 'bano-p2-mujeres', 'bano-p2-hombres', 'bano-p2-profesores', 'bano-p2-discapacitados'
+            ];
+            state.workers.patricia.assignedZones = [
+                'bano-p3-mujeres', 'bano-p3-hombres', 'bano-p3-profesores', 'bano-p3-discapacitados',
+                'camarin-varones', 'camarin-damas', 'bano-personal', 'bano-casino', 'bano-kiosco', 'camarin-profesores'
+            ];
         }
 
-        // Crear elemento de botón para una zona
-        function createZoneButton(zone) {
-            const btn = document.createElement('button');
+        // ==========================================
+        // CONTROL DE VISTAS (ROLES)
+        // ==========================================
+        function switchRole(role) {
+            state.activeRole = role;
             
-            // Clases base
-            let btnClass = `zone-btn`;
-            if (zone.isClean) btnClass += ' clean';
+            // Actualizar botones de la barra superior
+            document.getElementById('btn-role-jefe').classList.toggle('active', role === 'jefe');
+            document.getElementById('btn-role-trabajador').classList.toggle('active', role === 'trabajador');
             
-            // Clases de piso
-            if (zone.floor === 1) btnClass += ' floor-1';
-            else if (zone.floor === 2) btnClass += ' floor-2';
-            else if (zone.floor === 3) btnClass += ' floor-3';
-            else btnClass += ' floor-comun';
-
-            btn.className = btnClass;
-            btn.id = `btn-${zone.id}`;
+            // Mostrar panel correcto
+            document.getElementById('pane-jefe').classList.toggle('active', role === 'jefe');
+            document.getElementById('pane-trabajador').classList.toggle('active', role === 'trabajador');
             
-            // Etiquetas de Piso
-            let floorLabel = `${zone.floor}º Piso`;
-            if (zone.floor === 'comun') {
-                floorLabel = zone.type === 'cancha' ? 'Exterior' : 'Común';
-            }
-
-            const statusText = zone.isClean ? 'Limpio' : 'Pendiente';
-            const timeText = zone.lastCleanedTime ? zone.lastCleanedTime : 'Sin registro';
-
-            btn.innerHTML = `
-                <span class="zone-floor-tag">${floorLabel}</span>
-                ${ICONS[zone.type] || ICONS.sala}
-                <span class="zone-name">${zone.name}</span>
-                <span class="zone-status-text">${statusText}</span>
-                <span class="zone-time">${timeText}</span>
-            `;
-
-            // Click listener
-            btn.onclick = () => toggleZoneState(zone.id);
-
-            return btn;
+            renderAll();
         }
 
-        // Alternar estado limpio / pendiente
-        function toggleZoneState(zoneId) {
-            const zone = zones.find(z => z.id === zoneId);
-            if (!zone) return;
+        // ==========================================
+        // ROL JEFE: ASIGNACIÓN Y MENSAJES
+        // ==========================================
+        function updateDailyMessage() {
+            const inputVal = document.getElementById('msgInput').value.trim();
+            if (inputVal === '') {
+                showToast("Por favor redacta un mensaje válido.", "warning");
+                return;
+            }
+            state.mensajeDelDia = inputVal;
+            showToast("Mensaje general del día actualizado y publicado en tiempo real.", "success");
+            renderAll();
+        }
 
-            zone.isClean = !zone.isClean;
+        function loadWorkerAssignments() {
+            state.assigningWorker = document.getElementById('assignWorkerSelect').value;
+            renderAssignGrid();
+        }
+
+        // Renderizar cuadrícula de asignación para el Jefe (checkboxes)
+        function renderAssignGrid() {
+            const grid = document.getElementById('assignGrid');
+            grid.innerHTML = '';
             
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const worker = state.workers[state.assigningWorker];
 
-            if (zone.isClean) {
-                zone.lastCleanedTime = timeString;
+            state.zones.forEach(zone => {
+                const label = document.createElement('label');
+                label.className = 'assign-checkbox-item';
                 
-                // Nueva función comercial: Guardar registro en el feed de auditoría en vivo
-                addLogEntry(zone.name, timeString);
+                const isChecked = worker.assignedZones.includes(zone.id);
+                
+                label.innerHTML = `
+                    <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleAssignZone('${zone.id}', this.checked)">
+                    <span>${zone.name}</span>
+                `;
+                grid.appendChild(label);
+            });
+            
+            // Actualizar contadores de tareas en panel jefe
+            updateWorkerCounts();
+        }
+
+        function toggleAssignZone(zoneId, isAssigned) {
+            const worker = state.workers[state.assigningWorker];
+            
+            if (isAssigned) {
+                if (!worker.assignedZones.includes(zoneId)) {
+                    worker.assignedZones.push(zoneId);
+                }
             } else {
-                zone.lastCleanedTime = null;
+                worker.assignedZones = worker.assignedZones.filter(id => id !== zoneId);
+            }
+            
+            updateWorkerCounts();
+        }
+
+        function bulkAssign(shouldAssignAll) {
+            const worker = state.workers[state.assigningWorker];
+            if (shouldAssignAll) {
+                worker.assignedZones = state.zones.map(z => z.id);
+            } else {
+                worker.assignedZones = [];
+            }
+            renderAssignGrid();
+            showToast(`Zonas actualizadas para ${worker.name}`, "info");
+        }
+
+        function updateWorkerCounts() {
+            document.getElementById('count-maria').innerText = state.workers.maria.assignedZones.length;
+            document.getElementById('count-carmen').innerText = state.workers.carmen.assignedZones.length;
+            document.getElementById('count-rosa').innerText = state.workers.rosa.assignedZones.length;
+            document.getElementById('count-patricia').innerText = state.workers.patricia.assignedZones.length;
+        }
+
+        // ==========================================
+        // ROL TRABAJADOR: INTERFAZ MÓVIL
+        // ==========================================
+        function switchWorker() {
+            state.activeWorker = document.getElementById('workerSelect').value;
+            renderAll();
+            showToast(`Cargada la agenda diaria de ${state.workers[state.activeWorker].name}`, "info");
+        }
+
+        function renderPhoneScreen() {
+            // Sincronizar nombres y mensajes
+            document.getElementById('workerNameHeader').innerText = state.workers[state.activeWorker].name;
+            document.getElementById('workerSelect').value = state.activeWorker;
+            document.getElementById('phoneMessageText').innerText = state.mensajeDelDia;
+
+            const grid = document.getElementById('phoneTasksGrid');
+            grid.innerHTML = '';
+
+            const assignedIds = state.workers[state.activeWorker].assignedZones;
+            const myTasks = state.zones.filter(z => assignedIds.includes(z.id));
+
+            if (myTasks.length === 0) {
+                grid.innerHTML = `
+                    <div class="phone-empty-state">
+                        <span class="phone-empty-icon">✨</span>
+                        <h4 class="phone-empty-title">¡Todo al día!</h4>
+                        <p class="phone-empty-desc">No tienes salas ni áreas asignadas para hoy. Puedes descansar o consultar a tu supervisor.</p>
+                    </div>
+                `;
+                return;
             }
 
-            // Re-renderizar panel táctil
-            renderPanel();
+            myTasks.forEach(task => {
+                const card = document.createElement('div');
+                
+                // Clases base
+                let cardClass = `phone-task-card`;
+                if (task.status === 'en-proceso') cardClass += ' in-process';
+                else if (task.status === 'limpio') cardClass += ' clean-status';
+                
+                // Piso class
+                if (task.floor === 1) cardClass += ' floor-1';
+                else if (task.floor === 2) cardClass += ' floor-2';
+                else if (task.floor === 3) cardClass += ' floor-3';
+                else cardClass += ' floor-comun';
+
+                card.className = cardClass;
+                
+                // Detalle del botón interno o detalles de tiempo
+                let actionArea = '';
+                let statusLabel = 'Pendiente';
+                
+                if (task.status === 'pendiente') {
+                    statusLabel = 'Pendiente';
+                    card.onclick = () => openDiagnosticModal(task.id);
+                } else if (task.status === 'en-proceso') {
+                    statusLabel = 'En Proceso';
+                    
+                    const entryTimeFormatted = formatTime(task.entradaTime);
+                    const emojiFace = getDiagnosticEmoji(task.diagnostic);
+                    
+                    actionArea = `
+                        <div class="task-card-details-row">
+                            <span>Entrada: <span class="task-detail-time">${entryTimeFormatted}</span></span>
+                            <span>Diagnóstico: ${emojiFace}</span>
+                        </div>
+                        <button class="task-btn-finish" onclick="finishCleaning('${task.id}', event)">
+                            Finalizar Aseo (Check)
+                        </button>
+                    `;
+                } else if (task.status === 'limpio') {
+                    statusLabel = 'Limpio';
+                    
+                    const entryTimeFormatted = formatTime(task.entradaTime);
+                    const exitTimeFormatted = formatTime(task.salidaTime);
+                    const emojiFace = getDiagnosticEmoji(task.diagnostic);
+                    
+                    actionArea = `
+                        <div class="task-card-details-row">
+                            <span>Entrada: <span class="task-detail-time">${entryTimeFormatted}</span></span>
+                            <span>Salida: <span class="task-detail-time">${exitTimeFormatted}</span></span>
+                        </div>
+                        <div class="task-card-details-row" style="border:none; margin:0; padding:0;">
+                            <span>Diagnóstico: ${emojiFace}</span>
+                            <span style="font-weight:700; color:var(--color-clean);">Duración: ${task.lastDuration}s</span>
+                        </div>
+                    `;
+                }
+
+                let floorLabel = `${task.floor}º Piso`;
+                if (task.floor === 'comun') {
+                    floorLabel = task.type === 'cancha' ? 'Deportes' : 'Área Común';
+                }
+
+                card.innerHTML = `
+                    <div class="task-card-header">
+                        <div class="task-card-meta">
+                            <div class="task-card-icon">${ICONS[task.type] || ICONS.sala}</div>
+                            <div class="task-card-info">
+                                <span class="task-card-name">${task.name}</span>
+                                <span class="task-card-floor">${floorLabel}</span>
+                            </div>
+                        </div>
+                        <span class="task-card-status-badge">${statusLabel}</span>
+                    </div>
+                    ${actionArea}
+                `;
+
+                grid.appendChild(card);
+            });
         }
 
-        // Registrar entrada de auditoría en vivo
-        function addLogEntry(zoneName, timeStr) {
-            const currentOperator = document.getElementById('operatorSelect').value;
+        // ==========================================
+        // FLUJO DE TIEMPOS Y DIAGNÓSTICO EN TERRENO
+        // ==========================================
+        function openDiagnosticModal(zoneId) {
+            state.pendingDiagnosticZoneId = zoneId;
+            document.getElementById('diagModalOverlay').classList.add('active');
+        }
+
+        function submitDiagnostic(rating) {
+            const zoneId = state.pendingDiagnosticZoneId;
+            const zone = state.zones.find(z => z.id === zoneId);
             
-            // Tiempos estimados aleatorios pero realistas para la demo comercial
-            const estimatedExecutionTime = Math.floor(Math.random() * 15) + 10; // entre 10 y 25 minutos
+            if (zone) {
+                // Registrar Entrada
+                zone.status = 'en-proceso';
+                zone.entradaTime = Date.now();
+                zone.diagnostic = rating;
+                zone.operator = state.workers[state.activeWorker].name;
+                
+                // Registrar log
+                const timestampStr = new Date().toLocaleTimeString('es-CL');
+                const emojiFace = getDiagnosticEmoji(rating);
+                
+                state.logs.unshift({
+                    zoneName: zone.name,
+                    operator: zone.operator,
+                    entrada: timestampStr,
+                    diagnostic: emojiFace,
+                    salida: '-',
+                    duracion: '-',
+                    status: 'en-proceso',
+                    badgeClass: 'en-proceso'
+                });
+                
+                showToast(`Entrada registrada en ${zone.name}. Limpieza iniciada.`, "info");
+            }
+
+            // Cerrar modal
+            document.getElementById('diagModalOverlay').classList.remove('active');
+            state.pendingDiagnosticZoneId = null;
             
-            const logEntry = {
-                timestamp: timeStr,
-                zoneName: zoneName,
-                operator: currentOperator,
-                status: `LIMPIA - Tiempo est: ${estimatedExecutionTime} min (Guardado con éxito)`
-            };
-
-            logs.unshift(logEntry); // Insertar al inicio de la lista
-            updateFeedTable();
+            renderAll();
         }
 
-        // Limpiar el feed
-        function clearFeed() {
-            logs = [];
-            updateFeedTable();
+        function finishCleaning(zoneId, event) {
+            // Evitar propagación a la tarjeta
+            if (event) event.stopPropagation();
+
+            const zone = state.zones.find(z => z.id === zoneId);
+            if (zone && zone.status === 'en-proceso') {
+                // Registrar Salida
+                zone.status = 'limpio';
+                zone.salidaTime = Date.now();
+                
+                // Calcular duración exacta (segundos reales)
+                const durationSecs = Math.round((zone.salidaTime - zone.entradaTime) / 1000);
+                zone.lastDuration = durationSecs;
+
+                const entradaStr = formatTime(zone.entradaTime);
+                const salidaStr = formatTime(zone.salidaTime);
+                const emojiFace = getDiagnosticEmoji(zone.diagnostic);
+
+                // Actualizar log en la tabla (buscar el que estaba en proceso y completarlo)
+                const existingLogIndex = state.logs.findIndex(l => l.zoneName === zone.name && l.status === 'en-proceso');
+                
+                if (existingLogIndex !== -1) {
+                    state.logs[existingLogIndex].salida = salidaStr;
+                    state.logs[existingLogIndex].duracion = `${durationSecs} segundos`;
+                    state.logs[existingLogIndex].status = 'limpio';
+                    state.logs[existingLogIndex].badgeClass = 'limpio';
+                } else {
+                    // Si no se encuentra, insertar uno nuevo
+                    state.logs.unshift({
+                        zoneName: zone.name,
+                        operator: zone.operator,
+                        entrada: entradaStr,
+                        diagnostic: emojiFace,
+                        salida: salidaStr,
+                        duracion: `${durationSecs}s`,
+                        status: 'limpio',
+                        badgeClass: 'limpio'
+                    });
+                }
+
+                showToast(`Aseo finalizado en ${zone.name}. Trazabilidad guardada con éxito.`, "success");
+            }
+
+            renderAll();
         }
 
-        // Actualizar tabla de registros en vivo
-        function updateFeedTable() {
-            const tbody = document.getElementById('feedTableBody');
+        // ==========================================
+        // AUDITORÍA Y TABLA DE MONITOREO (ROL JEFE)
+        // ==========================================
+        function renderAuditTable() {
+            const tbody = document.getElementById('auditTableBody');
             tbody.innerHTML = '';
 
-            if (logs.length === 0) {
+            if (state.logs.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="4" class="feed-empty">No hay registros de aseo en esta sesión de demo. Presione botones en la consola superior.</td>
+                        <td colspan="7" class="audit-empty-state">No hay registros de auditoría aún. Cambie a la vista de operario y comience a limpiar.</td>
                     </tr>
                 `;
                 return;
             }
 
-            logs.forEach(log => {
+            state.logs.forEach(log => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="feed-timestamp">${log.timestamp}</td>
                     <td class="feed-zone-badge">${log.zoneName}</td>
                     <td class="feed-operator">${log.operator}</td>
-                    <td class="feed-status">${log.status}</td>
+                    <td class="feed-timestamp">${log.entrada}</td>
+                    <td><span style="font-size: 1.15rem;">${log.diagnostic}</span></td>
+                    <td class="feed-timestamp">${log.salida}</td>
+                    <td style="font-weight: 700; color: ${log.duracion !== '-' ? 'var(--accent)' : 'var(--text-muted)'}">${log.duracion}</td>
+                    <td><span class="badge-status ${log.badgeClass}">${log.status}</span></td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // Calcular y actualizar contadores reactivos de cabecera y el KPI global de eficiencia
-        function updateCounters() {
-            // Contadores por tipo
-            const salas = zones.filter(z => z.type === 'sala');
-            const cleanSalas = salas.filter(z => z.isClean).length;
-            document.getElementById('badge-salas').innerText = `${cleanSalas} / ${salas.length} Limpios`;
+        // ==========================================
+        // CALCULO DE EFICIENCIA GLOBAL
+        // ==========================================
+        function updateGlobalEfficiency() {
+            const total = state.zones.length; // 51
+            const cleanCount = state.zones.filter(z => z.status === 'limpio').length;
+            const percentage = Math.round((cleanCount / total) * 100) || 0;
 
-            const canchas = zones.filter(z => z.type === 'cancha');
-            const cleanCanchas = canchas.filter(z => z.isClean).length;
-            document.getElementById('badge-canchas').innerText = `${cleanCanchas} / ${canchas.length} Limpios`;
-
-            const banos = zones.filter(z => z.type === 'bano' || z.type === 'camarin');
-            const cleanBanos = banos.filter(z => z.isClean).length;
-            document.getElementById('badge-banos').innerText = `${cleanBanos} / ${banos.length} Limpios`;
-
-            // Eficiencia Global del Campus (51 zonas en total)
-            const totalZones = zones.length;
-            const totalClean = zones.filter(z => z.isClean).length;
-            const efficiencyPercentage = Math.round((totalClean / totalZones) * 100) || 0;
-
-            // Actualizar visual del círculo de progreso de eficiencia
-            document.getElementById('efficiencyValue').innerHTML = `${efficiencyPercentage}% <span>COMPLETADO</span>`;
+            // Actualizar visual del Jefe
+            document.getElementById('jefeEfficiencyValue').innerHTML = `${percentage}% <span>COMPLETADO</span>`;
             
-            const circle = document.getElementById('efficiencyCircle');
+            const circle = document.getElementById('jefeEfficiencyCircle');
             const circumference = 440;
-            const offset = circumference - (efficiencyPercentage / 100) * circumference;
+            const offset = circumference - (percentage / 100) * circumference;
             circle.style.strokeDashoffset = offset;
 
-            // Actualizar estado cualitativo
-            const label = document.getElementById('efficiencyLabel');
-            if (efficiencyPercentage === 0) {
+            // Actualizar badge cualitativo
+            const label = document.getElementById('jefeEfficiencyLabel');
+            if (percentage === 0) {
                 label.innerText = 'Rendimiento Inicial';
                 label.style.borderColor = 'rgba(255, 255, 255, 0.2)';
                 label.style.color = '#fff';
-            } else if (efficiencyPercentage < 35) {
+            } else if (percentage < 35) {
                 label.innerText = 'Requiere Sanitización';
                 label.style.borderColor = 'rgba(239, 68, 68, 0.4)';
                 label.style.color = '#f87171';
-            } else if (efficiencyPercentage < 75) {
+            } else if (percentage < 75) {
                 label.innerText = 'Limpieza Favorable';
                 label.style.borderColor = 'rgba(249, 115, 22, 0.4)';
                 label.style.color = '#fb923c';
@@ -2033,26 +2586,76 @@
             }
         }
 
-        // Alternar el estado colapsado / activo de un acordeón
-        function toggleAccordion(itemId) {
-            const accordionItem = document.getElementById(itemId);
-            const isActive = accordionItem.classList.contains('active');
-            
-            // Cerrar todos los acordeones para un look limpio
-            document.querySelectorAll('.accordion-item').forEach(item => {
-                item.classList.remove('active');
-            });
+        // ==========================================
+        // UTILIDADES Y RESET
+        // ==========================================
+        function formatTime(timestamp) {
+            if (!timestamp) return '-';
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
 
-            // Si no estaba activo, abrir el actual
-            if (!isActive) {
-                accordionItem.classList.add('active');
+        function getDiagnosticEmoji(diag) {
+            if (diag === 'bueno') return '🙂';
+            if (diag === 'regular') return '😐';
+            if (diag === 'malo') return '🙁';
+            return '-';
+        }
+
+        function showToast(message, type = "info") {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            let icon = "ℹ️";
+            if (type === "success") icon = "✅";
+            if (type === "warning") icon = "⚠️";
+
+            toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        function resetDemo() {
+            if (confirm("¿Deseas reiniciar la simulación completa? Se borrará el historial de auditoría y se restablecerán las asignaciones originales.")) {
+                initZones();
+                initDefaultAssignments();
+                state.logs = [];
+                state.mensajeDelDia = "Hoy supervisión externa a las 14:00. Por favor, priorizar sanitización de baños y camarines.";
+                document.getElementById('msgInput').value = state.mensajeDelDia;
+                showToast("Simulador reiniciado correctamente.", "success");
+                renderAll();
             }
         }
 
-        // Ejecutar inicializaciones cuando el DOM esté listo
+        // ==========================================
+        // RENDERIZADO GLOBAL
+        // ==========================================
+        function renderAll() {
+            if (state.activeRole === 'jefe') {
+                renderAssignGrid();
+                renderAuditTable();
+                updateGlobalEfficiency();
+            } else {
+                renderPhoneScreen();
+            }
+        }
+
+        // Ejecutar al cargar el documento
         document.addEventListener("DOMContentLoaded", () => {
             initZones();
-            renderPanel();
+            initDefaultAssignments();
+            
+            // Inicializar textarea
+            document.getElementById('msgInput').value = state.mensajeDelDia;
+            
+            // Render inicial
+            renderAll();
         });
     </script>
 </body>
