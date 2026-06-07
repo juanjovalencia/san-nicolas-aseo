@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Valtek Optima – Gestión Inteligente de Aseo Institucional</title>
-  <meta name="description" content="Valtek Optima: plataforma SaaS de optimización y trazabilidad de aseo para colegios y universidades.">
+  <meta name="description" content="Valtek Optima: plataforma SaaS de optimización, trazabilidad de aseo, control de portería y contratistas para colegios y universidades.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -32,6 +32,7 @@
 
     /* ── NAVBAR ── */
     #navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 900; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; height: 60px; background: rgba(7,9,19,0.9); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+    .nav-logo-area { display: flex; align-items: center; gap: 1rem; }
     .nav-logo { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .nav-links { display: flex; gap: 0.5rem; align-items: center; }
     .nav-btn { padding: 0.4rem 1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 500; background: transparent; color: var(--text-dim); border: 1px solid transparent; transition: all 0.2s; }
@@ -46,6 +47,8 @@
     .role-chip.superadmin { background: rgba(245,158,11,0.15); color: var(--gold); border: 1px solid rgba(245,158,11,0.3); }
     .role-chip.admin { background: rgba(99,102,241,0.15); color: var(--primary); border: 1px solid rgba(99,102,241,0.3); }
     .role-chip.trabajador { background: rgba(16,185,129,0.15); color: var(--clean); border: 1px solid rgba(16,185,129,0.3); }
+    .role-chip.proveedor { background: rgba(99,102,241,0.15); color: var(--accent); border: 1px solid rgba(99,102,241,0.3); }
+    .role-chip.porteria { background: rgba(16,185,129,0.15); color: var(--clean); border: 1px solid rgba(16,185,129,0.3); }
 
     /* ── VIEWS ── */
     .app-view { display: none; padding-top: 60px; min-height: 100vh; }
@@ -54,7 +57,7 @@
     /* ── AUTH ── */
     #view-auth { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; background: radial-gradient(ellipse at 50% 50%, rgba(99,102,241,0.15) 0%, var(--bg) 70%); padding: 1rem; }
     #view-auth.hidden { display: none; }
-    .auth-card { width: 100%; max-width: 420px; background: rgba(13,17,36,0.95); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem 2rem; backdrop-filter: blur(30px); box-shadow: 0 20px 80px rgba(0,0,0,0.6), 0 0 60px rgba(99,102,241,0.1); }
+    .auth-card { width: 100%; max-width: 440px; background: rgba(13,17,36,0.95); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem 2rem; backdrop-filter: blur(30px); box-shadow: 0 20px 80px rgba(0,0,0,0.6), 0 0 60px rgba(99,102,241,0.1); }
     .auth-logo { text-align: center; margin-bottom: 0.4rem; font-family: var(--font-display); font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .auth-tagline { text-align: center; color: var(--text-muted); font-size: 0.82rem; margin-bottom: 2rem; }
     .auth-lock-badge { display: flex; align-items: center; justify-content: center; gap: 0.4rem; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); border-radius: 8px; padding: 0.55rem 1rem; margin-bottom: 1.5rem; font-size: 0.78rem; color: var(--gold); }
@@ -98,14 +101,14 @@
     .card-title { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
     .card-desc { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
 
-    /* ── SUPER ADMIN ── */
+    /* ── SUPER ADMIN (ADMINISTRADOR MAYOR) ── */
     #view-superadmin { background: radial-gradient(circle at 80% 20%, rgba(245,158,11,0.06) 0%, transparent 40%), var(--bg); }
     .sa-header { background: rgba(245,158,11,0.04); border-bottom: 1px solid rgba(245,158,11,0.15); padding: 1.5rem 2rem 0; }
     .sa-header-top { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
     .sa-crown { font-size: 1.8rem; }
     .sa-title-text { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--gold); }
     .sa-title-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.1rem; }
-    .sa-tabs { display: flex; gap: 0.25rem; }
+    .sa-tabs { display: flex; gap: 0.25rem; overflow-x: auto; }
     .sa-tab { padding: 0.7rem 1.4rem; border-radius: 10px 10px 0 0; background: transparent; color: var(--text-muted); font-size: 0.88rem; font-weight: 600; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
     .sa-tab.active { color: var(--gold); border-bottom-color: var(--gold); background: rgba(245,158,11,0.05); }
     .sa-tab:hover:not(.active) { color: var(--text-dim); background: rgba(255,255,255,0.02); }
@@ -116,6 +119,74 @@
     .plan-basico { background: rgba(100,116,139,0.15); color: var(--text-dim); border: 1px solid var(--border); }
     .plan-profesional { background: rgba(99,102,241,0.12); color: var(--primary); border: 1px solid rgba(99,102,241,0.25); }
     .plan-enterprise { background: rgba(245,158,11,0.12); color: var(--gold); border: 1px solid rgba(245,158,11,0.25); }
+
+    /* ── PROVEEDOR PANEL ── */
+    #view-proveedor { background: radial-gradient(circle at 10% 20%, rgba(99,102,241,0.06) 0%, transparent 40%), var(--bg); }
+    .prov-header { background: rgba(99,102,241,0.04); border-bottom: 1px solid rgba(99,102,241,0.15); padding: 1.5rem 2rem 0; }
+    .prov-tabs { display: flex; gap: 0.25rem; overflow-x: auto; }
+    .prov-tab { padding: 0.7rem 1.4rem; border-radius: 10px 10px 0 0; background: transparent; color: var(--text-muted); font-size: 0.88rem; font-weight: 600; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
+    .prov-tab.active { color: var(--primary); border-bottom-color: var(--primary); background: rgba(99,102,241,0.05); }
+    .prov-tab:hover:not(.active) { color: var(--text-dim); background: rgba(255,255,255,0.02); }
+    .prov-body { padding: 2rem; max-width: 1200px; }
+    .prov-tab-content { display: none; }
+    .prov-tab-content.active { display: block; }
+
+    .doc-list { display: flex; flex-direction: column; gap: 1rem; }
+    .doc-item { display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; gap: 1rem; flex-wrap: wrap; }
+    .doc-info { display: flex; flex-direction: column; gap: 0.25rem; }
+    .doc-name { font-weight: 600; font-size: 0.9rem; }
+    .doc-meta { font-size: 0.75rem; color: var(--text-muted); }
+
+    /* ── PORTERIA PANEL ── */
+    #view-porteria { background: radial-gradient(circle at 50% 50%, rgba(16,185,129,0.04) 0%, var(--bg) 80%); }
+    .port-container { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; }
+    .port-search-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem; text-align: center; box-shadow: var(--shadow); margin-bottom: 2rem; }
+    .port-title { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text); }
+    .port-subtitle { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 2rem; }
+    .port-input-wrapper { display: flex; gap: 0.75rem; max-width: 500px; margin: 0 auto; }
+    .port-input { flex: 1; padding: 0.9rem 1.2rem; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; font-size: 1.1rem; text-align: center; letter-spacing: 0.05em; outline: none; transition: all 0.2s; }
+    .port-input:focus { border-color: var(--clean); box-shadow: 0 0 15px rgba(16,185,129,0.2); }
+    .btn-port-search { padding: 0 1.5rem; border-radius: 12px; font-weight: 700; background: linear-gradient(135deg, var(--clean), #059669); color: #fff; transition: all 0.2s; }
+    .btn-port-search:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .status-screen { padding: 2rem; border-radius: 16px; margin-top: 1.5rem; border: 1px solid transparent; text-align: left; display: none; }
+    .status-screen.active { display: block; animation: slideDown 0.3s ease-out; }
+
+    .status-authorized { background: rgba(6,78,59,0.4); border-color: rgba(16,185,129,0.3); box-shadow: 0 0 30px rgba(16,185,129,0.1); }
+    .status-blocked { background: rgba(127,29,29,0.4); border-color: rgba(239,68,68,0.3); box-shadow: 0 0 30px rgba(239,68,68,0.1); }
+    .status-notfound { background: rgba(30,41,59,0.6); border-color: var(--border); }
+
+    .status-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+    .status-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+    .status-authorized .status-icon { background: rgba(16,185,129,0.2); color: var(--clean); }
+    .status-blocked .status-icon { background: rgba(239,68,68,0.2); color: var(--dirty); }
+    .status-notfound .status-icon { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+    .status-text { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; }
+
+    .worker-detail-grid { display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; margin-bottom: 1.5rem; align-items: center; }
+    @media(max-width: 500px) { .worker-detail-grid { grid-template-columns: 1fr; text-align: center; justify-items: center; } }
+    .worker-avatar-lg { width: 80px; height: 80px; border-radius: 16px; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #fff; font-weight: 800; border: 2px solid rgba(255,255,255,0.1); }
+    .worker-info-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    @media(max-width: 400px) { .worker-info-fields { grid-template-columns: 1fr; } }
+    .info-item { display: flex; flex-direction: column; gap: 0.15rem; }
+    .info-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
+    .info-val { font-size: 0.88rem; font-weight: 600; color: var(--text); }
+
+    .status-reasons { background: rgba(0,0,0,0.25); border: 1px solid rgba(239,68,68,0.2); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; }
+    .reason-title { font-size: 0.82rem; font-weight: 700; color: var(--dirty); margin-bottom: 0.5rem; text-transform: uppercase; }
+    .reason-list { font-size: 0.8rem; color: var(--text-dim); padding-left: 1.2rem; }
+
+    .action-buttons { display: flex; gap: 1rem; }
+    .btn-action { flex: 1; padding: 0.85rem; border-radius: 10px; font-weight: 700; text-align: center; font-size: 0.95rem; transition: all 0.2s; }
+    .btn-action-in { background: linear-gradient(135deg, var(--clean), #059669); color: #fff; }
+    .btn-action-out { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; }
+    .btn-action:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .badge-authorized { background: rgba(16,185,129,0.15); color: var(--clean); border: 1px solid rgba(16,185,129,0.3); }
+    .badge-rejected { background: rgba(239,68,68,0.15); color: var(--dirty); border: 1px solid rgba(239,68,68,0.3); }
+    .badge-expired { background: rgba(245,158,11,0.15); color: var(--process); border: 1px solid rgba(245,158,11,0.3); }
 
     /* ── JEFE PANEL ── */
     #view-jefe { background: var(--bg); }
@@ -215,7 +286,7 @@
     #report-print-area { display: none; }
     @media print {
       body { background: #fff !important; color: #111 !important; }
-      #navbar, #view-auth, #view-landing, #view-superadmin, #view-jefe, #view-trabajador, #diagnostic-modal, #toast { display: none !important; }
+      #navbar, #view-auth, #view-landing, #view-superadmin, #view-jefe, #view-trabajador, #view-proveedor, #view-porteria, #diagnostic-modal, #toast, #upload-modal { display: none !important; }
       #report-print-area { display: block !important; padding: 2rem; }
       #report-print-area h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
       #report-print-area table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 1rem; }
@@ -232,7 +303,7 @@
     .phone-status-bar { display: flex; justify-content: space-between; align-items: center; padding: 0 1.25rem 0.5rem; font-size: 0.72rem; color: var(--text-dim); }
     .phone-header { background: linear-gradient(135deg, rgba(16,185,129,0.85), rgba(5,150,105,0.85)); padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; }
     .phone-user-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: #fff; }
-    .phone-role-badge { font-size: 0.7rem; background: rgba(255,255,255,0.2); padding: 0.2rem 0.5rem; border-radius: 99px; color: rgba(255,255,255,0.9); }
+    .phone-role-badge { font-size: 0.7rem; background: rgba(255,255,255,0.2); padding: 0.2rem 0.55rem; border-radius: 99px; color: rgba(255,255,255,0.9); }
     .msg-banner { margin: 0.75rem 1.25rem; background: rgba(99,102,241,0.12); border-left: 3px solid var(--primary); border-radius: 8px; padding: 0.7rem 0.9rem; font-size: 0.82rem; color: var(--text-dim); line-height: 1.5; display: none; }
     .msg-banner.show { display: block; }
     .msg-banner strong { color: var(--primary); font-size: 0.75rem; display: block; margin-bottom: 0.2rem; }
@@ -288,14 +359,24 @@
 
 <!-- NAVBAR -->
 <nav id="navbar">
-  <span class="nav-logo">⬡ Valtek Optima</span>
-  <div class="nav-links">
-    <div id="navbar-user-info"><div class="user-avatar" id="nav-avatar">?</div><div><div id="nav-username" style="font-size:0.85rem;color:var(--text-dim);">Usuario</div><div id="nav-role-chip"></div></div></div>
-    <button class="nav-btn" id="nav-landing" onclick="showView('landing')">Inicio</button>
-    <button class="nav-btn" id="nav-superadmin" onclick="showView('superadmin')" style="display:none;">⚙ Super Admin</button>
-    <button class="nav-btn" id="nav-jefe" onclick="showView('jefe')" style="display:none;">Panel Jefe</button>
-    <button class="nav-btn" id="nav-trabajador" onclick="showView('trabajador')" style="display:none;">Vista Trabajador</button>
+  <div class="nav-logo-area">
+    <span class="nav-logo">⬡ Valtek Optima</span>
     <button class="nav-btn-primary" id="nav-login-btn" onclick="showAuth()">Iniciar Sesión</button>
+  </div>
+  <div class="nav-links">
+    <div id="navbar-user-info">
+      <div class="user-avatar" id="nav-avatar">?</div>
+      <div>
+        <div id="nav-username" style="font-size:0.85rem;color:var(--text-dim);">Usuario</div>
+        <div id="nav-role-chip"></div>
+      </div>
+    </div>
+    <button class="nav-btn active" id="nav-landing" onclick="showView('landing')">Inicio</button>
+    <button class="nav-btn" id="nav-superadmin" onclick="showView('superadmin')" style="display:none;">👑 Admin Mayor</button>
+    <button class="nav-btn" id="nav-proveedor" onclick="showView('proveedor')" style="display:none;">🏢 Proveedores</button>
+    <button class="nav-btn" id="nav-porteria" onclick="showView('porteria')" style="display:none;">🚪 Portería</button>
+    <button class="nav-btn" id="nav-jefe" onclick="showView('jefe')" style="display:none;">👔 Panel Jefe</button>
+    <button class="nav-btn" id="nav-trabajador" onclick="showView('trabajador')" style="display:none;">📱 Vista Trabajador</button>
     <button class="nav-btn" id="nav-logout-btn" onclick="logout()" style="display:none;">Salir</button>
   </div>
 </nav>
@@ -304,74 +385,387 @@
 <div id="view-auth">
   <div class="auth-card">
     <div class="auth-logo">Valtek Optima</div>
-    <div class="auth-tagline">Plataforma SaaS de Gestión de Aseo Institucional</div>
+    <div class="auth-tagline">Plataforma SaaS de Gestión de Aseo, Portería y Contratistas</div>
     <div class="auth-lock-badge">🔒 Acceso restringido — Solo usuarios autorizados</div>
-    <div class="form-group"><label class="form-label">Correo Electrónico</label><input class="form-input" type="email" id="login-email" placeholder="usuario@institucion.cl"></div>
-    <div class="form-group"><label class="form-label">Contraseña</label><input class="form-input" type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
-    <div id="login-error" class="error-msg">✖ Credenciales incorrectas.</div>
+    <div class="form-group">
+      <label class="form-label">Correo Electrónico</label>
+      <input class="form-input" type="email" id="login-email" placeholder="usuario@institucion.cl">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Contraseña</label>
+      <input class="form-input" type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div id="login-error" class="error-msg">✖ Credenciales incorrectas o incompletas.</div>
     <button class="btn-full btn-primary" onclick="doLogin()" style="margin-top:0.5rem;">Ingresar</button>
     <div style="margin-top:1.25rem;padding:0.75rem;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid var(--border);">
       <div style="font-size:0.72rem;color:var(--text-muted);text-align:center;margin-bottom:0.4rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Cuentas demo</div>
-      <div style="font-size:0.78rem;color:var(--text-dim);text-align:center;line-height:1.9;">
-        <span style="color:var(--gold);">👑</span> superadmin@valtek.cl / <strong>valtek2025</strong><br>
-        <span style="color:var(--primary);">👔</span> admin@valtek.cl / <strong>1234</strong><br>
-        <span style="color:var(--clean);">📱</span> maria@valtek.cl / <strong>1234</strong>
+      <div style="font-size:0.78rem;color:var(--text-dim);text-align:left;line-height:1.9;max-height:120px;overflow-y:auto;padding-right:0.25rem;">
+        👑 <strong>Admin Mayor:</strong> superadmin@valtek.cl / <strong>valtek2025</strong><br>
+        🏢 <strong>Proveedor:</strong> proveedor@valtek.cl / <strong>1234</strong><br>
+        🚪 <strong>Portería:</strong> porteria@valtek.cl / <strong>1234</strong><br>
+        👔 <strong>Jefe Aseo:</strong> admin@valtek.cl / <strong>1234</strong><br>
+        📱 <strong>Trabajador:</strong> maria@valtek.cl / <strong>1234</strong>
       </div>
     </div>
   </div>
 </div>
 
 <!-- LANDING -->
-<div id="view-landing" class="app-view">
-  <section class="hero"><div style="position:relative;z-index:1;">
-    <div class="hero-badge"><span></span> SaaS para Instituciones Educativas</div>
-    <h1 class="hero-title">Valtek Optima</h1>
-    <p class="hero-subtitle">La plataforma inteligente de gestión y optimización de aseo institucional.</p>
-    <p class="hero-impact">Elimine la incertidumbre operativa. Controle el rendimiento real de su personal, reduzca los tiempos muertos y garantice campus 100% sanitizados.</p>
-    <div class="hero-ctas"><button class="btn-hero-primary" onclick="showAuth()">🚀 Solicitar Acceso</button><button class="btn-hero-outline" onclick="document.getElementById('problems').scrollIntoView({behavior:'smooth'})">Ver Beneficios</button></div>
-  </div></section>
-  <div id="problems" style="background:rgba(239,68,68,0.03);border-top:1px solid rgba(239,68,68,0.08);border-bottom:1px solid rgba(239,68,68,0.08);">
-    <div class="section">
-      <div class="section-tag" style="background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.2);color:var(--dirty);">El Problema</div>
-      <h2 class="section-title">¿Qué está fallando en tu institución?</h2>
-      <p class="section-desc">Cada día, millones de minutos se pierden sin control ni registro.</p>
-      <div class="cards-grid">
-        <div class="feature-card"><div class="card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="card-title">Pérdida de Tiempo</div><div class="card-desc">Sin registro, el personal genera inactividad invisible que acumula horas muertas.</div></div>
-        <div class="feature-card"><div class="card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><div class="card-title">Falta de Trazabilidad</div><div class="card-desc">No existe historial digital. Si un área no se limpió, nadie puede probarlo.</div></div>
-        <div class="feature-card"><div class="card-icon orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="card-title">Injusticia Laboral</div><div class="card-desc">Algunos cargan más zonas que otros sin que el administrador lo sepa.</div></div>
+<div id="view-landing" class="app-view active">
+  <section class="hero">
+    <div style="position:relative;z-index:1;">
+      <div class="hero-badge"><span></span> SaaS para Control & Trazabilidad Institucional</div>
+      <h1 class="hero-title">Valtek Optima</h1>
+      <p class="hero-subtitle">La solución integral para la gestión de contratistas, seguridad en portería y eficiencia de aseo.</p>
+      <p class="hero-impact">Elimine la incertidumbre operativa. Controle el personal externo, centralice la documentación legal y verifique el rendimiento real de aseo y mantención.</p>
+      <div class="hero-ctas">
+        <button class="btn-hero-primary" onclick="showAuth()">🚀 Solicitar Acceso</button>
+        <button class="btn-hero-outline" onclick="document.getElementById('benefits').scrollIntoView({behavior:'smooth'})">Ver Beneficios</button>
       </div>
     </div>
-  </div>
-  <div class="section">
-    <div class="section-tag">Beneficios</div><h2 class="section-title">La solución que tu campus necesita</h2><p class="section-desc">Cero papel, cero fricción, máximo control.</p>
-    <div class="cards-grid">
-      <div class="feature-card"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div class="card-title">Control de Rendimiento</div><div class="card-desc">Timestamps exactos de entrada y salida. Auditoría en tiempo real.</div></div>
-      <div class="feature-card"><div class="card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><div class="card-title">Interfaz Zero-Friction</div><div class="card-desc">Un toque para entrar, un toque para salir. Sin capacitación técnica.</div></div>
-      <div class="feature-card"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="card-title">Acceso Controlado</div><div class="card-desc">Super Admin → Jefe → Trabajador. Cada rol ve solo lo que necesita.</div></div>
+  </section>
+
+  <div id="benefits" style="background:rgba(99,102,241,0.02);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="section">
+      <div class="section-tag">Nuestros Pilares</div>
+      <h2 class="section-title">Control absoluto en un solo panel</h2>
+      <p class="section-desc">Garantice el cumplimiento de normativas legales y de higiene con un flujo digital inteligente.</p>
+      <div class="cards-grid">
+        <div class="feature-card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="card-title">Control de Contratistas</div>
+          <div class="card-desc">Carga centralizada de personal externo, carpetas de arranque y checklist legal de 6 documentos indispensables.</div>
+        </div>
+        <div class="feature-card">
+          <div class="card-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div class="card-title">Seguridad en Portería</div>
+          <div class="card-desc">Búsqueda rápida por RUT en accesos. Bloqueo automático para contratistas con documentación vencida o incompleta.</div>
+        </div>
+        <div class="feature-card">
+          <div class="card-icon orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <div class="card-title">Reportes de Eficiencia</div>
+          <div class="card-desc">Estadísticas de aseo en tiempo real, rankings de eficiencia y generación de informes ejecutivos en PDF descargables.</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- SUPER ADMIN -->
+<!-- ADMINISTRADOR MAYOR -->
 <div id="view-superadmin" class="app-view">
   <div class="sa-header">
-    <div class="sa-header-top"><div class="sa-crown">👑</div><div><div class="sa-title-text">Panel de Super Administrador</div><div class="sa-title-sub">Control centralizado de colegios y usuarios</div></div></div>
-    <div class="sa-tabs"><button class="sa-tab active" onclick="switchSaTab('colegios')">🏫 Colegios</button><button class="sa-tab" onclick="switchSaTab('usuarios')">👥 Usuarios</button></div>
+    <div class="sa-header-top"><div class="sa-crown">👑</div><div><div class="sa-title-text">Panel de Administrador Mayor</div><div class="sa-title-sub">Control global de colegios, usuarios, contratistas y auditorías</div></div></div>
+    <div class="sa-tabs">
+      <button class="sa-tab active" onclick="switchSaTab('colegios')">🏫 Colegios y Usuarios</button>
+      <button class="sa-tab" onclick="switchSaTab('aprobaciones')">✅ Aprobaciones de Personal</button>
+      <button class="sa-tab" onclick="switchSaTab('metricas')">📊 Métricas Globales</button>
+      <button class="sa-tab" onclick="switchSaTab('bitacora')">📁 Bitácora de Archivos</button>
+    </div>
   </div>
   <div class="sa-body">
+    <!-- Tab Colegios y Usuarios -->
     <div class="sa-tab-content active" id="sa-tab-colegios">
-      <div class="j-card"><div class="j-card-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Registrar Institución</div>
-        <div class="flex-row"><div class="f-group"><label class="f-label">Nombre</label><input class="f-input" id="sch-name" placeholder="Colegio San Nicolás"></div><div class="f-group"><label class="f-label">Ciudad</label><input class="f-input" id="sch-city" placeholder="Santiago"></div><div class="f-group"><label class="f-label">Plan</label><select class="f-input f-select" id="sch-plan"><option value="Básico">🔹 Básico</option><option value="Profesional" selected>🔷 Profesional</option><option value="Enterprise">💎 Enterprise</option></select></div><button class="btn-sm btn-gold-sm" style="margin-bottom:1rem;" onclick="createSchool()">+ Agregar</button></div>
+      <div class="j-grid-2">
+        <div class="j-card">
+          <div class="j-card-title">🏫 Registrar Colegio</div>
+          <div class="f-group"><label class="f-label">Nombre</label><input class="f-input" id="sch-name" placeholder="Colegio San Nicolás"></div>
+          <div class="f-group"><label class="f-label">Ciudad</label><input class="f-input" id="sch-city" placeholder="Santiago"></div>
+          <div class="f-group">
+            <label class="f-label">Plan Contratado</label>
+            <select class="f-input f-select" id="sch-plan">
+              <option value="Básico">🔹 Básico</option>
+              <option value="Profesional" selected>🔷 Profesional</option>
+              <option value="Enterprise">💎 Enterprise</option>
+            </select>
+          </div>
+          <button class="btn-sm btn-gold-sm" onclick="createSchool()">+ Agregar Colegio</button>
+        </div>
+        <div class="j-card">
+          <div class="j-card-title">👥 Dar de Alta Usuario</div>
+          <div class="f-group"><label class="f-label">Nombre</label><input class="f-input" id="nu-name" placeholder="Juan Pérez"></div>
+          <div class="f-group"><label class="f-label">Email</label><input class="f-input" type="email" id="nu-email" placeholder="jperez@colegio.cl"></div>
+          <div class="f-group"><label class="f-label">Contraseña</label><input class="f-input" type="text" id="nu-pass" placeholder="Mín. 4 caracteres"></div>
+          <div class="f-group">
+            <label class="f-label">Rol</label>
+            <select class="f-input f-select" id="nu-role">
+              <option value="admin">👔 Jefe de Aseo</option>
+              <option value="trabajador">📱 Trabajador</option>
+              <option value="proveedor">🏢 Proveedor Terciario</option>
+              <option value="porteria">🚪 Portería</option>
+            </select>
+          </div>
+          <div class="f-group">
+            <label class="f-label">Colegio Asociado</label>
+            <select class="f-input f-select" id="nu-school"></select>
+          </div>
+          <div class="f-group">
+            <label class="f-label">Plan Vinculado</label>
+            <input class="f-input" id="nu-plan-display" readonly style="color:var(--text-muted);cursor:default;">
+          </div>
+          <div id="nu-error" style="color:var(--dirty);font-size:0.8rem;margin-bottom:0.75rem;display:none;"></div>
+          <button class="btn-sm btn-gold-sm" onclick="createUser()">✅ Dar de Alta Usuario</button>
+        </div>
       </div>
-      <div class="j-card"><div class="j-card-title">Instituciones Registradas</div><div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>#</th><th>Nombre</th><th>Ciudad</th><th>Plan</th><th>Usuarios</th><th>Acciones</th></tr></thead><tbody id="schools-tbody"></tbody></table></div></div>
+      <div class="j-card">
+        <div class="j-card-title">Colegios Registrados</div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead><tr><th>#</th><th>Nombre</th><th>Ciudad</th><th>Plan</th><th>Usuarios</th><th>Acciones</th></tr></thead>
+            <tbody id="schools-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="j-card">
+        <div class="j-card-title">Todos los Usuarios de la Plataforma</div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead><tr><th>#</th><th>Nombre</th><th>Email</th><th>Rol</th><th>Colegio</th><th>Plan</th><th>Acciones</th></tr></thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
-    <div class="sa-tab-content" id="sa-tab-usuarios">
-      <div class="j-card"><div class="j-card-title">Crear Usuario</div>
-        <div class="j-grid-2"><div><div class="f-group"><label class="f-label">Nombre</label><input class="f-input" id="nu-name" placeholder="María González"></div><div class="f-group"><label class="f-label">Email</label><input class="f-input" type="email" id="nu-email" placeholder="maria@colegio.cl"></div><div class="f-group"><label class="f-label">Contraseña</label><input class="f-input" type="text" id="nu-pass" placeholder="Mín. 4 caracteres"></div></div><div><div class="f-group"><label class="f-label">Rol</label><select class="f-input f-select" id="nu-role"><option value="admin">👔 Jefe de Aseo</option><option value="trabajador">📱 Trabajador</option></select></div><div class="f-group"><label class="f-label">Colegio</label><select class="f-input f-select" id="nu-school"></select></div><div class="f-group"><label class="f-label">Plan</label><input class="f-input" id="nu-plan-display" readonly style="color:var(--text-muted);cursor:default;"></div></div></div>
-        <div id="nu-error" style="color:var(--dirty);font-size:0.8rem;margin-bottom:0.75rem;display:none;"></div>
-        <button class="btn-sm btn-gold-sm" onclick="createUser()">✅ Dar de Alta</button>
+
+    <!-- Tab Aprobaciones de Personal -->
+    <div class="sa-tab-content" id="sa-tab-aprobaciones">
+      <div class="j-card">
+        <div class="j-card-title">Aprobación de Personal Externo (Contratistas)</div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Trabajador / RUT</th>
+                <th>Tipo</th>
+                <th>Empresa (Proveedor)</th>
+                <th>Checklist Documental</th>
+                <th>Estado Aprobación</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="sa-aprobaciones-tbody"></tbody>
+          </table>
+        </div>
       </div>
-      <div class="j-card"><div class="j-card-title">Todos los Usuarios</div><div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>#</th><th>Nombre</th><th>Email</th><th>Rol</th><th>Colegio</th><th>Plan</th><th>Acciones</th></tr></thead><tbody id="users-tbody"></tbody></table></div></div>
+    </div>
+
+    <!-- Tab Métricas Globales -->
+    <div class="sa-tab-content" id="sa-tab-metricas">
+      <div class="kpi-row">
+        <div class="kpi-box"><div class="kpi-value" id="sa-kpi-schools" style="color:var(--gold);">0</div><div class="kpi-label">Colegios Registrados</div></div>
+        <div class="kpi-box"><div class="kpi-value" id="sa-kpi-workers" style="color:var(--accent);">0</div><div class="kpi-label">Trabajadores Totales</div></div>
+        <div class="kpi-box"><div class="kpi-value" id="sa-kpi-external" style="color:var(--primary);">0</div><div class="kpi-label">Contratistas Externos</div></div>
+        <div class="kpi-box"><div class="kpi-value" id="sa-kpi-access" style="color:var(--clean);">0</div><div class="kpi-label">Accesos Registrados Hoy</div></div>
+      </div>
+      <div class="j-card">
+        <div class="j-card-title">Información y Métricas Globales</div>
+        <div style="font-size:0.9rem;line-height:1.7;color:var(--text-dim);">
+          <p style="margin-bottom:1rem;">Desde este panel consolida toda la actividad del sistema. Utilice el botón a continuación para descargar el reporte ejecutivo global de trazabilidad.</p>
+          <button class="btn-sm btn-green" onclick="generateExecutiveReport()">🖨 Imprimir Reporte Consolidado (PDF)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Bitácora de Archivos -->
+    <div class="sa-tab-content" id="sa-tab-bitacora">
+      <div class="j-grid-2">
+        <div class="j-card">
+          <div class="j-card-title">📁 Subir Archivo a Bitácora</div>
+          <div class="f-group">
+            <label class="f-label">Trabajador Vinculado</label>
+            <select class="f-input f-select" id="bitacora-worker-select"></select>
+          </div>
+          <div class="f-group">
+            <label class="f-label">Descripción del Documento</label>
+            <input class="f-input" id="bitacora-desc" placeholder="Ej: Certificado de inducción, inducción de seguridad, etc.">
+          </div>
+          <div class="f-group">
+            <label class="f-label">Archivo</label>
+            <div id="bitacora-dropzone" style="border: 2px dashed rgba(255,255,255,0.15); border-radius: 10px; padding: 1.5rem; text-align: center; cursor: pointer; background: rgba(255,255,255,0.02); transition: all 0.2s;" onclick="document.getElementById('bitacora-file-input').click()">
+              <span style="font-size: 1.5rem; display: block; margin-bottom: 0.5rem;">📁</span>
+              <span id="bitacora-dropzone-text" style="font-size: 0.82rem; color: var(--text-muted);">Haz clic para seleccionar o arrastra un archivo</span>
+              <input type="file" id="bitacora-file-input" style="display: none;" onchange="handleBitacoraFileSelect(event)">
+            </div>
+          </div>
+          <button class="btn-sm btn-gold-sm" onclick="addBitacoraEntry()">💾 Registrar en Bitácora</button>
+        </div>
+        <div class="j-card">
+          <div class="j-card-title">📖 Historial de Bitácora General</div>
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Trabajador</th>
+                  <th>Archivo</th>
+                  <th>Descripción</th>
+                  <th>Registrado Por</th>
+                  <th>Fecha</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="sa-bitacora-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROVEEDOR TERCIARIO -->
+<div id="view-proveedor" class="app-view">
+  <div class="prov-header">
+    <div class="sa-header-top"><div class="sa-crown" style="font-size:1.8rem;">🏢</div><div><div class="sa-title-text" style="color:var(--primary);">Panel de Proveedor Terciario</div><div class="sa-title-sub">Carga de personal y entrega de documentación legal de subcontratistas</div></div></div>
+    <div class="prov-tabs">
+      <button class="prov-tab active" onclick="switchProvTab('cargar')">👷 Cargar Personal</button>
+      <button class="prov-tab" onclick="switchProvTab('docs')">📄 Documentación Legal</button>
+      <button class="prov-tab" onclick="switchProvTab('estado')">📋 Estado de Mis Trabajadores</button>
+    </div>
+  </div>
+  <div class="prov-body">
+    <!-- Cargar Personal -->
+    <div class="prov-tab-content active" id="prov-tab-cargar">
+      <div class="j-card" style="max-width: 600px; margin: 0 auto;">
+        <div class="j-card-title">👷 Enrolamiento de Trabajador Externo</div>
+        <div class="f-group"><label class="f-label">Nombre Completo</label><input class="f-input" id="prov-worker-name" placeholder="Pedro Soto"></div>
+        <div class="f-group"><label class="f-label">RUT</label><input class="f-input" id="prov-worker-rut" placeholder="18.765.432-1"></div>
+        <div class="f-group">
+          <label class="f-label">Tipo de Servicio</label>
+          <select class="f-input f-select" id="prov-worker-type">
+            <option value="aseo">🧹 Personal de Aseo</option>
+            <option value="mantencion">🛠 Personal de Mantención</option>
+          </select>
+        </div>
+        <div class="f-group"><label class="f-label">Teléfono</label><input class="f-input" id="prov-worker-phone" placeholder="+56912345678"></div>
+        <button class="btn-sm btn-green" onclick="addExternalWorker()">Cargar Personal en el Sistema</button>
+      </div>
+    </div>
+
+    <!-- Documentación Legal -->
+    <div class="prov-tab-content" id="prov-tab-docs">
+      <div class="j-card">
+        <div class="j-card-title">📄 Carpeta Legal Digital por Trabajador</div>
+        <div class="f-group" style="max-width: 400px; margin-bottom: 1.5rem;">
+          <label class="f-label">Seleccionar Trabajador</label>
+          <select class="f-input f-select" id="prov-worker-select" onchange="renderDocChecklist()"></select>
+        </div>
+        <div class="doc-list" id="prov-doc-checklist">
+          <p style="color:var(--text-muted);text-align:center;">Seleccione un trabajador para cargar sus documentos.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado de Mis Trabajadores -->
+    <div class="prov-tab-content" id="prov-tab-estado">
+      <div class="j-card">
+        <div class="j-card-title">Estado de Aprobación por la Institución</div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>RUT</th>
+                <th>Tipo</th>
+                <th>Teléfono</th>
+                <th>Checklist Documentos</th>
+                <th>Estado Acceso</th>
+              </tr>
+            </thead>
+            <tbody id="prov-workers-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PORTERÍA -->
+<div id="view-porteria" class="app-view">
+  <div class="port-container">
+    <div class="port-search-card">
+      <h2 class="port-title">Control de Acceso y Portería</h2>
+      <p class="port-subtitle">Verificación instantánea de documentación de contratistas y personal de aseo</p>
+      <div class="port-input-wrapper">
+        <input class="port-input" id="porteria-rut-search" placeholder="18.765.432-1" onkeydown="if(event.key==='Enter')lookupRut()">
+        <button class="btn-port-search" onclick="lookupRut()">Consultar</button>
+      </div>
+
+      <!-- Result screens -->
+      <!-- 🟢 AUTORIZADO -->
+      <div class="status-screen status-authorized" id="port-screen-auth">
+        <div class="status-header">
+          <div class="status-icon">✓</div>
+          <div class="status-text">🟢 ACCESO PERMITIDO</div>
+        </div>
+        <div class="worker-detail-grid">
+          <div class="worker-avatar-lg" id="port-auth-avatar">?</div>
+          <div class="worker-info-fields">
+            <div class="info-item"><div class="info-label">Nombre</div><div class="info-val" id="port-auth-name"></div></div>
+            <div class="info-item"><div class="info-label">RUT</div><div class="info-val" id="port-auth-rut"></div></div>
+            <div class="info-item"><div class="info-label">Empresa</div><div class="info-val" id="port-auth-company"></div></div>
+            <div class="info-item"><div class="info-label">Tipo</div><div class="info-val" id="port-auth-type"></div></div>
+          </div>
+        </div>
+        <div class="action-buttons">
+          <button class="btn-action btn-action-in" onclick="registerGateEvent('entrada')">Registrar Entrada</button>
+          <button class="btn-action btn-action-out" onclick="registerGateEvent('salida')">Registrar Salida</button>
+        </div>
+      </div>
+
+      <!-- 🔴 BLOQUEADO -->
+      <div class="status-screen status-blocked" id="port-screen-blocked">
+        <div class="status-header">
+          <div class="status-icon">⚠</div>
+          <div class="status-text">🔴 ACCESO DENEGADO</div>
+        </div>
+        <div style="font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:1rem;" id="port-blocked-warning-title">INGRESO PROHIBIDO</div>
+        <div class="worker-detail-grid">
+          <div class="worker-avatar-lg" style="background:linear-gradient(135deg, var(--dirty), #991b1b);" id="port-blocked-avatar">?</div>
+          <div class="worker-info-fields">
+            <div class="info-item"><div class="info-label">Nombre</div><div class="info-val" id="port-blocked-name"></div></div>
+            <div class="info-item"><div class="info-label">RUT</div><div class="info-val" id="port-blocked-rut"></div></div>
+            <div class="info-item"><div class="info-label">Empresa</div><div class="info-val" id="port-blocked-company"></div></div>
+            <div class="info-item"><div class="info-label">Acceso</div><div class="info-val" style="color:var(--dirty);">BLOQUEADO</div></div>
+          </div>
+        </div>
+        <div class="status-reasons">
+          <div class="reason-title">Documentos Pendientes o Vencidos:</div>
+          <ul class="reason-list" id="port-blocked-reasons-list"></ul>
+        </div>
+      </div>
+
+      <!-- ⚪ NO ENCONTRADO -->
+      <div class="status-screen status-notfound" id="port-screen-notfound">
+        <div class="status-header">
+          <div class="status-icon">?</div>
+          <div class="status-text">RUT NO REGISTRADO</div>
+        </div>
+        <p style="font-size:0.9rem;color:var(--text-muted);">El RUT ingresado no coincide con ningún trabajador interno o externo cargado en el sistema. Solicite asistencia al administrador mayor.</p>
+      </div>
+    </div>
+
+    <!-- Gate Log -->
+    <div class="j-card">
+      <div class="j-card-title">🚪 Historial de Accesos Registrados de Hoy</div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>RUT</th>
+              <th>Evento</th>
+              <th>Hora</th>
+              <th>Registrado Por</th>
+            </tr>
+          </thead>
+          <tbody id="port-history-tbody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -397,7 +791,7 @@
       <div class="j-card"><div class="j-card-title">📋 Onboarding — 3 Pasos</div>
         <div class="steps-grid">
           <div class="step-card"><div class="step-num">1</div><div class="step-title">Compartir Link</div><div class="step-desc">Envía el enlace por WhatsApp. No necesita instalar nada.</div></div>
-          <div class="step-card"><div class="step-num">2</div><div class="step-title">Iniciar Sesión</div><div class="step-desc">Ingresa con email y contraseña del Super Admin.</div></div>
+          <div class="step-card"><div class="step-num">2</div><div class="step-title">Iniciar Sesión</div><div class="step-desc">Ingresa con email y contraseña del Administrador.</div></div>
           <div class="step-card"><div class="step-num">3</div><div class="step-title">Marcar Zonas</div><div class="step-desc">Toca para iniciar, carita de diagnóstico, toca para finalizar.</div></div>
         </div>
       </div>
@@ -514,6 +908,27 @@
     <div class="diag-cancel" onclick="closeDiagnostic()">✕ Cancelar</div>
   </div>
 </div>
+
+<!-- UPLOAD MODAL FOR CONTRACTORS -->
+<div id="upload-modal" style="position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 1rem;">
+  <div class="diag-card" style="text-align: left; max-width: 400px; width:100%;">
+    <div class="diag-title" style="margin-bottom: 0.5rem;" id="up-modal-title">Subir Documento</div>
+    <div class="diag-subtitle" style="text-align:left; margin-bottom: 1.5rem;" id="up-modal-subtitle">Ingrese los datos para completar la entrega.</div>
+    <div class="f-group">
+      <label class="f-label">Nombre del Archivo PDF</label>
+      <input class="f-input" id="up-filename" placeholder="cedula_trabajador.pdf">
+    </div>
+    <div class="f-group">
+      <label class="f-label">Fecha de Vencimiento del Documento</label>
+      <input class="f-input" type="date" id="up-expiry">
+    </div>
+    <div style="display: flex; gap: 0.75rem; margin-top: 1.75rem;">
+      <button class="btn-sm btn-green" onclick="confirmUpload()" style="flex:1;">Confirmar Entrega</button>
+      <button class="btn-sm btn-red" onclick="closeUploadModal()" style="flex:1;">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <!-- PRINT REPORT (hidden, shown only during print) -->
@@ -528,8 +943,60 @@
     { id: 'u2', name: 'Tía María', email: 'maria@valtek.cl', password: '1234', role: 'trabajador', schoolId: 'sch1', createdAt: '06/06/2026' },
     { id: 'u3', name: 'Tía Carmen', email: 'carmen@valtek.cl', password: '1234', role: 'trabajador', schoolId: 'sch1', createdAt: '06/06/2026' },
     { id: 'u4', name: 'Tía Rosa', email: 'rosa@valtek.cl', password: '1234', role: 'trabajador', schoolId: 'sch1', createdAt: '06/06/2026' },
-    { id: 'u5', name: 'Tía Patricia', email: 'patricia@valtek.cl', password: '1234', role: 'trabajador', schoolId: 'sch1', createdAt: '06/06/2026' }
+    { id: 'u5', name: 'Tía Patricia', email: 'patricia@valtek.cl', password: '1234', role: 'trabajador', schoolId: 'sch1', createdAt: '06/06/2026' },
+    { id: 'u_prov', name: 'Servicios Limpieza SpA', email: 'proveedor@valtek.cl', password: '1234', role: 'proveedor', schoolId: 'sch1', createdAt: '07/06/2026' },
+    { id: 'u_port', name: 'Portería Central', email: 'porteria@valtek.cl', password: '1234', role: 'porteria', schoolId: 'sch1', createdAt: '07/06/2026' }
   ];
+
+  const SEED_EXTERNAL_WORKERS = [
+    {
+      id: 'ew_demo',
+      name: 'Josefina Reyes',
+      rut: '15.432.876-5',
+      type: 'aseo',
+      phone: '+56987654321',
+      providerId: 'u_prov',
+      schoolId: 'sch1',
+      status: 'autorizado',
+      documents: {
+        cedula:        { uploaded: true, fileName: 'cedula_josefina.pdf', uploadDate: '07/06/2026', expiryDate: '2027-12-31' },
+        antecedentes:  { uploaded: true, fileName: 'antecedentes_josefina.pdf', uploadDate: '07/06/2026', expiryDate: '2027-06-30' },
+        inhabilidades: { uploaded: true, fileName: 'inhabilidades_josefina.pdf', uploadDate: '07/06/2026', expiryDate: '2027-06-30' },
+        psicologico:   { uploaded: true, fileName: 'psicologico_josefina.pdf', uploadDate: '07/06/2026', expiryDate: '2027-06-30' },
+        licencia:      { uploaded: true, fileName: 'licencia_josefina.pdf', uploadDate: '07/06/2026', expiryDate: '2030-01-01' },
+        das:           { uploaded: true, fileName: 'das_josefina.pdf', uploadDate: '07/06/2026', expiryDate: '2027-01-01' }
+      },
+      createdAt: '07/06/2026'
+    },
+    {
+      id: 'ew_demo2',
+      name: 'Pedro Soto',
+      rut: '18.765.432-1',
+      type: 'mantencion',
+      phone: '+56976543210',
+      providerId: 'u_prov',
+      schoolId: 'sch1',
+      status: 'pendiente',
+      documents: {
+        cedula:        { uploaded: true, fileName: 'cedula_pedro.pdf', uploadDate: '07/06/2026', expiryDate: '2027-06-30' },
+        antecedentes:  { uploaded: false, fileName: null, uploadDate: null, expiryDate: null },
+        inhabilidades: { uploaded: true, fileName: 'inhabilidades_pedro.pdf', uploadDate: '07/06/2026', expiryDate: '2026-06-01' }, // expired!
+        psicologico:   { uploaded: false, fileName: null, uploadDate: null, expiryDate: null },
+        licencia:      { uploaded: false, fileName: null, uploadDate: null, expiryDate: null },
+        das:           { uploaded: false, fileName: null, uploadDate: null, expiryDate: null }
+      },
+      createdAt: '07/06/2026'
+    }
+  ];
+
+  const SEED_GATE_LOG = [
+    { id: 'gl_demo1', externalWorkerId: 'ew_demo', name: 'Josefina Reyes', rut: '15.432.876-5', type: 'entrada', timestamp: Date.now() - 3600000, registeredBy: 'Portería Central' }
+  ];
+
+  const SEED_FILE_LOG = [
+    { id: 'fl_demo1', workerId: 'u2', workerName: 'Tía María (Interno)', fileName: 'contrato_firmado.pdf', description: 'Copia del contrato de trabajo', uploadedBy: 'Super Admin Valtek', uploadDate: Date.now() - 7200000 }
+  ];
+
   const ICONS = {
     sala: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
     cancha: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2v20"/></svg>',
@@ -537,19 +1004,77 @@
     camarin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>'
   };
 
-  const state = { currentUser: null, schools: [], users: [], zones: [], mensajeDelDia: '', activePhoneWorker: null, pendingDiagnosticZone: null, auditLog: [] };
+  const state = { 
+    currentUser: null, 
+    schools: [], 
+    users: [], 
+    zones: [], 
+    mensajeDelDia: '', 
+    activePhoneWorker: null, 
+    pendingDiagnosticZone: null, 
+    auditLog: [],
+    // Expanded roles state arrays
+    externalWorkers: [],
+    gateLog: [],
+    fileLog: []
+  };
+
+  // Temp state for document upload
+  let tempUploadWorkerId = null;
+  let tempUploadDocKey = null;
+  let tempBitacoraFileSelected = null;
 
   // ── PERSISTENCE ──
-  const DATA_VERSION = '3.0';
-  function saveData() { localStorage.setItem('vo_version', DATA_VERSION); localStorage.setItem('vo_schools', JSON.stringify(state.schools)); localStorage.setItem('vo_users', JSON.stringify(state.users)); localStorage.setItem('vo_msg', state.mensajeDelDia); }
+  const DATA_VERSION = '4.0'; // Updated version for re-seed
+  function saveData() { 
+    localStorage.setItem('vo_version', DATA_VERSION); 
+    localStorage.setItem('vo_schools', JSON.stringify(state.schools)); 
+    localStorage.setItem('vo_users', JSON.stringify(state.users)); 
+    localStorage.setItem('vo_msg', state.mensajeDelDia); 
+    localStorage.setItem('vo_ext_workers', JSON.stringify(state.externalWorkers));
+    localStorage.setItem('vo_gate_log', JSON.stringify(state.gateLog));
+    localStorage.setItem('vo_file_log', JSON.stringify(state.fileLog));
+    localStorage.setItem('vo_zones', JSON.stringify(state.zones));
+    localStorage.setItem('vo_audit', JSON.stringify(state.auditLog));
+  }
+
   function loadData() {
     localStorage.removeItem('valtek_users');
-    if (localStorage.getItem('vo_version') !== DATA_VERSION) { localStorage.removeItem('vo_schools'); localStorage.removeItem('vo_users'); localStorage.removeItem('vo_msg'); }
-    const s = localStorage.getItem('vo_schools'), u = localStorage.getItem('vo_users'), m = localStorage.getItem('vo_msg');
+    if (localStorage.getItem('vo_version') !== DATA_VERSION) { 
+      localStorage.removeItem('vo_schools'); 
+      localStorage.removeItem('vo_users'); 
+      localStorage.removeItem('vo_msg'); 
+      localStorage.removeItem('vo_ext_workers');
+      localStorage.removeItem('vo_gate_log');
+      localStorage.removeItem('vo_file_log');
+      localStorage.removeItem('vo_zones');
+      localStorage.removeItem('vo_audit');
+    }
+    const s = localStorage.getItem('vo_schools');
+    const u = localStorage.getItem('vo_users');
+    const m = localStorage.getItem('vo_msg');
+    const ew = localStorage.getItem('vo_ext_workers');
+    const gl = localStorage.getItem('vo_gate_log');
+    const fl = localStorage.getItem('vo_file_log');
+    const z = localStorage.getItem('vo_zones');
+    const au = localStorage.getItem('vo_audit');
+
     state.schools = s ? JSON.parse(s) : JSON.parse(JSON.stringify(SEED_SCHOOLS));
     state.users = u ? JSON.parse(u) : JSON.parse(JSON.stringify(SEED_USERS));
     state.mensajeDelDia = m || '¡Buenos días equipo! Revisen baños del 2do piso. Visita institucional esta tarde. 💪';
+    state.externalWorkers = ew ? JSON.parse(ew) : JSON.parse(JSON.stringify(SEED_EXTERNAL_WORKERS));
+    state.gateLog = gl ? JSON.parse(gl) : JSON.parse(JSON.stringify(SEED_GATE_LOG));
+    state.fileLog = fl ? JSON.parse(fl) : JSON.parse(JSON.stringify(SEED_FILE_LOG));
+    state.auditLog = au ? JSON.parse(au) : [];
+
+    // Sync seed users
     SEED_USERS.forEach(su => { if (!state.users.find(uu => uu.email === su.email)) state.users.push(JSON.parse(JSON.stringify(su))); });
+
+    if (z) {
+      state.zones = JSON.parse(z);
+    } else {
+      initZones();
+    }
     saveData();
   }
 
@@ -569,38 +1094,90 @@
     ['bP30','bP31','bP32','bP33','cam0','cam1','cam2','bpc0','bpc1','bpc2'].forEach(id=>a(id,'u5'));
   }
 
+  // Helper: check status of external worker (including document expiration)
+  function checkWorkerStatus(worker) {
+    if (worker.status === 'rechazado') return 'rechazado';
+    if (worker.status === 'pendiente') return 'pendiente';
+
+    const nowStr = new Date().toISOString().split('T')[0];
+    let hasExpired = false;
+    let hasMissing = false;
+
+    const docs = ['cedula', 'antecedentes', 'inhabilidades', 'psicologico', 'licencia', 'das'];
+    for (const d of docs) {
+      const docObj = worker.documents[d];
+      if (!docObj || !docObj.uploaded) {
+        hasMissing = true;
+      } else if (docObj.expiryDate && docObj.expiryDate < nowStr) {
+        hasExpired = true;
+      }
+    }
+
+    if (hasExpired) return 'vencido';
+    if (hasMissing) return 'pendiente'; // Incomplete docs acts as pending
+    return worker.status; // 'autorizado'
+  }
+
   // ── AUTH ──
   function showAuth() { document.getElementById('view-auth').classList.remove('hidden'); }
   function hideAuth() { document.getElementById('view-auth').classList.add('hidden'); }
   function doLogin() {
-    const email = document.getElementById('login-email').value.trim().toLowerCase(), pass = document.getElementById('login-password').value;
+    const email = document.getElementById('login-email').value.trim().toLowerCase();
+    const pass = document.getElementById('login-password').value;
     if (email === SUPER_ADMIN.email && pass === SUPER_ADMIN.password) { loginSuccess(SUPER_ADMIN); return; }
     const user = state.users.find(u => u.email.toLowerCase() === email && u.password === pass);
     if (!user) { document.getElementById('login-error').classList.add('show'); return; }
     document.getElementById('login-error').classList.remove('show');
     loginSuccess(user);
   }
+
   function loginSuccess(user) {
-    state.currentUser = user; hideAuth();
+    state.currentUser = user; 
+    hideAuth();
     document.getElementById('navbar-user-info').style.display = 'flex';
     document.getElementById('nav-avatar').textContent = user.name.charAt(0).toUpperCase();
     document.getElementById('nav-avatar').className = 'user-avatar' + (user.role==='superadmin'?' gold':'');
     document.getElementById('nav-username').textContent = user.name;
-    const rl = {superadmin:'👑 Super Admin', admin:'👔 Jefe', trabajador:'📱 Trabajador'};
+    const rl = {superadmin:'👑 Admin Mayor', admin:'👔 Jefe', trabajador:'📱 Trabajador', proveedor:'🏢 Proveedor', porteria:'🚪 Portero'};
     document.getElementById('nav-role-chip').innerHTML = '<span class="role-chip '+user.role+'">'+(rl[user.role]||user.role)+'</span>';
+    
     document.getElementById('nav-login-btn').style.display = 'none';
     document.getElementById('nav-logout-btn').style.display = 'inline-flex';
+    
+    // Role-based Navbar visibility
     document.getElementById('nav-superadmin').style.display = user.role==='superadmin'?'inline-flex':'none';
+    document.getElementById('nav-proveedor').style.display = (user.role==='proveedor'||user.role==='superadmin')?'inline-flex':'none';
+    document.getElementById('nav-porteria').style.display = (user.role==='porteria'||user.role==='superadmin')?'inline-flex':'none';
     document.getElementById('nav-jefe').style.display = (user.role==='admin'||user.role==='superadmin')?'inline-flex':'none';
     document.getElementById('nav-trabajador').style.display = (user.role==='trabajador'||user.role==='superadmin')?'inline-flex':'none';
-    if (user.role==='superadmin') showView('superadmin'); else if (user.role==='admin') showView('jefe'); else showView('trabajador');
+
+    // Role-based redirect
+    if (user.role==='superadmin') showView('superadmin'); 
+    else if (user.role==='proveedor') showView('proveedor');
+    else if (user.role==='porteria') showView('porteria');
+    else if (user.role==='admin') showView('jefe'); 
+    else showView('trabajador');
+
     showToast('👋 ¡Bienvenido/a '+user.name+'!');
   }
+
   function logout() {
     state.currentUser = null;
-    document.getElementById('navbar-user-info').style.display='none'; document.getElementById('nav-login-btn').style.display='inline-flex'; document.getElementById('nav-logout-btn').style.display='none';
-    document.getElementById('nav-superadmin').style.display='none'; document.getElementById('nav-jefe').style.display='none'; document.getElementById('nav-trabajador').style.display='none';
-    showView('landing'); showAuth();
+    document.getElementById('navbar-user-info').style.display='none'; 
+    document.getElementById('nav-login-btn').style.display='inline-flex'; 
+    document.getElementById('nav-logout-btn').style.display='none';
+    document.getElementById('nav-superadmin').style.display='none'; 
+    document.getElementById('nav-proveedor').style.display='none'; 
+    document.getElementById('nav-porteria').style.display='none'; 
+    document.getElementById('nav-jefe').style.display='none'; 
+    document.getElementById('nav-trabajador').style.display='none';
+    
+    // Clean inputs
+    document.getElementById('login-email').value = '';
+    document.getElementById('login-password').value = '';
+    
+    showView('landing'); 
+    showAuth();
   }
 
   // ── VIEWS ──
@@ -609,32 +1186,851 @@
     const el=document.getElementById('view-'+v); if(el) el.classList.add('active');
     document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
     const nb=document.getElementById('nav-'+v); if(nb) nb.classList.add('active');
-    if(v==='superadmin') renderSuperAdmin(); if(v==='jefe') renderJefeAll(); if(v==='trabajador') renderWorkerView();
+    
+    if(v==='superadmin') renderSuperAdmin(); 
+    else if(v==='proveedor') renderProveedorAll();
+    else if(v==='porteria') renderPorteriaAll();
+    else if(v==='jefe') renderJefeAll(); 
+    else if(v==='trabajador') renderWorkerView();
   }
 
-  // ── SUPER ADMIN ──
-  function switchSaTab(t) { document.querySelectorAll('.sa-tab').forEach(x=>x.classList.remove('active')); document.querySelectorAll('.sa-tab-content').forEach(x=>x.classList.remove('active')); const ts=['colegios','usuarios']; document.querySelectorAll('.sa-tab')[ts.indexOf(t)].classList.add('active'); document.getElementById('sa-tab-'+t).classList.add('active'); renderSuperAdmin(); }
-  function renderSuperAdmin() { renderSchoolsTable(); renderUsersTable(); populateSchoolSelect(); }
-  function createSchool() { const n=document.getElementById('sch-name').value.trim(), c=document.getElementById('sch-city').value.trim(), p=document.getElementById('sch-plan').value; if(!n||!c){showToast('⚠ Completa nombre y ciudad.',true);return;} state.schools.push({id:'sch'+Date.now(),name:n,city:c,plan:p}); saveData(); document.getElementById('sch-name').value=''; document.getElementById('sch-city').value=''; renderSchoolsTable(); populateSchoolSelect(); showToast('🏫 Colegio registrado.'); }
-  function deleteSchool(id) { if(state.users.some(u=>u.schoolId===id)){showToast('⚠ Tiene usuarios activos.',true);return;} state.schools=state.schools.filter(s=>s.id!==id); saveData(); renderSchoolsTable(); populateSchoolSelect(); showToast('🗑 Eliminado.'); }
-  function renderSchoolsTable() { const tb=document.getElementById('schools-tbody'); if(!tb)return; if(!state.schools.length){tb.innerHTML='<tr class="empty-row"><td colspan="6">Sin instituciones.</td></tr>';return;} tb.innerHTML=state.schools.map((s,i)=>{const uc=state.users.filter(u=>u.schoolId===s.id).length; const pc=s.plan==='Enterprise'?'plan-enterprise':s.plan==='Profesional'?'plan-profesional':'plan-basico'; return '<tr><td style="color:var(--text-muted);">'+(i+1)+'</td><td><strong>'+s.name+'</strong></td><td>'+s.city+'</td><td><span class="plan-badge '+pc+'">'+s.plan+'</span></td><td style="color:var(--primary);font-weight:700;">'+uc+'</td><td><button class="btn-sm btn-red" onclick="deleteSchool(\''+s.id+'\')">🗑</button></td></tr>';}).join(''); }
-  function populateSchoolSelect() { const sel=document.getElementById('nu-school'); if(!sel)return; sel.innerHTML=state.schools.map(s=>'<option value="'+s.id+'">'+s.name+'</option>').join(''); updatePlanDisplay(); }
-  function updatePlanDisplay() { const sel=document.getElementById('nu-school'),pd=document.getElementById('nu-plan-display'); if(!sel||!pd)return; const sch=state.schools.find(s=>s.id===sel.value); pd.value=sch?sch.plan:'–'; }
-  function createUser() { const n=document.getElementById('nu-name').value.trim(),e=document.getElementById('nu-email').value.trim().toLowerCase(),p=document.getElementById('nu-pass').value,r=document.getElementById('nu-role').value,sid=document.getElementById('nu-school').value; const er=document.getElementById('nu-error'); er.style.display='none'; if(!n||!e||!p){er.textContent='✖ Completa todos los campos.';er.style.display='block';return;} if(p.length<4){er.textContent='✖ Contraseña mín. 4 caracteres.';er.style.display='block';return;} if(e===SUPER_ADMIN.email||state.users.find(u=>u.email===e)){er.textContent='✖ Email ya en uso.';er.style.display='block';return;} if(!sid){er.textContent='✖ Selecciona un colegio.';er.style.display='block';return;} const sch=state.schools.find(s=>s.id===sid); state.users.push({id:'u'+Date.now(),name:n,email:e,password:p,role:r,schoolId:sid,plan:sch?sch.plan:'–',createdAt:new Date().toLocaleDateString('es-CL')}); saveData(); document.getElementById('nu-name').value='';document.getElementById('nu-email').value='';document.getElementById('nu-pass').value=''; renderUsersTable(); showToast('✅ Usuario '+n+' creado.'); }
-  function deleteUser(id) { state.users=state.users.filter(u=>u.id!==id); state.zones.forEach(z=>{if(z.assignedTo===id)z.assignedTo=null;}); saveData(); renderUsersTable(); renderJefeAll(); showToast('🗑 Eliminado.'); }
-  function renderUsersTable() { const tb=document.getElementById('users-tbody'); if(!tb)return; const all=[{id:'_sa',name:SUPER_ADMIN.name,email:SUPER_ADMIN.email,role:'superadmin',schoolId:null,plan:null,createdAt:'Sistema',_p:true},...state.users]; tb.innerHTML=all.map((u,i)=>{const sch=state.schools.find(s=>s.id===u.schoolId); const rl=u.role==='superadmin'?'<span class="role-chip superadmin">👑 Super Admin</span>':u.role==='admin'?'<span class="role-chip admin">👔 Jefe</span>':'<span class="role-chip trabajador">📱 Trabajador</span>'; const pc=u.plan==='Enterprise'?'plan-enterprise':u.plan==='Profesional'?'plan-profesional':u.plan==='Básico'?'plan-basico':''; const pb=u.plan?'<span class="plan-badge '+pc+'">'+u.plan+'</span>':'–'; const ab=u._p?'<span style="color:var(--text-muted);font-size:0.75rem;">Protegido</span>':'<button class="btn-sm btn-red" onclick="deleteUser(\''+u.id+'\')">🗑</button>'; return '<tr><td style="color:var(--text-muted);">'+(i+1)+'</td><td><strong>'+u.name+'</strong></td><td style="color:var(--primary);">'+u.email+'</td><td>'+rl+'</td><td>'+(sch?sch.name:'–')+'</td><td>'+pb+'</td><td>'+ab+'</td></tr>';}).join(''); }
+  // ── SUPER ADMIN (ADMINISTRADOR MAYOR) ──
+  function switchSaTab(t) { 
+    document.querySelectorAll('.sa-tab').forEach(x=>x.classList.remove('active')); 
+    document.querySelectorAll('.sa-tab-content').forEach(x=>x.classList.remove('active')); 
+    const ts=['colegios','aprobaciones','metricas','bitacora']; 
+    document.querySelectorAll('.sa-tab')[ts.indexOf(t)].classList.add('active'); 
+    document.getElementById('sa-tab-'+t).classList.add('active'); 
+    renderSuperAdmin(); 
+  }
 
-  // ── JEFE ──
-  function switchJefeTab(t) { document.querySelectorAll('.jefe-tab').forEach(x=>x.classList.remove('active')); document.querySelectorAll('.jefe-tab-content').forEach(x=>x.classList.remove('active')); const ts=['personal','asignacion','monitoreo','informes']; document.querySelectorAll('.jefe-tab')[ts.indexOf(t)].classList.add('active'); document.getElementById('jefe-tab-'+t).classList.add('active'); renderJefeAll(); }
-  function renderJefeAll() { const lbl=document.getElementById('jefe-school-label'); if(lbl&&state.currentUser&&state.currentUser.schoolId){const s=state.schools.find(x=>x.id===state.currentUser.schoolId);lbl.textContent=s?'— '+s.name:'';} renderJefeWorkers(); renderAssignWorkerSelect(); renderAssignGrid(); updateMonitoreo(); renderLiveMonitor(); renderReports(); const mi=document.getElementById('msg-input'); if(mi&&!mi._i){mi.value=state.mensajeDelDia;mi._i=true;} }
-  function getWorkers() { if(!state.currentUser) return []; return state.currentUser.role==='superadmin' ? state.users.filter(u=>u.role==='trabajador') : state.users.filter(u=>u.role==='trabajador'&&u.schoolId===state.currentUser.schoolId); }
-  function renderJefeWorkers() { const tb=document.getElementById('jefe-workers-tbody'); if(!tb)return; const ws=getWorkers(); if(!ws.length){tb.innerHTML='<tr class="empty-row"><td colspan="4">Sin trabajadores.</td></tr>';return;} tb.innerHTML=ws.map(w=>{const as=state.zones.filter(z=>z.assignedTo===w.id).length,cl=state.zones.filter(z=>z.assignedTo===w.id&&z.status==='limpio').length; const b=cl>0&&cl===as&&as>0?'<span class="badge badge-clean">✅ Completado</span>':as>0?'<span class="badge badge-process">🔄 En Jornada</span>':'<span class="badge badge-pending">⚪ Sin Asignar</span>'; return '<tr><td><strong>'+w.name+'</strong></td><td style="color:var(--text-muted);">'+w.email+'</td><td style="color:var(--primary);font-weight:700;">'+as+'</td><td>'+b+'</td></tr>';}).join(''); }
-  function renderAssignWorkerSelect() { const sel=document.getElementById('assign-worker-select'); if(!sel)return; const pr=sel.value, ws=getWorkers(); sel.innerHTML=ws.length===0?'<option value="">Sin trabajadores</option>':ws.map(w=>'<option value="'+w.id+'">'+w.name+'</option>').join(''); if(pr&&ws.find(w=>w.id===pr))sel.value=pr; renderAssignGrid(); }
-  function renderAssignGrid() { const sel=document.getElementById('assign-worker-select'); if(!sel||!sel.value)return; const wid=sel.value,grid=document.getElementById('assign-grid'),cnt=document.getElementById('assign-counter'); if(!grid)return; const asgd=state.zones.filter(z=>z.assignedTo===wid).length; if(cnt)cnt.innerHTML='<strong style="color:var(--primary);">'+asgd+'</strong> de 51 zonas.'; const fc=z=>z.floor==='comun'?'var(--common)':z.floor===1?'var(--p1)':z.floor===2?'var(--p2)':'var(--p3)'; grid.innerHTML=state.zones.map(z=>{const ch=z.assignedTo===wid; return '<label class="zone-check-item'+(ch?' checked':'')+'" onclick="toggleZone(\''+z.id+'\',\''+wid+'\')"><input type="checkbox"'+(ch?' checked':'')+' onclick="event.stopPropagation();toggleZone(\''+z.id+'\',\''+wid+'\')"><span style="width:8px;height:8px;border-radius:50%;background:'+fc(z)+';display:inline-block;flex-shrink:0;"></span>'+z.name+'</label>';}).join(''); }
-  function toggleZone(zid,wid) { const z=state.zones.find(x=>x.id===zid); if(!z)return; z.assignedTo=z.assignedTo===wid?null:wid; renderAssignGrid(); renderJefeWorkers(); renderWorkerView(); }
-  function assignAll() { const wid=document.getElementById('assign-worker-select').value; state.zones.forEach(z=>z.assignedTo=wid); renderAssignGrid(); renderJefeWorkers(); renderWorkerView(); showToast('✅ Todas asignadas.'); }
-  function unassignAll() { const wid=document.getElementById('assign-worker-select').value; state.zones.forEach(z=>{if(z.assignedTo===wid)z.assignedTo=null;}); renderAssignGrid(); renderJefeWorkers(); renderWorkerView(); showToast('❌ Desasignadas.'); }
-  function publishMessage() { state.mensajeDelDia=document.getElementById('msg-input').value.trim(); saveData(); renderWorkerView(); showToast('📢 Mensaje publicado.'); }
+  function renderSuperAdmin() { 
+    renderSchoolsTable(); 
+    renderUsersTable(); 
+    populateSchoolSelect(); 
+    renderSaAprobacionesTable();
+    renderSaMetricas();
+    renderSaBitacora();
+  }
+
+  function createSchool() { 
+    const n=document.getElementById('sch-name').value.trim();
+    const c=document.getElementById('sch-city').value.trim();
+    const p=document.getElementById('sch-plan').value; 
+    if(!n||!c){showToast('⚠ Completa nombre y ciudad.',true);return;} 
+    state.schools.push({id:'sch'+Date.now(),name:n,city:c,plan:p}); 
+    saveData(); 
+    document.getElementById('sch-name').value=''; 
+    document.getElementById('sch-city').value=''; 
+    renderSchoolsTable(); 
+    populateSchoolSelect(); 
+    showToast('🏫 Colegio registrado.'); 
+  }
+
+  function deleteSchool(id) { 
+    if(state.users.some(u=>u.schoolId===id)){showToast('⚠ Tiene usuarios activos.',true);return;} 
+    state.schools=state.schools.filter(s=>s.id!==id); 
+    saveData(); 
+    renderSchoolsTable(); 
+    populateSchoolSelect(); 
+    showToast('🗑 Eliminado.'); 
+  }
+
+  function renderSchoolsTable() { 
+    const tb=document.getElementById('schools-tbody'); 
+    if(!tb)return; 
+    if(!state.schools.length){tb.innerHTML='<tr class="empty-row"><td colspan="6">Sin instituciones.</td></tr>';return;} 
+    tb.innerHTML=state.schools.map((s,i)=>{
+      const uc=state.users.filter(u=>u.schoolId===s.id).length; 
+      const pc=s.plan==='Enterprise'?'plan-enterprise':s.plan==='Profesional'?'plan-profesional':'plan-basico'; 
+      return '<tr><td style="color:var(--text-muted);">'+(i+1)+'</td><td><strong>'+s.name+'</strong></td><td>'+s.city+'</td><td><span class="plan-badge '+pc+'">'+s.plan+'</span></td><td style="color:var(--primary);font-weight:700;">'+uc+'</td><td><button class="btn-sm btn-red" onclick="deleteSchool(\''+s.id+'\')">🗑</button></td></tr>';
+    }).join(''); 
+  }
+
+  function populateSchoolSelect() { 
+    const sel=document.getElementById('nu-school'); 
+    if(!sel)return; 
+    sel.innerHTML=state.schools.map(s=>'<option value="'+s.id+'">'+s.name+'</option>').join(''); 
+    updatePlanDisplay(); 
+  }
+
+  function updatePlanDisplay() { 
+    const sel=document.getElementById('nu-school');
+    const pd=document.getElementById('nu-plan-display'); 
+    if(!sel||!pd)return; 
+    const sch=state.schools.find(s=>s.id===sel.value); 
+    pd.value=sch?sch.plan:'–'; 
+  }
+
+  function createUser() { 
+    const n=document.getElementById('nu-name').value.trim();
+    const e=document.getElementById('nu-email').value.trim().toLowerCase();
+    const p=document.getElementById('nu-pass').value;
+    const r=document.getElementById('nu-role').value;
+    const sid=document.getElementById('nu-school').value; 
+    const er=document.getElementById('nu-error'); 
+    er.style.display='none'; 
+    if(!n||!e||!p){er.textContent='✖ Completa todos los campos.';er.style.display='block';return;} 
+    if(p.length<4){er.textContent='✖ Contraseña mín. 4 caracteres.';er.style.display='block';return;} 
+    if(e===SUPER_ADMIN.email||state.users.find(u=>u.email===e)){er.textContent='✖ Email ya en uso.';er.style.display='block';return;} 
+    if(!sid){er.textContent='✖ Selecciona un colegio.';er.style.display='block';return;} 
+    const sch=state.schools.find(s=>s.id===sid); 
+    state.users.push({id:'u'+Date.now(),name:n,email:e,password:p,role:r,schoolId:sid,plan:sch?sch.plan:'–',createdAt:new Date().toLocaleDateString('es-CL')}); 
+    saveData(); 
+    document.getElementById('nu-name').value='';
+    document.getElementById('nu-email').value='';
+    document.getElementById('nu-pass').value=''; 
+    renderUsersTable(); 
+    showToast('✅ Usuario '+n+' creado.'); 
+  }
+
+  function deleteUser(id) { 
+    state.users=state.users.filter(u=>u.id!==id); 
+    state.zones.forEach(z=>{if(z.assignedTo===id)z.assignedTo=null;}); 
+    saveData(); 
+    renderUsersTable(); 
+    renderJefeAll(); 
+    showToast('🗑 Eliminado.'); 
+  }
+
+  function renderUsersTable() { 
+    const tb=document.getElementById('users-tbody'); 
+    if(!tb)return; 
+    const all=[{id:'_sa',name:SUPER_ADMIN.name,email:SUPER_ADMIN.email,role:'superadmin',schoolId:null,plan:null,createdAt:'Sistema',_p:true},...state.users]; 
+    tb.innerHTML=all.map((u,i)=>{
+      const sch=state.schools.find(s=>s.id===u.schoolId); 
+      const rolesHTML = {
+        superadmin:'<span class="role-chip superadmin">👑 Admin Mayor</span>', 
+        admin:'<span class="role-chip admin">👔 Jefe Aseo</span>',
+        trabajador:'<span class="role-chip trabajador">📱 Trabajador</span>',
+        proveedor:'<span class="role-chip proveedor">🏢 Proveedor</span>',
+        porteria:'<span class="role-chip porteria">🚪 Portería</span>'
+      };
+      const rl=rolesHTML[u.role] || '<span class="role-chip">'+u.role+'</span>'; 
+      const pc=u.plan==='Enterprise'?'plan-enterprise':u.plan==='Profesional'?'plan-profesional':u.plan==='Básico'?'plan-basico':''; 
+      const pb=u.plan?'<span class="plan-badge '+pc+'">'+u.plan+'</span>':'–'; 
+      const ab=u._p?'<span style="color:var(--text-muted);font-size:0.75rem;">Protegido</span>':'<button class="btn-sm btn-red" onclick="deleteUser(\''+u.id+'\')">🗑</button>'; 
+      return '<tr><td style="color:var(--text-muted);">'+(i+1)+'</td><td><strong>'+u.name+'</strong></td><td style="color:var(--primary);">'+u.email+'</td><td>'+rl+'</td><td>'+(sch?sch.name:'–')+'</td><td>'+pb+'</td><td>'+ab+'</td></tr>';
+    }).join(''); 
+  }
+
+  // Render document checklist inside tables dynamically
+  function renderDocChecklistHTML(w) {
+    const docs = [
+      { key: 'cedula', label: 'CI' },
+      { key: 'antecedentes', label: 'Ante' },
+      { key: 'inhabilidades', label: 'Inha' },
+      { key: 'psicologico', label: 'Psic' },
+      { key: 'licencia', label: 'Lic' },
+      { key: 'das', label: 'DAS' }
+    ];
+    
+    const nowStr = new Date().toISOString().split('T')[0];
+    
+    return '<div style="display: flex; gap: 0.25rem;">' + docs.map(d => {
+      const docObj = w.documents[d.key];
+      let title = d.label + ': ';
+      let color = 'var(--text-muted)';
+      let bg = 'rgba(255,255,255,0.05)';
+      let border = '1px solid rgba(255,255,255,0.1)';
+      
+      if (!docObj || !docObj.uploaded) {
+        title += 'Falta';
+        color = 'var(--dirty)';
+        bg = 'rgba(239,68,68,0.1)';
+        border = '1px solid rgba(239,68,68,0.2)';
+      } else if (docObj.expiryDate && docObj.expiryDate < nowStr) {
+        title += 'Vencido (' + docObj.expiryDate + ')';
+        color = 'var(--process)';
+        bg = 'rgba(245,158,11,0.1)';
+        border = '1px solid rgba(245,158,11,0.2)';
+      } else {
+        title += 'OK (' + docObj.fileName + ')';
+        color = 'var(--clean)';
+        bg = 'rgba(16,185,129,0.1)';
+        border = '1px solid rgba(16,185,129,0.2)';
+      }
+      
+      return '<span style="font-size: 0.65rem; font-weight:700; padding: 0.15rem 0.35rem; border-radius: 4px; color: ' + color + '; background: ' + bg + '; border: ' + border + ';" title="' + title + '">' + d.label + '</span>';
+    }).join('') + '</div>';
+  }
+
+  // Sa Tab 2: Aprobaciones
+  function renderSaAprobacionesTable() {
+    const tbody = document.getElementById('sa-aprobaciones-tbody');
+    if (!tbody) return;
+    if (!state.externalWorkers.length) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No hay contratistas registrados.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = state.externalWorkers.map(w => {
+      const provider = state.users.find(u => u.id === w.providerId);
+      const company = provider ? provider.name : 'Proveedor Terciario';
+      const docChecklist = renderDocChecklistHTML(w);
+      const calcStatus = checkWorkerStatus(w);
+
+      let statusBadge = '';
+      if (calcStatus === 'autorizado') statusBadge = '<span class="badge badge-authorized">🟢 Autorizado</span>';
+      else if (calcStatus === 'rechazado') statusBadge = '<span class="badge badge-rejected">🔴 Rechazado</span>';
+      else if (calcStatus === 'vencido') statusBadge = '<span class="badge badge-expired">⚠️ Docs Vencidos</span>';
+      else statusBadge = '<span class="badge badge-pending">🟡 Pendiente</span>';
+
+      return '<tr>' +
+        '<td><strong>' + w.name + '</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">' + w.rut + '</span></td>' +
+        '<td>' + (w.type === 'aseo' ? '🧹 Aseo' : '🛠 Mantención') + '</td>' +
+        '<td>' + company + '</td>' +
+        '<td>' + docChecklist + '</td>' +
+        '<td>' + statusBadge + '</td>' +
+        '<td>' +
+          '<div style="display:flex;gap:0.4rem;">' +
+            '<button class="btn-sm btn-green" onclick="approveWorker(\''+w.id+'\')">✓</button>' +
+            '<button class="btn-sm btn-red" onclick="rejectWorker(\''+w.id+'\')">✕</button>' +
+          '</div>' +
+        '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  function approveWorker(id) {
+    const w = state.externalWorkers.find(x => x.id === id);
+    if (!w) return;
+    w.status = 'autorizado';
+    saveData();
+    renderSaAprobacionesTable();
+    showToast('🟢 Trabajador ' + w.name + ' AUTORIZADO para acceso.');
+  }
+
+  function rejectWorker(id) {
+    const w = state.externalWorkers.find(x => x.id === id);
+    if (!w) return;
+    w.status = 'rechazado';
+    saveData();
+    renderSaAprobacionesTable();
+    showToast('🔴 Trabajador ' + w.name + ' RECHAZADO.');
+  }
+
+  // Sa Tab 3: Métricas
+  function renderSaMetricas() {
+    const schCount = state.schools.length;
+    const wCount = state.users.filter(u => u.role === 'trabajador').length;
+    const extCount = state.externalWorkers.length;
+    const todayAccess = state.gateLog.length;
+
+    const s = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    s('sa-kpi-schools', schCount);
+    s('sa-kpi-workers', wCount);
+    s('sa-kpi-external', extCount);
+    s('sa-kpi-access', todayAccess);
+  }
+
+  // Sa Tab 4: Bitácora
+  function renderSaBitacora() {
+    // Populate select
+    const sel = document.getElementById('bitacora-worker-select');
+    if (sel) {
+      const list = [];
+      state.users.filter(u => u.role === 'trabajador').forEach(u => {
+        list.push({ id: u.id, name: u.name + ' (Interno)', source: 'interno' });
+      });
+      state.externalWorkers.forEach(w => {
+        list.push({ id: w.id, name: w.name + ' (Externo - ' + w.rut + ')', source: 'externo' });
+      });
+      sel.innerHTML = list.map(w => '<option value="' + w.id + '" data-name="' + w.name + '">' + w.name + '</option>').join('');
+    }
+
+    const tbody = document.getElementById('sa-bitacora-tbody');
+    if (!tbody) return;
+    if (!state.fileLog.length) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No hay archivos en la bitácora.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = state.fileLog.map(f => {
+      const dateStr = new Date(f.uploadDate).toLocaleDateString('es-CL') + ' ' + new Date(f.uploadDate).toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit'});
+      return '<tr>' +
+        '<td><strong>' + f.workerName + '</strong></td>' +
+        '<td><span style="color:var(--accent);font-family:monospace;font-size:0.8rem;">📄 ' + f.fileName + '</span></td>' +
+        '<td>' + f.description + '</td>' +
+        '<td>' + f.uploadedBy + '</td>' +
+        '<td>' + dateStr + '</td>' +
+        '<td><button class="btn-sm btn-red" onclick="deleteBitacoraEntry(\''+f.id+'\')">🗑</button></td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  function handleBitacoraFileSelect(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    tempBitacoraFileSelected = file.name;
+    document.getElementById('bitacora-dropzone-text').innerHTML = '📄 <strong>' + file.name + '</strong> seleccionado';
+    document.getElementById('bitacora-dropzone').style.borderColor = 'var(--clean)';
+  }
+
+  function addBitacoraEntry() {
+    const sel = document.getElementById('bitacora-worker-select');
+    const desc = document.getElementById('bitacora-desc').value.trim();
+    if (!sel || !sel.value) { showToast('⚠ Seleccione un trabajador.', true); return; }
+    if (!desc) { showToast('⚠ Ingrese una descripción.', true); return; }
+    
+    const fileName = tempBitacoraFileSelected || 'archivo_bitacora_' + Math.floor(Math.random()*1000) + '.pdf';
+    const workerName = sel.options[sel.selectedIndex].getAttribute('data-name');
+    
+    state.fileLog.unshift({
+      id: 'fl_' + Date.now(),
+      workerId: sel.value,
+      workerName: workerName,
+      fileName: fileName,
+      description: desc,
+      uploadedBy: state.currentUser ? state.currentUser.name : 'Admin',
+      uploadDate: Date.now()
+    });
+
+    saveData();
+    document.getElementById('bitacora-desc').value = '';
+    tempBitacoraFileSelected = null;
+    document.getElementById('bitacora-dropzone-text').textContent = 'Haz clic para seleccionar o arrastra un archivo';
+    document.getElementById('bitacora-dropzone').style.borderColor = 'rgba(255,255,255,0.15)';
+    renderSaBitacora();
+    showToast('💾 Archivo guardado en bitácora.');
+  }
+
+  function deleteBitacoraEntry(id) {
+    state.fileLog = state.fileLog.filter(f => f.id !== id);
+    saveData();
+    renderSaBitacora();
+    showToast('🗑 Entrada eliminada de la bitácora.');
+  }
+
+  // Consolidated PDF report for Admin Mayor
+  function generateExecutiveReport() {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('es-CL') + ' ' + now.toLocaleTimeString('es-CL');
+    
+    let html = '<h1>📊 Reporte Consolidado de Operaciones – Valtek Optima</h1>';
+    html += '<p><strong>Generado por:</strong> ' + (state.currentUser ? state.currentUser.name : 'Administrador Mayor') + ' | <strong>Fecha:</strong> ' + dateStr + '</p>';
+    
+    // Schools list
+    html += '<h2>Colegios Registrados</h2><table><thead><tr><th>Colegio</th><th>Ciudad</th><th>Plan</th><th>Usuarios Activos</th></tr></thead><tbody>';
+    state.schools.forEach(s => {
+      const uc = state.users.filter(u => u.schoolId === s.id).length;
+      html += '<tr><td><strong>' + s.name + '</strong></td><td>' + s.city + '</td><td>' + s.plan + '</td><td>' + uc + '</td></tr>';
+    });
+    html += '</tbody></table>';
+
+    // Contratistas
+    html += '<h2>Personal Externo (Contratistas)</h2><table><thead><tr><th>Nombre</th><th>RUT</th><th>Tipo</th><th>Empresa</th><th>Estado</th></tr></thead><tbody>';
+    state.externalWorkers.forEach(w => {
+      const provider = state.users.find(u => u.id === w.providerId);
+      const company = provider ? provider.name : 'Proveedor Terciario';
+      const calcStatus = checkWorkerStatus(w);
+      const st = calcStatus === 'autorizado' ? 'Autorizado' : calcStatus === 'vencido' ? 'Docs Vencidos' : calcStatus === 'rechazado' ? 'Rechazado' : 'Pendiente';
+      html += '<tr><td><strong>' + w.name + '</strong></td><td>' + w.rut + '</td><td>' + (w.type === 'aseo' ? 'Aseo' : 'Mantención') + '</td><td>' + company + '</td><td>' + st + '</td></tr>';
+    });
+    html += '</tbody></table>';
+
+    // Access Logs
+    html += '<h2>Accesos Registrados (Historial Reciente)</h2><table><thead><tr><th>Nombre</th><th>RUT</th><th>Acción</th><th>Fecha/Hora</th><th>Portero</th></tr></thead><tbody>';
+    state.gateLog.forEach(g => {
+      const ds = new Date(g.timestamp).toLocaleString('es-CL');
+      html += '<tr><td>' + g.name + '</td><td>' + g.rut + '</td><td><strong>' + g.type.toUpperCase() + '</strong></td><td>' + ds + '</td><td>' + g.registeredBy + '</td></tr>';
+    });
+    html += '</tbody></table>';
+
+    html += '<p style="margin-top:2rem;font-size:0.8rem;color:#999;">Generado por Valtek Optima — Consolidado General</p>';
+    
+    document.getElementById('report-print-area').innerHTML = html;
+    window.print();
+  }
+
+  // ── PROVEEDOR TERCIARIO PANEL ──
+  function switchProvTab(t) {
+    document.querySelectorAll('.prov-tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.prov-tab-content').forEach(x=>x.classList.remove('active'));
+    const ts=['cargar','docs','estado'];
+    document.querySelectorAll('.prov-tab')[ts.indexOf(t)].classList.add('active');
+    document.getElementById('prov-tab-'+t).classList.add('active');
+    renderProveedorAll();
+  }
+
+  function renderProveedorAll() {
+    renderProvWorkersDropdown();
+    renderDocChecklist();
+    renderProvWorkersTable();
+  }
+
+  function addExternalWorker() {
+    const name = document.getElementById('prov-worker-name').value.trim();
+    const rut = document.getElementById('prov-worker-rut').value.trim();
+    const type = document.getElementById('prov-worker-type').value;
+    const phone = document.getElementById('prov-worker-phone').value.trim();
+
+    if (!name || !rut || !phone) { showToast('⚠ Rellene todos los campos.', true); return; }
+
+    // Check if worker already exists
+    if (state.externalWorkers.some(w => w.rut === rut)) {
+      showToast('⚠ El RUT ya está registrado.', true);
+      return;
+    }
+
+    const newWorker = {
+      id: 'ew_' + Date.now(),
+      name: name,
+      rut: rut,
+      type: type,
+      phone: phone,
+      providerId: state.currentUser ? state.currentUser.id : 'u_prov',
+      schoolId: state.currentUser ? state.currentUser.schoolId : 'sch1',
+      status: 'pendiente',
+      documents: {
+        cedula:        { uploaded: false, fileName: null, uploadDate: null, expiryDate: null },
+        antecedentes:  { uploaded: false, fileName: null, uploadDate: null, expiryDate: null },
+        inhabilidades: { uploaded: false, fileName: null, uploadDate: null, expiryDate: null },
+        psicologico:   { uploaded: false, fileName: null, uploadDate: null, expiryDate: null },
+        licencia:      { uploaded: false, fileName: null, uploadDate: null, expiryDate: null },
+        das:           { uploaded: false, fileName: null, uploadDate: null, expiryDate: null }
+      },
+      createdAt: new Date().toLocaleDateString('es-CL')
+    };
+
+    state.externalWorkers.push(newWorker);
+    saveData();
+
+    document.getElementById('prov-worker-name').value = '';
+    document.getElementById('prov-worker-rut').value = '';
+    document.getElementById('prov-worker-phone').value = '';
+
+    renderProveedorAll();
+    showToast('👷 Contratista ' + name + ' cargado como PENDIENTE.');
+  }
+
+  function getMyExternalWorkers() {
+    if (!state.currentUser) return [];
+    return state.externalWorkers.filter(w => w.providerId === state.currentUser.id);
+  }
+
+  function renderProvWorkersDropdown() {
+    const sel = document.getElementById('prov-worker-select');
+    if (!sel) return;
+    const myWorkers = getMyExternalWorkers();
+    const currentSelVal = sel.value;
+    
+    if (!myWorkers.length) {
+      sel.innerHTML = '<option value="">No tiene trabajadores cargados</option>';
+      return;
+    }
+
+    sel.innerHTML = myWorkers.map(w => '<option value="' + w.id + '">' + w.name + ' (' + w.rut + ')</option>').join('');
+    
+    if (currentSelVal && myWorkers.some(w => w.id === currentSelVal)) {
+      sel.value = currentSelVal;
+    }
+  }
+
+  function renderDocChecklist() {
+    const sel = document.getElementById('prov-worker-select');
+    const container = document.getElementById('prov-doc-checklist');
+    if (!container) return;
+    if (!sel || !sel.value) {
+      container.innerHTML = '<p style="color:var(--text-muted);text-align:center;">No hay trabajadores cargados.</p>';
+      return;
+    }
+
+    const worker = state.externalWorkers.find(w => w.id === sel.value);
+    if (!worker) return;
+
+    const docs = [
+      { key: 'cedula', label: 'Cédula de Identidad (ambos lados)' },
+      { key: 'antecedentes', label: 'Certificado de Antecedentes (fines especiales)' },
+      { key: 'inhabilidades', label: 'Certificado de Inhabilidades para menores' },
+      { key: 'psicologico', label: 'Certificado de Idoneidad Psicológica' },
+      { key: 'licencia', label: 'Licencia de Ed. Media o Certificaciones' },
+      { key: 'das', label: 'Registro Derecho a Saber (DAS)' }
+    ];
+
+    const nowStr = new Date().toISOString().split('T')[0];
+
+    let html = '<div class="doc-list">';
+    docs.forEach(d => {
+      const docObj = worker.documents[d.key];
+      let badgeHTML = '';
+      let fileMetaHTML = '';
+      
+      if (!docObj || !docObj.uploaded) {
+        badgeHTML = '<span class="badge badge-pending">❌ Falta</span>';
+        fileMetaHTML = 'Sin documento entregado';
+      } else if (docObj.expiryDate && docObj.expiryDate < nowStr) {
+        badgeHTML = '<span class="badge badge-expired">⚠️ Vencido (' + docObj.expiryDate + ')</span>';
+        fileMetaHTML = 'Archivo: ' + docObj.fileName + ' | Entregado: ' + docObj.uploadDate;
+      } else {
+        badgeHTML = '<span class="badge badge-authorized">✅ Subido (Vence: ' + (docObj.expiryDate || 'N/A') + ')</span>';
+        fileMetaHTML = 'Archivo: ' + docObj.fileName + ' | Entregado: ' + docObj.uploadDate;
+      }
+
+      html += '<div class="doc-item">' +
+        '<div class="doc-info">' +
+          '<div class="doc-name">' + d.label + '</div>' +
+          '<div class="doc-meta">' + fileMetaHTML + '</div>' +
+        '</div>' +
+        '<div>' + badgeHTML + '</div>' +
+        '<div><button class="btn-sm btn-blue" onclick="openUploadModal(\'' + worker.id + '\', \'' + d.key + '\', \'' + d.label + '\')">Subir PDF</button></div>' +
+      '</div>';
+    });
+    html += '</div>';
+    container.innerHTML = html;
+  }
+
+  function openUploadModal(workerId, docKey, docLabel) {
+    tempUploadWorkerId = workerId;
+    tempUploadDocKey = docKey;
+    
+    document.getElementById('up-modal-title').textContent = 'Subir: ' + docLabel;
+    
+    const worker = state.externalWorkers.find(w => w.id === workerId);
+    const docObj = worker.documents[docKey];
+    if (docObj && docObj.uploaded) {
+      document.getElementById('up-filename').value = docObj.fileName || '';
+      document.getElementById('up-expiry').value = docObj.expiryDate || '';
+    } else {
+      document.getElementById('up-filename').value = docKey + '_' + worker.rut.replace(/[^a-zA-Z0-9]/g, '') + '.pdf';
+      document.getElementById('up-expiry').value = '';
+    }
+
+    document.getElementById('upload-modal').style.display = 'flex';
+  }
+
+  function closeUploadModal() {
+    document.getElementById('upload-modal').style.display = 'none';
+    tempUploadWorkerId = null;
+    tempUploadDocKey = null;
+  }
+
+  function confirmUpload() {
+    if (!tempUploadWorkerId || !tempUploadDocKey) return;
+    const fn = document.getElementById('up-filename').value.trim();
+    const exp = document.getElementById('up-expiry').value;
+
+    if (!fn) { showToast('⚠ Ingrese el nombre del archivo.', true); return; }
+    if (!exp) { showToast('⚠ Ingrese la fecha de vencimiento.', true); return; }
+
+    const worker = state.externalWorkers.find(w => w.id === tempUploadWorkerId);
+    if (!worker) return;
+
+    worker.documents[tempUploadDocKey] = {
+      uploaded: true,
+      fileName: fn,
+      uploadDate: new Date().toLocaleDateString('es-CL'),
+      expiryDate: exp
+    };
+
+    saveData();
+    closeUploadModal();
+    renderDocChecklist();
+    renderProvWorkersTable();
+    showToast('✅ Documento cargado exitosamente.');
+  }
+
+  function renderProvWorkersTable() {
+    const tbody = document.getElementById('prov-workers-tbody');
+    if (!tbody) return;
+    const myWorkers = getMyExternalWorkers();
+
+    if (!myWorkers.length) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No tiene personal enrolado.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = myWorkers.map(w => {
+      const calcStatus = checkWorkerStatus(w);
+      const docChecklist = renderDocChecklistHTML(w);
+
+      let statusBadge = '';
+      if (calcStatus === 'autorizado') statusBadge = '<span class="badge badge-authorized">🟢 Autorizado</span>';
+      else if (calcStatus === 'rechazado') statusBadge = '<span class="badge badge-rejected">🔴 Rechazado</span>';
+      else if (calcStatus === 'vencido') statusBadge = '<span class="badge badge-expired">⚠️ Documentación Vencida</span>';
+      else statusBadge = '<span class="badge badge-pending">🟡 Pendiente</span>';
+
+      return '<tr>' +
+        '<td><strong>' + w.name + '</strong></td>' +
+        '<td>' + w.rut + '</td>' +
+        '<td>' + (w.type === 'aseo' ? '🧹 Aseo' : '🛠 Mantención') + '</td>' +
+        '<td>' + w.phone + '</td>' +
+        '<td>' + docChecklist + '</td>' +
+        '<td>' + statusBadge + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  // ── PORTERÍA PANEL ──
+  function renderPorteriaAll() {
+    renderPorteriaHistory();
+  }
+
+  let tempActivePorteriaWorker = null;
+
+  function lookupRut() {
+    const rutInput = document.getElementById('porteria-rut-search');
+    if (!rutInput) return;
+    const rut = rutInput.value.trim();
+    if (!rut) { showToast('⚠ Ingrese un RUT.', true); return; }
+
+    const sAuth = document.getElementById('port-screen-auth');
+    const sBlocked = document.getElementById('port-screen-blocked');
+    const sNotfound = document.getElementById('port-screen-notfound');
+
+    // Hide all first
+    sAuth.classList.remove('active');
+    sBlocked.classList.remove('active');
+    sNotfound.classList.remove('active');
+    tempActivePorteriaWorker = null;
+
+    // Search external worker first
+    const worker = state.externalWorkers.find(w => w.rut.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() === rut.replace(/[^a-zA-Z0-9]/g, '').toLowerCase());
+
+    if (!worker) {
+      // Look up internal worker next
+      const internalUser = state.users.find(u => u.role === 'trabajador' && u.name.toLowerCase().includes(rut.toLowerCase()));
+      if (internalUser) {
+        // Internal workers are always authorized automatically
+        sAuth.classList.add('active');
+        document.getElementById('port-auth-avatar').textContent = internalUser.name.charAt(0).toUpperCase();
+        document.getElementById('port-auth-name').textContent = internalUser.name;
+        document.getElementById('port-auth-rut').textContent = 'Interno';
+        document.getElementById('port-auth-company font').textContent = 'Personal Planta';
+        document.getElementById('port-auth-type').textContent = 'Aseo';
+        
+        tempActivePorteriaWorker = { id: internalUser.id, name: internalUser.name, rut: 'Interno', isInternal: true };
+      } else {
+        sNotfound.classList.add('active');
+      }
+      return;
+    }
+
+    // Evaluate worker status (checking documents expiry & status field)
+    const calcStatus = checkWorkerStatus(worker);
+    const provider = state.users.find(u => u.id === worker.providerId);
+    const company = provider ? provider.name : 'Proveedor Terciario';
+
+    if (calcStatus === 'autorizado') {
+      sAuth.classList.add('active');
+      document.getElementById('port-auth-avatar').textContent = worker.name.charAt(0).toUpperCase();
+      document.getElementById('port-auth-name').textContent = worker.name;
+      document.getElementById('port-auth-rut').textContent = worker.rut;
+      document.getElementById('port-auth-company').textContent = company;
+      document.getElementById('port-auth-type').textContent = worker.type === 'aseo' ? 'Aseo' : 'Mantención';
+      
+      tempActivePorteriaWorker = { id: worker.id, name: worker.name, rut: worker.rut, isInternal: false };
+    } else {
+      sBlocked.classList.add('active');
+      document.getElementById('port-blocked-avatar').textContent = worker.name.charAt(0).toUpperCase();
+      document.getElementById('port-blocked-name').textContent = worker.name;
+      document.getElementById('port-blocked-rut').textContent = worker.rut;
+      document.getElementById('port-blocked-company').textContent = company;
+
+      // Render block reasons
+      const reasonsList = document.getElementById('port-blocked-reasons-list');
+      reasonsList.innerHTML = '';
+
+      if (worker.status === 'rechazado') {
+        const li = document.createElement('li');
+        li.textContent = 'Bloqueado: Rechazado explícitamente por el Administrador Mayor.';
+        reasonsList.appendChild(li);
+      } else if (worker.status === 'pendiente' && !Object.values(worker.documents).some(d => d.uploaded)) {
+        const li = document.createElement('li');
+        li.textContent = 'Bloqueado: Pendiente de aprobación y sin documentos cargados.';
+        reasonsList.appendChild(li);
+      }
+
+      // Check document list specifically
+      const nowStr = new Date().toISOString().split('T')[0];
+      const docNames = {
+        cedula: 'Cédula de Identidad',
+        antecedentes: 'Certificado de Antecedentes',
+        inhabilidades: 'Inhabilidades para trabajar con menores',
+        psicologico: 'Idoneidad Psicológica',
+        licencia: 'Licencia / Certificaciones Técnicas',
+        das: 'Derecho a Saber (DAS)'
+      };
+
+      for (const key in worker.documents) {
+        const doc = worker.documents[key];
+        if (!doc || !doc.uploaded) {
+          const li = document.createElement('li');
+          li.textContent = 'Falta documento obligatorio: ' + docNames[key];
+          reasonsList.appendChild(li);
+        } else if (doc.expiryDate && doc.expiryDate < nowStr) {
+          const li = document.createElement('li');
+          li.textContent = 'Documento VENCIDO: ' + docNames[key] + ' (Venció: ' + doc.expiryDate + ')';
+          reasonsList.appendChild(li);
+        }
+      }
+    }
+  }
+
+  function registerGateEvent(eventType) {
+    if (!tempActivePorteriaWorker) return;
+    
+    state.gateLog.unshift({
+      id: 'gl_' + Date.now(),
+      externalWorkerId: tempActivePorteriaWorker.id,
+      name: tempActivePorteriaWorker.name,
+      rut: tempActivePorteriaWorker.rut,
+      type: eventType,
+      timestamp: Date.now(),
+      registeredBy: state.currentUser ? state.currentUser.name : 'Portería'
+    });
+
+    saveData();
+    renderPorteriaHistory();
+    renderSaMetricas(); // Keep superadmin metric sync
+
+    // Reset RUT search screen
+    document.getElementById('porteria-rut-search').value = '';
+    document.getElementById('port-screen-auth').classList.remove('active');
+    tempActivePorteriaWorker = null;
+
+    showToast('🚪 Acceso de ' + eventType.toUpperCase() + ' registrado con éxito.');
+  }
+
+  function renderPorteriaHistory() {
+    const tbody = document.getElementById('port-history-tbody');
+    if (!tbody) return;
+
+    if (!state.gateLog.length) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Sin accesos registrados hoy.</td></tr>';
+      return;
+    }
+
+    // Filter today's accesses only
+    const startOfToday = new Date().setHours(0,0,0,0);
+    const todayLogs = state.gateLog.filter(g => g.timestamp >= startOfToday);
+
+    if (!todayLogs.length) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Sin accesos registrados hoy.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = todayLogs.map(g => {
+      const timeStr = new Date(g.timestamp).toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+      const badgeClass = g.type === 'entrada' ? 'badge-clean' : 'badge-process';
+      return '<tr>' +
+        '<td><strong>' + g.name + '</strong></td>' +
+        '<td>' + g.rut + '</td>' +
+        '<td><span class="badge ' + badgeClass + '">' + g.type.toUpperCase() + '</span></td>' +
+        '<td>' + timeStr + '</td>' +
+        '<td>' + g.registeredBy + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  // ── JEFE DE ASEO PANEL ──
+  function switchJefeTab(t) { 
+    document.querySelectorAll('.jefe-tab').forEach(x=>x.classList.remove('active')); 
+    document.querySelectorAll('.jefe-tab-content').forEach(x=>x.classList.remove('active')); 
+    const ts=['personal','asignacion','monitoreo','informes']; 
+    document.querySelectorAll('.jefe-tab')[ts.indexOf(t)].classList.add('active'); 
+    document.getElementById('jefe-tab-'+t).classList.add('active'); 
+    renderJefeAll(); 
+  }
+
+  function renderJefeAll() { 
+    const lbl=document.getElementById('jefe-school-label'); 
+    if(lbl&&state.currentUser&&state.currentUser.schoolId){
+      const s=state.schools.find(x=>x.id===state.currentUser.schoolId);
+      lbl.textContent=s?'— '+s.name:'';
+    } 
+    renderJefeWorkers(); 
+    renderAssignWorkerSelect(); 
+    renderAssignGrid(); 
+    updateMonitoreo(); 
+    renderLiveMonitor(); 
+    renderReports(); 
+    const mi=document.getElementById('msg-input'); 
+    if(mi&&!mi._i){mi.value=state.mensajeDelDia;mi._i=true;} 
+  }
+
+  function getWorkers() { 
+    if(!state.currentUser) return []; 
+    return state.currentUser.role==='superadmin' 
+      ? state.users.filter(u=>u.role=='trabajador') 
+      : state.users.filter(u=>u.role=='trabajador'&&u.schoolId===state.currentUser.schoolId); 
+  }
+
+  function renderJefeWorkers() { 
+    const tb=document.getElementById('jefe-workers-tbody'); 
+    if(!tb)return; 
+    const ws=getWorkers(); 
+    if(!ws.length){tb.innerHTML='<tr class="empty-row"><td colspan="4">Sin trabajadores.</td></tr>';return;} 
+    tb.innerHTML=ws.map(w=>{
+      const as=state.zones.filter(z=>z.assignedTo===w.id).length;
+      const cl=state.zones.filter(z=>z.assignedTo===w.id&&z.status==='limpio').length; 
+      const b=cl>0&&cl===as&&as>0?'<span class="badge badge-clean">✅ Completado</span>':as>0?'<span class="badge badge-process">🔄 En Jornada</span>':'<span class="badge badge-pending">⚪ Sin Asignar</span>'; 
+      return '<tr><td><strong>'+w.name+'</strong></td><td style="color:var(--text-muted);">'+w.email+'</td><td style="color:var(--primary);font-weight:700;">'+as+'</td><td>'+b+'</td></tr>';
+    }).join(''); 
+  }
+
+  function renderAssignWorkerSelect() { 
+    const sel=document.getElementById('assign-worker-select'); 
+    if(!sel)return; 
+    const pr=sel.value;
+    const ws=getWorkers(); 
+    sel.innerHTML=ws.length===0?'<option value="">Sin trabajadores</option>':ws.map(w=>'<option value="'+w.id+'">'+w.name+'</option>').join(''); 
+    if(pr&&ws.find(w=>w.id===pr))sel.value=pr; 
+    renderAssignGrid(); 
+  }
+
+  function renderAssignGrid() { 
+    const sel=document.getElementById('assign-worker-select'); 
+    if(!sel||!sel.value)return; 
+    const wid=sel.value;
+    const grid=document.getElementById('assign-grid');
+    const cnt=document.getElementById('assign-counter'); 
+    if(!grid)return; 
+    const asgd=state.zones.filter(z=>z.assignedTo===wid).length; 
+    if(cnt)cnt.innerHTML='<strong style="color:var(--primary);">'+asgd+'</strong> de 51 zonas.'; 
+    const fc=z=>z.floor==='comun'?'var(--common)':z.floor===1?'var(--p1)':z.floor===2?'var(--p2)':'var(--p3)'; 
+    grid.innerHTML=state.zones.map(z=>{
+      const ch=z.assignedTo===wid; 
+      return '<label class="zone-check-item'+(ch?' checked':'')+'" onclick="toggleZone(\''+z.id+'\',\''+wid+'\')"><input type="checkbox"'+(ch?' checked':'')+' onclick="event.stopPropagation();toggleZone(\''+z.id+'\',\''+wid+'\')"><span style="width:8px;height:8px;border-radius:50%;background:'+fc(z)+';display:inline-block;flex-shrink:0;"></span>'+z.name+'</label>';
+    }).join(''); 
+  }
+
+  function toggleZone(zid,wid) { 
+    const z=state.zones.find(x=>x.id===zid); 
+    if(!z)return; 
+    z.assignedTo=z.assignedTo===wid?null:wid; 
+    saveData();
+    renderAssignGrid(); 
+    renderJefeWorkers(); 
+    renderWorkerView(); 
+  }
+
+  function assignAll() { 
+    const wid=document.getElementById('assign-worker-select').value; 
+    state.zones.forEach(z=>z.assignedTo=wid); 
+    saveData();
+    renderAssignGrid(); 
+    renderJefeWorkers(); 
+    renderWorkerView(); 
+    showToast('✅ Todas asignadas.'); 
+  }
+
+  function unassignAll() { 
+    const wid=document.getElementById('assign-worker-select').value; 
+    state.zones.forEach(z=>{if(z.assignedTo===wid)z.assignedTo=null;}); 
+    saveData();
+    renderAssignGrid(); 
+    renderJefeWorkers(); 
+    renderWorkerView(); 
+    showToast('❌ Desasignadas.'); 
+  }
+
+  function publishMessage() { 
+    state.mensajeDelDia=document.getElementById('msg-input').value.trim(); 
+    saveData(); 
+    renderWorkerView(); 
+    showToast('📢 Mensaje publicado.'); 
+  }
 
   // ── LIVE MONITOR ──
   function renderLiveMonitor() {
@@ -675,33 +2071,150 @@
     if (state.mensajeDelDia) { banner.classList.add('show'); bt.textContent = state.mensajeDelDia; } else banner.classList.remove('show');
     renderPhoneBody();
   }
+
   function getFloorClass(z) { return z.floor==='comun'?'pc':z.floor===1?'p1':z.floor===2?'p2':'p3'; }
   function getFloorLabel(z) { return z.floor==='comun'?(z.type==='cancha'?'Deportes':'Área Común'):z.floor+'º Piso'; }
+
   function renderPhoneBody() {
-    const body=document.getElementById('phone-body'); if(!body)return;
-    const wid=state.activePhoneWorker, my=wid?state.zones.filter(z=>z.assignedTo===wid):[];
+    const body=document.getElementById('phone-body'); 
+    if(!body)return;
+    const wid=state.activePhoneWorker;
+    const my=wid?state.zones.filter(z=>z.assignedTo===wid):[];
     if(!my.length){body.innerHTML='<div class="empty-tasks"><div style="font-size:2rem;margin-bottom:0.5rem;">📋</div>No tienes zonas asignadas hoy.</div>';return;}
     const cl=my.filter(z=>z.status==='limpio').length;
     let h='<div class="phone-section-title">Mis Zonas <span class="phone-counter">'+cl+' / '+my.length+' ✅</span></div>';
-    my.forEach(z=>{const fc=getFloorClass(z),ic=ICONS[z.type]||ICONS.sala,fl=getFloorLabel(z);let sb='',aa='';
-      if(z.status==='pendiente'){sb='<span class="task-status-badge pendiente">⚪ Pendiente</span>';aa='<div class="task-action-row"><button class="task-btn task-btn-start" onclick="startZone(\''+z.id+'\')">▶ Iniciar</button></div>';}
-      else if(z.status==='en-proceso'){sb='<span class="task-status-badge en-proceso">🟡 En Proceso</span>';const t=new Date(z.entradaTime),ts=t.getHours().toString().padStart(2,'0')+':'+t.getMinutes().toString().padStart(2,'0')+':'+t.getSeconds().toString().padStart(2,'0'),de=z.diagnostic==='excelente'?'🙂':z.diagnostic==='regular'?'😐':'🙁';aa='<div class="task-time-info">Entrada: <span>'+ts+'</span> · '+de+'</div><div class="task-action-row"><button class="task-btn task-btn-finish" onclick="finishZone(\''+z.id+'\')">✅ Finalizar</button></div>';}
-      else{sb='<span class="task-status-badge limpio">🟢 Limpio</span>';const sa=new Date(z.salidaTime),dur=Math.round((z.salidaTime-z.entradaTime)/1000),ds=dur>=60?Math.floor(dur/60)+'min '+(dur%60)+'s':dur+'s',ss=sa.getHours().toString().padStart(2,'0')+':'+sa.getMinutes().toString().padStart(2,'0'),de=z.diagnostic==='excelente'?'🙂':z.diagnostic==='regular'?'😐':'🙁';aa='<div class="task-time-info">Salida: <span style="color:var(--clean)">'+ss+'</span> · '+ds+' · '+de+'</div>';}
+    my.forEach(z=>{
+      const fc=getFloorClass(z);
+      const ic=ICONS[z.type]||ICONS.sala;
+      const fl=getFloorLabel(z);
+      let sb='';
+      let aa='';
+      if(z.status==='pendiente'){
+        sb='<span class="task-status-badge pendiente">⚪ Pendiente</span>';
+        aa='<div class="task-action-row"><button class="task-btn task-btn-start" onclick="startZone(\''+z.id+'\')">▶ Iniciar</button></div>';
+      }
+      else if(z.status==='en-proceso'){
+        sb='<span class="task-status-badge en-proceso">🟡 En Proceso</span>';
+        const t=new Date(z.entradaTime);
+        const ts=t.getHours().toString().padStart(2,'0')+':'+t.getMinutes().toString().padStart(2,'0')+':'+t.getSeconds().toString().padStart(2,'0');
+        const de=z.diagnostic==='excelente'?'🙂':z.diagnostic==='regular'?'😐':'🙁';
+        aa='<div class="task-time-info">Entrada: <span>'+ts+'</span> · '+de+'</div><div class="task-action-row"><button class="task-btn task-btn-finish" onclick="finishZone(\''+z.id+'\')">✅ Finalizar</button></div>';
+      }
+      else{
+        sb='<span class="task-status-badge limpio">🟢 Limpio</span>';
+        const sa=new Date(z.salidaTime);
+        const dur=Math.round((z.salidaTime-z.entradaTime)/1000);
+        const ds=dur&gt;=60?Math.floor(dur/60)+'min '+(dur%60)+'s':dur+'s';
+        const ss=sa.getHours().toString().padStart(2,'0')+':'+sa.getMinutes().toString().padStart(2,'0');
+        const de=z.diagnostic==='excelente'?'🙂':z.diagnostic==='regular'?'😐':'🙁';
+        aa='<div class="task-time-info">Salida: <span style="color:var(--clean)">'+ss+'</span> · '+ds+' · '+de+'</div>';
+      }
       h+='<div class="task-card '+fc+' '+z.status+'"><div class="task-card-header"><div class="task-card-meta"><div class="task-icon '+fc+'">'+ic+'</div><div><div class="task-name">'+z.name+'</div><div class="task-floor">'+fl+'</div></div></div>'+sb+'</div>'+aa+'</div>';
     });
     body.innerHTML=h;
   }
 
   // ── WORKFLOW ──
-  function startZone(zid) { state.pendingDiagnosticZone=zid; const z=state.zones.find(x=>x.id===zid); document.getElementById('diag-zone-name').textContent=z?z.name:''; document.getElementById('diagnostic-modal').classList.add('open'); }
-  function closeDiagnostic() { state.pendingDiagnosticZone=null; document.getElementById('diagnostic-modal').classList.remove('open'); }
-  function selectDiagnostic(diag) { const zid=state.pendingDiagnosticZone; if(!zid)return; const z=state.zones.find(x=>x.id===zid); if(!z)return; z.status='en-proceso'; z.entradaTime=Date.now(); z.diagnostic=diag; closeDiagnostic(); addAuditEntry(z); renderPhoneBody(); updateMonitoreo(); renderLiveMonitor(); renderJefeWorkers(); showToast('▶ Aseo iniciado en '+z.name); }
-  function finishZone(zid) { const z=state.zones.find(x=>x.id===zid); if(!z||z.status!=='en-proceso')return; z.salidaTime=Date.now(); z.status='limpio'; updateAuditEntry(z); renderPhoneBody(); updateMonitoreo(); renderLiveMonitor(); renderJefeWorkers(); renderReports(); showToast('✅ ¡'+z.name+' LIMPIA!'); }
-  function addAuditEntry(z) { const w=state.users.find(u=>u.id===z.assignedTo); if(!state.auditLog.find(e=>e.zid===z.id)) state.auditLog.push({zid:z.id,zoneName:z.name,workerName:w?w.name:'–',workerId:z.assignedTo,entradaTime:z.entradaTime,diagnostic:z.diagnostic,salidaTime:null,status:'en-proceso'}); renderAuditTable(); }
-  function updateAuditEntry(z) { const e=state.auditLog.find(x=>x.zid===z.id); if(e){e.salidaTime=z.salidaTime;e.status='limpio';} renderAuditTable(); }
-  function renderAuditTable() { const em=document.getElementById('audit-empty'),tb=document.getElementById('audit-table'),tbody=document.getElementById('audit-tbody'); if(!tbody)return; if(!state.auditLog.length){if(em)em.style.display='block';if(tb)tb.style.display='none';return;} if(em)em.style.display='none';if(tb)tb.style.display='table'; const fmt=ts=>{if(!ts)return'–';const d=new Date(ts);return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')+':'+d.getSeconds().toString().padStart(2,'0');}; tbody.innerHTML=state.auditLog.map(e=>{const dur=(e.entradaTime&&e.salidaTime)?Math.round((e.salidaTime-e.entradaTime)/1000):null;const ds=dur!==null?(dur>=60?Math.floor(dur/60)+'min '+(dur%60)+'s':dur+'s'):'–';const de=e.diagnostic==='excelente'?'🙂 Excelente':e.diagnostic==='regular'?'😐 Regular':'🙁 Malo';const b=e.status==='limpio'?'<span class="badge badge-clean">🟢 Limpio</span>':'<span class="badge badge-process">🟡 En Proceso</span>';return'<tr><td><strong>'+e.zoneName+'</strong></td><td>'+e.workerName+'</td><td style="color:var(--process);">'+fmt(e.entradaTime)+'</td><td>'+de+'</td><td style="color:var(--clean);">'+fmt(e.salidaTime)+'</td><td>'+ds+'</td><td>'+b+'</td></tr>';}).join(''); }
-  function updateMonitoreo() { const total=state.zones.length,cl=state.zones.filter(z=>z.status==='limpio').length,pr=state.zones.filter(z=>z.status==='en-proceso').length,pe=state.zones.filter(z=>z.status==='pendiente').length,pct=Math.round((cl/total)*100); const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;}; s('kpi-clean',cl);s('kpi-clean2',cl);s('kpi-process',pr);s('kpi-process2',pr);s('kpi-pending',pe);s('kpi-pending2',pe);s('efficiency-pct',pct+'%'); const ci=document.getElementById('efficiency-circle'); if(ci){const c=2*Math.PI*70;ci.style.strokeDasharray=c;ci.style.strokeDashoffset=c-(c*pct/100);} renderAuditTable(); }
-  function resetDemo() { state.zones.forEach(z=>{z.status='pendiente';z.entradaTime=null;z.salidaTime=null;z.diagnostic=null;}); state.auditLog=[]; renderPhoneBody(); updateMonitoreo(); renderLiveMonitor(); renderJefeWorkers(); renderReports(); showToast('🔄 Demo reiniciada.'); }
+  function startZone(zid) { 
+    state.pendingDiagnosticZone=zid; 
+    const z=state.zones.find(x=>x.id===zid); 
+    document.getElementById('diag-zone-name').textContent=z?z.name:''; 
+    document.getElementById('diagnostic-modal').classList.add('open'); 
+  }
+
+  function closeDiagnostic() { 
+    state.pendingDiagnosticZone=null; 
+    document.getElementById('diagnostic-modal').classList.remove('open'); 
+  }
+
+  function selectDiagnostic(diag) { 
+    const zid=state.pendingDiagnosticZone; 
+    if(!zid)return; 
+    const z=state.zones.find(x=>x.id===zid); 
+    if(!z)return; 
+    z.status='en-proceso'; 
+    z.entradaTime=Date.now(); 
+    z.diagnostic=diag; 
+    closeDiagnostic(); 
+    addAuditEntry(z); 
+    saveData();
+    renderPhoneBody(); 
+    updateMonitoreo(); 
+    renderLiveMonitor(); 
+    renderJefeWorkers(); 
+    showToast('▶ Aseo iniciado en '+z.name); 
+  }
+
+  function finishZone(zid) { 
+    const z=state.zones.find(x=>x.id===zid); 
+    if(!z||z.status!=='en-proceso')return; 
+    z.salidaTime=Date.now(); 
+    z.status='limpio'; 
+    updateAuditEntry(z); 
+    saveData();
+    renderPhoneBody(); 
+    updateMonitoreo(); 
+    renderLiveMonitor(); 
+    renderJefeWorkers(); 
+    renderReports(); 
+    showToast('✅ ¡'+z.name+' LIMPIA!'); 
+  }
+
+  function addAuditEntry(z) { 
+    const w=state.users.find(u=>u.id===z.assignedTo); 
+    if(!state.auditLog.find(e=>e.zid===z.id)) {
+      state.auditLog.push({zid:z.id,zoneName:z.name,workerName:w?w.name:'–',workerId:z.assignedTo,entradaTime:z.entradaTime,diagnostic:z.diagnostic,salidaTime:null,status:'en-proceso'}); 
+    }
+    renderAuditTable(); 
+  }
+
+  function updateAuditEntry(z) { 
+    const e=state.auditLog.find(x=>x.zid===z.id); 
+    if(e){e.salidaTime=z.salidaTime;e.status='limpio';} 
+    renderAuditTable(); 
+  }
+
+  function renderAuditTable() { 
+    const em=document.getElementById('audit-empty');
+    const tb=document.getElementById('audit-table');
+    const tbody=document.getElementById('audit-tbody'); 
+    if(!tbody)return; 
+    if(!state.auditLog.length){if(em)em.style.display='block';if(tb)tb.style.display='none';return;} 
+    if(em)em.style.display='none';if(tb)tb.style.display='table'; 
+    const fmt=ts=>{if(!ts)return'–';const d=new Date(ts);return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')+':'+d.getSeconds().toString().padStart(2,'0');}; 
+    tbody.innerHTML=state.auditLog.map(e=>{
+      const dur=(e.entradaTime&&e.salidaTime)?Math.round((e.salidaTime-e.entradaTime)/1000):null;
+      const ds=dur!==null?(dur>=60?Math.floor(dur/60)+'min '+(dur%60)+'s':dur+'s'):'–';
+      const de=e.diagnostic==='excelente'?'🙂 Excelente':e.diagnostic==='regular'?'😐 Regular':'🙁 Malo';
+      const b=e.status==='limpio'?'<span class="badge badge-clean">🟢 Limpio</span>':'<span class="badge badge-process">🟡 En Proceso</span>';
+      return'<tr><td><strong>'+e.zoneName+'</strong></td><td>'+e.workerName+'</td><td style="color:var(--process);">'+fmt(e.entradaTime)+'</td><td>'+de+'</td><td style="color:var(--clean);">'+fmt(e.salidaTime)+'</td><td>'+ds+'</td><td>'+b+'</td></tr>';
+    }).join(''); 
+  }
+
+  function updateMonitoreo() { 
+    const total=state.zones.length;
+    const cl=state.zones.filter(z=>z.status==='limpio').length;
+    const pr=state.zones.filter(z=>z.status==='en-proceso').length;
+    const pe=state.zones.filter(z=>z.status==='pendiente').length;
+    const pct=Math.round((cl/total)*100); 
+    const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;}; 
+    s('kpi-clean',cl);s('kpi-clean2',cl);s('kpi-process',pr);s('kpi-process2',pr);s('kpi-pending',pe);s('kpi-pending2',pe);s('efficiency-pct',pct+'%'); 
+    const ci=document.getElementById('efficiency-circle'); 
+    if(ci){const c=2*Math.PI*70;ci.style.strokeDasharray=c;ci.style.strokeDashoffset=c-(c*pct/100);} 
+    renderAuditTable(); 
+  }
+
+  function resetDemo() { 
+    state.zones.forEach(z=>{z.status='pendiente';z.entradaTime=null;z.salidaTime=null;z.diagnostic=null;}); 
+    state.auditLog=[]; 
+    saveData();
+    renderPhoneBody(); 
+    updateMonitoreo(); 
+    renderLiveMonitor(); 
+    renderJefeWorkers(); 
+    renderReports(); 
+    showToast('🔄 Demo reiniciada.'); 
+  }
 
   // ── REPORTS & STATS ──
   function getWorkerStats(wid) {
@@ -714,7 +2227,9 @@
     const diagAvg = completed.length > 0 ? (completed.reduce((s, z) => s + (diagScores[z.diagnostic] || 2), 0) / completed.length) : 0;
     return { assigned: assigned.length, completed: completed.length, inProcess: inProcess.length, totalTimeSec, avgTimeSec, diagAvg };
   }
+
   function fmtDuration(sec) { if (sec <= 0) return '–'; const m = Math.floor(sec / 60), s = sec % 60; return m > 0 ? m + 'min ' + s + 's' : s + 's'; }
+
   function renderReports() {
     const workers = getWorkers();
     const statsArr = workers.map(w => ({ ...w, stats: getWorkerStats(w.id) }));
@@ -747,6 +2262,7 @@
     // Rankings
     renderRankings(statsArr);
   }
+
   function renderRankings(statsArr) {
     const withData = statsArr.filter(w => w.stats.completed > 0);
     // Efficiency: lowest avg time first
@@ -830,10 +2346,17 @@
 
   // ── BOOTSTRAP ──
   document.addEventListener('DOMContentLoaded', () => {
-    loadData(); initZones(); updateClock(); setInterval(updateClock, 30000);
+    loadData(); 
+    updateClock(); 
+    setInterval(updateClock, 30000);
     // Refresh live monitor every 5 seconds
-    setInterval(() => { if (document.getElementById('jefe-tab-monitoreo') && document.getElementById('jefe-tab-monitoreo').classList.contains('active')) renderLiveMonitor(); }, 5000);
-    const ns = document.getElementById('nu-school'); if (ns) ns.addEventListener('change', updatePlanDisplay);
+    setInterval(() => { 
+      if (document.getElementById('jefe-tab-monitoreo') && document.getElementById('jefe-tab-monitoreo').classList.contains('active')) {
+        renderLiveMonitor(); 
+      }
+    }, 5000);
+    const ns = document.getElementById('nu-school'); 
+    if (ns) ns.addEventListener('change', updatePlanDisplay);
   });
 </script>
 </body>
