@@ -1796,7 +1796,7 @@
         document.getElementById('port-auth-avatar').textContent = internalUser.name.charAt(0).toUpperCase();
         document.getElementById('port-auth-name').textContent = internalUser.name;
         document.getElementById('port-auth-rut').textContent = 'Interno';
-        document.getElementById('port-auth-company font').textContent = 'Personal Planta';
+        document.getElementById('port-auth-company').textContent = 'Personal Planta';
         document.getElementById('port-auth-type').textContent = 'Aseo';
         
         tempActivePorteriaWorker = { id: internalUser.id, name: internalUser.name, rut: 'Interno', isInternal: true };
@@ -2104,7 +2104,7 @@
         sb='<span class="task-status-badge limpio">🟢 Limpio</span>';
         const sa=new Date(z.salidaTime);
         const dur=Math.round((z.salidaTime-z.entradaTime)/1000);
-        const ds=dur&gt;=60?Math.floor(dur/60)+'min '+(dur%60)+'s':dur+'s';
+        const ds=dur>=60?Math.floor(dur/60)+'min '+(dur%60)+'s':dur+'s';
         const ss=sa.getHours().toString().padStart(2,'0')+':'+sa.getMinutes().toString().padStart(2,'0');
         const de=z.diagnostic==='excelente'?'🙂':z.diagnostic==='regular'?'😐':'🙁';
         aa='<div class="task-time-info">Salida: <span style="color:var(--clean)">'+ss+'</span> · '+ds+' · '+de+'</div>';
