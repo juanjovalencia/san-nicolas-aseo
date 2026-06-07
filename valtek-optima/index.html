@@ -361,7 +361,6 @@
 <nav id="navbar">
   <div class="nav-logo-area">
     <span class="nav-logo">⬡ Valtek Optima</span>
-    <button class="nav-btn-primary" id="nav-login-btn" onclick="showAuth()">Iniciar Sesión</button>
   </div>
   <div class="nav-links">
     <div id="navbar-user-info">
@@ -377,12 +376,13 @@
     <button class="nav-btn" id="nav-porteria" onclick="showView('porteria')" style="display:none;">🚪 Portería</button>
     <button class="nav-btn" id="nav-jefe" onclick="showView('jefe')" style="display:none;">👔 Panel Jefe</button>
     <button class="nav-btn" id="nav-trabajador" onclick="showView('trabajador')" style="display:none;">📱 Vista Trabajador</button>
+    <button class="nav-btn-primary" id="nav-login-btn" onclick="showAuth()">Iniciar Sesión</button>
     <button class="nav-btn" id="nav-logout-btn" onclick="logout()" style="display:none;">Salir</button>
   </div>
 </nav>
 
 <!-- AUTH -->
-<div id="view-auth">
+<div id="view-auth" class="hidden">
   <div class="auth-card">
     <div class="auth-logo">Valtek Optima</div>
     <div class="auth-tagline">Plataforma SaaS de Gestión de Aseo, Portería y Contratistas</div>
