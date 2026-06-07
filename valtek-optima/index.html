@@ -915,12 +915,21 @@
     <div class="diag-title" style="margin-bottom: 0.5rem;" id="up-modal-title">Subir Documento</div>
     <div class="diag-subtitle" style="text-align:left; margin-bottom: 1.5rem;" id="up-modal-subtitle">Ingrese los datos para completar la entrega.</div>
     <div class="f-group">
-      <label class="f-label">Nombre del Archivo PDF</label>
+      <label class="f-label">Seleccionar Archivo o Foto</label>
+      <div id="modal-upload-dropzone" style="border: 2px dashed rgba(255,255,255,0.15); border-radius: 10px; padding: 1.25rem; text-align: center; cursor: pointer; background: rgba(255,255,255,0.02); transition: all 0.2s;" onclick="document.getElementById('modal-upload-file-input').click()">
+        <span style="font-size: 1.3rem; display: block; margin-bottom: 0.35rem;">📷</span>
+        <span id="modal-upload-dropzone-text" style="font-size: 0.8rem; color: var(--text-muted);">Haz clic para tomar foto o seleccionar archivo</span>
+        <input type="file" id="modal-upload-file-input" style="display: none;" onchange="handleModalFileSelect(event)">
+      </div>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Nombre del Archivo</label>
       <input class="f-input" id="up-filename" placeholder="cedula_trabajador.pdf">
     </div>
     <div class="f-group">
-      <label class="f-label">Fecha de Vencimiento del Documento</label>
+      <label class="f-label">Fecha de Vencimiento (Opcional)</label>
       <input class="f-input" type="date" id="up-expiry">
+      <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-top: 0.2rem;">Dejar en blanco si el documento no vence.</span>
     </div>
     <div style="display: flex; gap: 0.75rem; margin-top: 1.75rem;">
       <button class="btn-sm btn-green" onclick="confirmUpload()" style="flex:1;">Confirmar Entrega</button>
@@ -1023,6 +1032,7 @@
   let tempUploadWorkerId = null;
   let tempUploadDocKey = null;
   let tempBitacoraFileSelected = null;
+  let tempModalFileSelected = null;
 
   // ── PERSISTENCE ──
   const DATA_VERSION = '4.0'; // Updated version for re-seed
@@ -1680,11 +1690,24 @@
     container.innerHTML = html;
   }
 
+  function handleModalFileSelect(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    tempModalFileSelected = file.name;
+    document.getElementById('modal-upload-dropzone-text').innerHTML = '📄 <strong>' + file.name + '</strong>';
+    document.getElementById('modal-upload-dropzone').style.borderColor = 'var(--clean)';
+    document.getElementById('up-filename').value = file.name;
+  }
+
   function openUploadModal(workerId, docKey, docLabel) {
     tempUploadWorkerId = workerId;
     tempUploadDocKey = docKey;
+    tempModalFileSelected = null;
     
     document.getElementById('up-modal-title').textContent = 'Subir: ' + docLabel;
+    document.getElementById('modal-upload-dropzone-text').textContent = 'Haz clic para tomar foto o seleccionar archivo';
+    document.getElementById('modal-upload-dropzone').style.borderColor = 'rgba(255,255,255,0.15)';
+    document.getElementById('modal-upload-file-input').value = '';
     
     const worker = state.externalWorkers.find(w => w.id === workerId);
     const docObj = worker.documents[docKey];
@@ -1692,7 +1715,7 @@
       document.getElementById('up-filename').value = docObj.fileName || '';
       document.getElementById('up-expiry').value = docObj.expiryDate || '';
     } else {
-      document.getElementById('up-filename').value = docKey + '_' + worker.rut.replace(/[^a-zA-Z0-9]/g, '') + '.pdf';
+      document.getElementById('up-filename').value = '';
       document.getElementById('up-expiry').value = '';
     }
 
@@ -1703,6 +1726,7 @@
     document.getElementById('upload-modal').style.display = 'none';
     tempUploadWorkerId = null;
     tempUploadDocKey = null;
+    tempModalFileSelected = null;
   }
 
   function confirmUpload() {
@@ -1710,8 +1734,7 @@
     const fn = document.getElementById('up-filename').value.trim();
     const exp = document.getElementById('up-expiry').value;
 
-    if (!fn) { showToast('⚠ Ingrese el nombre del archivo.', true); return; }
-    if (!exp) { showToast('⚠ Ingrese la fecha de vencimiento.', true); return; }
+    if (!fn) { showToast('⚠ Seleccione un archivo o escriba un nombre.', true); return; }
 
     const worker = state.externalWorkers.find(w => w.id === tempUploadWorkerId);
     if (!worker) return;
@@ -1720,7 +1743,7 @@
       uploaded: true,
       fileName: fn,
       uploadDate: new Date().toLocaleDateString('es-CL'),
-      expiryDate: exp
+      expiryDate: exp ? exp : null
     };
 
     saveData();
