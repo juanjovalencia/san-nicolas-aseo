@@ -354,6 +354,38 @@
     #toast { position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; padding: 0.9rem 1.5rem; border-radius: 12px; font-size: 0.9rem; font-weight: 600; background: rgba(16,185,129,0.9); color: #fff; box-shadow: 0 8px 30px rgba(0,0,0,0.4); backdrop-filter: blur(10px); transform: translateY(100px); opacity: 0; transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1); pointer-events: none; }
     #toast.show { transform: translateY(0); opacity: 1; }
     #toast.error { background: rgba(239,68,68,0.9); }
+
+    .j-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
+    @media(max-width:992px){ .j-grid-3 { grid-template-columns: 1fr; } }
+
+    /* Active emoji selection */
+    .diag-emoji-btn.selected { transform: scale(1.08); }
+    .diag-emoji-btn.good.selected { border-color: var(--clean); background: rgba(16,185,129,0.2); }
+    .diag-emoji-btn.mid.selected { border-color: var(--process); background: rgba(245,158,11,0.2); }
+    .diag-emoji-btn.bad.selected { border-color: var(--dirty); background: rgba(239,68,68,0.2); }
+
+    /* Photo Upload Area in Modals */
+    .photo-upload-section { margin-top: 1rem; margin-bottom: 1.5rem; text-align: left; }
+    .photo-preview-container { margin-top: 0.5rem; border: 1px dashed var(--border); border-radius: 10px; height: 110px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.02); overflow: hidden; position: relative; cursor: pointer; }
+    .photo-preview-container:hover { background: rgba(255,255,255,0.05); }
+    .photo-preview-container img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-preview-placeholder { font-size: 0.75rem; color: var(--text-muted); text-align: center; padding: 0.5rem; }
+
+    /* Photo Comparison Slider / Side-by-side */
+    .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    .comparison-pane { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: rgba(255,255,255,0.02); }
+    .comparison-pane-title { font-size: 0.75rem; font-weight: 700; padding: 0.4rem 0.6rem; background: rgba(0,0,0,0.4); text-align: center; border-bottom: 1px solid var(--border); }
+    .comparison-pane-image { height: 180px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .comparison-pane-image img { width: 100%; height: 100%; object-fit: cover; }
+    .comparison-pane-image span { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* Thumbnails inside Tables */
+    .table-photos-col { display: flex; gap: 0.4rem; align-items: center; }
+    .table-photo-thumb { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); background: #111; overflow: hidden; cursor: pointer; transition: transform 0.15s; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; }
+    .table-photo-thumb:hover { transform: scale(1.2); }
+    .table-photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .table-photo-thumb.empty { color: var(--text-muted); border-style: dashed; cursor: default; }
+    .table-photo-thumb.empty:hover { transform: none; }
   </style>
 </head>
 <body>
@@ -867,7 +899,7 @@
       <div class="j-card">
         <div class="j-card-title">Bitácora de Actividad</div>
         <div id="audit-empty" style="text-align:center;padding:2rem;color:var(--text-muted);font-size:0.9rem;">⏳ Sin actividad aún.</div>
-        <div style="overflow-x:auto;"><table class="data-table" id="audit-table" style="display:none;"><thead><tr><th>Zona</th><th>Operario</th><th>Entrada</th><th>Diagnóstico</th><th>Salida</th><th>Duración</th><th>Estado</th></tr></thead><tbody id="audit-tbody"></tbody></table></div>
+        <div style="overflow-x:auto;"><table class="data-table" id="audit-table" style="display:none;"><thead><tr><th>Zona</th><th>Operario</th><th>Entrada</th><th>Diagnóstico</th><th>Fotos</th><th>Salida</th><th>Duración</th><th>Estado</th></tr></thead><tbody id="audit-tbody"></tbody></table></div>
       </div>
     </div>
 
@@ -928,6 +960,7 @@
                 <th>Operario</th>
                 <th>Entrada</th>
                 <th>Diagnóstico</th>
+                <th>Fotos</th>
                 <th>Salida</th>
                 <th>Duración</th>
                 <th>Estado</th>
@@ -939,7 +972,7 @@
       </div>
 
       <!-- Rankings -->
-      <div class="j-grid-2">
+      <div class="j-grid-3">
         <div class="j-card">
           <div class="j-card-title">🏆 Ranking de Eficiencia (Menor tiempo promedio)</div>
           <div id="rank-efficiency"></div>
@@ -947,6 +980,10 @@
         <div class="j-card">
           <div class="j-card-title">🥇 Ranking de Productividad (Más zonas limpias)</div>
           <div id="rank-productivity"></div>
+        </div>
+        <div class="j-card">
+          <div class="j-card-title">⚠️ Zonas Más Sucias (Peor diagnóstico promedio)</div>
+          <div id="rank-dirtiest-zones"></div>
         </div>
       </div>
     </div>
@@ -966,10 +1003,93 @@
 </div>
 
 <!-- MODALS -->
+<!-- DIAGNOSTIC MODAL -->
 <div id="diagnostic-modal">
-  <div class="diag-card"><div class="diag-title">¿Cómo encontraste esta zona?</div><div class="diag-subtitle" id="diag-zone-name"></div>
-    <div class="diag-emojis"><button class="diag-emoji-btn good" onclick="selectDiagnostic('excelente')"><span>🙂</span><span class="diag-emoji-label">Excelente</span></button><button class="diag-emoji-btn mid" onclick="selectDiagnostic('regular')"><span>😐</span><span class="diag-emoji-label">Regular</span></button><button class="diag-emoji-btn bad" onclick="selectDiagnostic('malo')"><span>🙁</span><span class="diag-emoji-label">Malo</span></button></div>
-    <div class="diag-cancel" onclick="closeDiagnostic()">✕ Cancelar</div>
+  <div class="diag-card" style="max-width: 400px; width:100%;">
+    <div class="diag-title">¿Cómo encontraste esta zona?</div>
+    <div class="diag-subtitle" id="diag-zone-name"></div>
+    
+    <div class="diag-emojis">
+      <button class="diag-emoji-btn good" id="diag-btn-excelente" onclick="setInitialDiagnostic('excelente')">
+        <span>🙂</span>
+        <span class="diag-emoji-label">Excelente</span>
+      </button>
+      <button class="diag-emoji-btn mid" id="diag-btn-regular" onclick="setInitialDiagnostic('regular')">
+        <span>😐</span>
+        <span class="diag-emoji-label">Regular</span>
+      </button>
+      <button class="diag-emoji-btn bad" id="diag-btn-malo" onclick="setInitialDiagnostic('malo')">
+        <span>🙁</span>
+        <span class="diag-emoji-label">Malo</span>
+      </button>
+    </div>
+    
+    <div class="photo-upload-section">
+      <label class="f-label" style="font-size:0.8rem; margin-bottom: 0.25rem; text-align: left;">📷 Foto de cómo estaba (Opcional)</label>
+      <div class="photo-preview-container" onclick="document.getElementById('photo-before-file').click()">
+        <div class="photo-preview-placeholder" id="photo-before-placeholder">
+          <span>📸 Haz clic para tomar/subir foto del estado inicial</span>
+        </div>
+        <img id="photo-before-preview" style="display:none;" />
+      </div>
+      <input type="file" id="photo-before-file" accept="image/*" style="display:none;" onchange="handlePhotoBeforeSelect(event)" />
+    </div>
+    
+    <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+      <button class="btn-sm btn-green" id="diag-confirm-btn" onclick="confirmStartZone()" style="flex:1;" disabled>Iniciar Limpieza</button>
+      <button class="btn-sm btn-red" onclick="closeDiagnostic()" style="flex:1;">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- FINISH MODAL -->
+<div id="finish-modal" style="position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 1rem;">
+  <div class="diag-card" style="max-width: 400px; width:100%;">
+    <div class="diag-title">Finalizar Limpieza</div>
+    <div class="diag-subtitle" id="finish-zone-name">Sube una foto de cómo quedó la zona limpia.</div>
+    
+    <div class="photo-upload-section">
+      <label class="f-label" style="font-size:0.8rem; margin-bottom: 0.25rem; text-align: left;">📷 Foto de cómo quedó (Opcional)</label>
+      <div class="photo-preview-container" onclick="document.getElementById('photo-after-file').click()">
+        <div class="photo-preview-placeholder" id="photo-after-placeholder">
+          <span>📸 Haz clic para tomar/subir foto del estado final</span>
+        </div>
+        <img id="photo-after-preview" style="display:none;" />
+      </div>
+      <input type="file" id="photo-after-file" accept="image/*" style="display:none;" onchange="handlePhotoAfterSelect(event)" />
+    </div>
+    
+    <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+      <button class="btn-sm btn-green" onclick="confirmFinishZone()" style="flex:1;">Confirmar y Terminar</button>
+      <button class="btn-sm btn-red" onclick="closeFinishModal()" style="flex:1;">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- PHOTO COMPARISON MODAL -->
+<div id="photo-comparison-modal" style="position: fixed; inset: 0; z-index: 2100; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; padding: 1rem;">
+  <div class="diag-card" style="max-width: 500px; width: 100%; text-align: left;">
+    <div class="diag-title" id="comp-modal-title">Comparativa de Limpieza</div>
+    <div class="diag-subtitle" id="comp-modal-subtitle" style="margin-bottom: 1.25rem; text-align:left;"></div>
+    
+    <div class="comparison-grid">
+      <div class="comparison-pane">
+        <div class="comparison-pane-title">Antes (Estado Inicial)</div>
+        <div class="comparison-pane-image" id="comp-pane-before">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+      <div class="comparison-pane">
+        <div class="comparison-pane-title">Después (Resultado Final)</div>
+        <div class="comparison-pane-image" id="comp-pane-after">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </div>
+    
+    <div style="text-align: center;">
+      <button class="btn-sm btn-red" onclick="closePhotoComparison()" style="min-width: 120px;">Cerrar</button>
+    </div>
   </div>
 </div>
 
@@ -1104,6 +1224,12 @@
   let tempBitacoraFileSelected = null;
   let tempModalFileSelected = null;
   let tempModalFileList = [];
+  
+  // Temp state for cleaning photos
+  let tempPhotoBeforeBase64 = null;
+  let tempPhotoAfterBase64 = null;
+  let tempSelectedDiagnostic = null;
+  let tempPendingFinishZoneId = null;
 
   // ── PERSISTENCE ──
   const DATA_VERSION = '4.0'; // Updated version for re-seed
@@ -2260,81 +2386,258 @@
     body.innerHTML=h;
   }
 
+  // Helper to resize image using canvas to a small thumbnail (~200px max)
+  function resizeImage(file, callback) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const max_size = 200;
+        let width = img.width;
+        let height = img.height;
+        if (width > height) {
+          if (width > max_size) {
+            height *= max_size / width;
+            width = max_size;
+          }
+        } else {
+          if (height > max_size) {
+            width *= max_size / height;
+            height = max_size;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        callback(canvas.toDataURL('image/jpeg', 0.7));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Photo Select Handlers
+  function handlePhotoBeforeSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    resizeImage(file, base64 => {
+      tempPhotoBeforeBase64 = base64;
+      document.getElementById('photo-before-preview').src = base64;
+      document.getElementById('photo-before-preview').style.display = 'block';
+      document.getElementById('photo-before-placeholder').style.display = 'none';
+    });
+  }
+
+  function handlePhotoAfterSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    resizeImage(file, base64 => {
+      tempPhotoAfterBase64 = base64;
+      document.getElementById('photo-after-preview').src = base64;
+      document.getElementById('photo-after-preview').style.display = 'block';
+      document.getElementById('photo-after-placeholder').style.display = 'none';
+    });
+  }
+
   // ── WORKFLOW ──
   function startZone(zid) { 
-    state.pendingDiagnosticZone=zid; 
-    const z=state.zones.find(x=>x.id===zid); 
-    document.getElementById('diag-zone-name').textContent=z?z.name:''; 
+    state.pendingDiagnosticZone = zid; 
+    const z = state.zones.find(x => x.id === zid); 
+    document.getElementById('diag-zone-name').textContent = z ? z.name : ''; 
+    
+    // Reset inputs
+    tempPhotoBeforeBase64 = null;
+    tempSelectedDiagnostic = null;
+    document.getElementById('photo-before-preview').src = '';
+    document.getElementById('photo-before-preview').style.display = 'none';
+    document.getElementById('photo-before-placeholder').style.display = 'block';
+    document.getElementById('photo-before-file').value = '';
+    document.getElementById('diag-confirm-btn').disabled = true;
+    
+    document.querySelectorAll('.diag-emoji-btn').forEach(btn => btn.classList.remove('selected'));
+    
     document.getElementById('diagnostic-modal').classList.add('open'); 
   }
 
   function closeDiagnostic() { 
-    state.pendingDiagnosticZone=null; 
+    state.pendingDiagnosticZone = null; 
     document.getElementById('diagnostic-modal').classList.remove('open'); 
   }
 
-  function selectDiagnostic(diag) { 
-    const zid=state.pendingDiagnosticZone; 
-    if(!zid)return; 
-    const z=state.zones.find(x=>x.id===zid); 
-    if(!z)return; 
-    z.status='en-proceso'; 
-    z.entradaTime=Date.now(); 
-    z.diagnostic=diag; 
+  function setInitialDiagnostic(diag) {
+    tempSelectedDiagnostic = diag;
+    document.querySelectorAll('.diag-emoji-btn').forEach(btn => btn.classList.remove('selected'));
+    document.getElementById('diag-btn-' + diag).classList.add('selected');
+    document.getElementById('diag-confirm-btn').disabled = false;
+  }
+
+  function confirmStartZone() {
+    const zid = state.pendingDiagnosticZone; 
+    if (!zid || !tempSelectedDiagnostic) return; 
+    const z = state.zones.find(x => x.id === zid); 
+    if (!z) return; 
+    
+    z.status = 'en-proceso'; 
+    z.entradaTime = Date.now(); 
+    z.diagnostic = tempSelectedDiagnostic; 
+    
     closeDiagnostic(); 
-    addAuditEntry(z); 
+    addAuditEntry(z, tempPhotoBeforeBase64); 
     saveData();
     renderPhoneBody(); 
     updateMonitoreo(); 
     renderLiveMonitor(); 
     renderJefeWorkers(); 
-    showToast('▶ Aseo iniciado en '+z.name); 
+    showToast('▶ Aseo iniciado en ' + z.name); 
   }
 
   function finishZone(zid) { 
-    const z=state.zones.find(x=>x.id===zid); 
-    if(!z||z.status!=='en-proceso')return; 
-    z.salidaTime=Date.now(); 
-    z.status='limpio'; 
-    updateAuditEntry(z); 
+    const z = state.zones.find(x => x.id === zid); 
+    if (!z || z.status !== 'en-proceso') return; 
+    
+    tempPendingFinishZoneId = zid;
+    tempPhotoAfterBase64 = null;
+    
+    // Reset finish modal preview
+    document.getElementById('photo-after-preview').src = '';
+    document.getElementById('photo-after-preview').style.display = 'none';
+    document.getElementById('photo-after-placeholder').style.display = 'block';
+    document.getElementById('photo-after-file').value = '';
+    
+    document.getElementById('finish-zone-name').textContent = 'Sube una foto de cómo quedó la zona limpia (' + z.name + ').';
+    document.getElementById('finish-modal').style.display = 'flex';
+  }
+
+  function closeFinishModal() {
+    tempPendingFinishZoneId = null;
+    document.getElementById('finish-modal').style.display = 'none';
+  }
+
+  function confirmFinishZone() {
+    const zid = tempPendingFinishZoneId;
+    if (!zid) return;
+    const z = state.zones.find(x => x.id === zid);
+    if (!z || z.status !== 'en-proceso') return;
+    
+    z.salidaTime = Date.now(); 
+    z.status = 'limpio'; 
+    
+    closeFinishModal();
+    updateAuditEntry(z, tempPhotoAfterBase64); 
     saveData();
     renderPhoneBody(); 
     updateMonitoreo(); 
     renderLiveMonitor(); 
     renderJefeWorkers(); 
     renderReports(); 
-    showToast('✅ ¡'+z.name+' LIMPIA!'); 
+    showToast('✅ ¡' + z.name + ' LIMPIA!'); 
   }
 
-  function addAuditEntry(z) { 
-    const w=state.users.find(u=>u.id===z.assignedTo); 
+  function addAuditEntry(z, photoBefore = null) { 
+    const w = state.users.find(u => u.id === z.assignedTo); 
     const existing = state.auditLog.find(e => e.zid === z.id && e.status === 'en-proceso');
-    if(!existing) {
-      state.auditLog.push({zid:z.id,zoneName:z.name,workerName:w?w.name:'–',workerId:z.assignedTo,entradaTime:z.entradaTime,diagnostic:z.diagnostic,salidaTime:null,status:'en-proceso'}); 
+    if (!existing) {
+      state.auditLog.push({
+        zid: z.id,
+        zoneName: z.name,
+        workerName: w ? w.name : '–',
+        workerId: z.assignedTo,
+        entradaTime: z.entradaTime,
+        diagnostic: z.diagnostic,
+        photoBefore: photoBefore,
+        photoAfter: null,
+        salidaTime: null,
+        status: 'en-proceso'
+      }); 
     }
     renderAuditTable(); 
   }
 
-  function updateAuditEntry(z) { 
+  function updateAuditEntry(z, photoAfter = null) { 
     const e = [...state.auditLog].reverse().find(x => x.zid === z.id && x.status === 'en-proceso');
-    if(e){e.salidaTime=z.salidaTime;e.status='limpio';} 
+    if (e) {
+      e.salidaTime = z.salidaTime;
+      e.status = 'limpio';
+      e.photoAfter = photoAfter;
+    } 
     renderAuditTable(); 
   }
 
+  // ── PHOTO COMPARISON VIEWER ──
+  function openPhotoComparison(idx) {
+    const e = state.auditLog[idx];
+    if (!e) return;
+    
+    document.getElementById('comp-modal-title').textContent = e.zoneName;
+    const date = new Date(e.entradaTime).toLocaleDateString('es-CL');
+    document.getElementById('comp-modal-subtitle').textContent = 'Limpieza realizada por ' + e.workerName + ' el ' + date;
+    
+    const beforePane = document.getElementById('comp-pane-before');
+    const afterPane = document.getElementById('comp-pane-after');
+    
+    const de = e.diagnostic === 'excelente' ? '🙂 Excelente' : e.diagnostic === 'regular' ? '😐 Regular' : '🙁 Malo';
+    
+    if (e.photoBefore) {
+      beforePane.innerHTML = '<img src="' + e.photoBefore + '" style="cursor:pointer;" onclick="window.open(\'' + e.photoBefore + '\')" />' +
+        '<div style="font-size:0.75rem; text-align:center; padding:0.25rem; color:var(--text-dim);">' + de + '</div>';
+    } else {
+      beforePane.innerHTML = '<div style="padding:2rem;text-align:center;"><span>Sin foto (' + de + ')</span></div>';
+    }
+    
+    if (e.photoAfter) {
+      afterPane.innerHTML = '<img src="' + e.photoAfter + '" style="cursor:pointer;" onclick="window.open(\'' + e.photoAfter + '\')" />';
+    } else {
+      afterPane.innerHTML = '<div style="padding:2rem;text-align:center;"><span>Sin foto</span></div>';
+    }
+    
+    document.getElementById('photo-comparison-modal').style.display = 'flex';
+  }
+
+  function closePhotoComparison() {
+    document.getElementById('photo-comparison-modal').style.display = 'none';
+  }
+
   function renderAuditTable() { 
-    const em=document.getElementById('audit-empty');
-    const tb=document.getElementById('audit-table');
-    const tbody=document.getElementById('audit-tbody'); 
-    if(!tbody)return; 
-    if(!state.auditLog.length){if(em)em.style.display='block';if(tb)tb.style.display='none';return;} 
-    if(em)em.style.display='none';if(tb)tb.style.display='table'; 
-    const fmt=ts=>{if(!ts)return'–';const d=new Date(ts);return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')+':'+d.getSeconds().toString().padStart(2,'0');}; 
-    tbody.innerHTML=state.auditLog.map(e=>{
-      const dur=(e.entradaTime&&e.salidaTime)?Math.round((e.salidaTime-e.entradaTime)/1000):null;
-      const ds=dur!==null?(dur>=60?Math.floor(dur/60)+'min '+(dur%60)+'s':dur+'s'):'–';
-      const de=e.diagnostic==='excelente'?'🙂 Excelente':e.diagnostic==='regular'?'😐 Regular':'🙁 Malo';
-      const b=e.status==='limpio'?'<span class="badge badge-clean">🟢 Limpio</span>':'<span class="badge badge-process">🟡 En Proceso</span>';
-      return'<tr><td><strong>'+e.zoneName+'</strong></td><td>'+e.workerName+'</td><td style="color:var(--process);">'+fmt(e.entradaTime)+'</td><td>'+de+'</td><td style="color:var(--clean);">'+fmt(e.salidaTime)+'</td><td>'+ds+'</td><td>'+b+'</td></tr>';
+    const em = document.getElementById('audit-empty');
+    const tb = document.getElementById('audit-table');
+    const tbody = document.getElementById('audit-tbody'); 
+    if (!tbody) return; 
+    if (!state.auditLog.length) { if (em) em.style.display = 'block'; if (tb) tb.style.display = 'none'; return; } 
+    if (em) em.style.display = 'none'; if (tb) tb.style.display = 'table'; 
+    const fmt = ts => { if (!ts) return '–'; const d = new Date(ts); return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0') + ':' + d.getSeconds().toString().padStart(2, '0'); }; 
+    
+    tbody.innerHTML = state.auditLog.map(e => {
+      const idx = state.auditLog.indexOf(e);
+      const dur = (e.entradaTime && e.salidaTime) ? Math.round((e.salidaTime - e.entradaTime) / 1000) : null;
+      const ds = dur !== null ? (dur >= 60 ? Math.floor(dur / 60) + 'min ' + (dur % 60) + 's' : dur + 's') : '–';
+      const de = e.diagnostic === 'excelente' ? '🙂 Excelente' : e.diagnostic === 'regular' ? '😐 Regular' : '🙁 Malo';
+      const b = e.status === 'limpio' ? '<span class="badge badge-clean">🟢 Limpio</span>' : '<span class="badge badge-process">🟡 En Proceso</span>';
+      
+      let photosHtml = '<div class="table-photos-col">';
+      if (e.photoBefore) {
+        photosHtml += '<div class="table-photo-thumb" onclick="openPhotoComparison(' + idx + ')" title="Ver foto inicial (Antes)"><img src="' + e.photoBefore + '" /></div>';
+      } else {
+        photosHtml += '<div class="table-photo-thumb empty" title="Sin foto inicial">–</div>';
+      }
+      if (e.photoAfter) {
+        photosHtml += '<div class="table-photo-thumb" onclick="openPhotoComparison(' + idx + ')" title="Ver foto final (Después)"><img src="' + e.photoAfter + '" /></div>';
+      } else {
+        photosHtml += '<div class="table-photo-thumb empty" title="Sin foto final">–</div>';
+      }
+      photosHtml += '</div>';
+      
+      return '<tr>' +
+        '<td><strong>' + e.zoneName + '</strong></td>' +
+        '<td>' + e.workerName + '</td>' +
+        '<td style="color:var(--process);">' + fmt(e.entradaTime) + '</td>' +
+        '<td>' + de + '</td>' +
+        '<td>' + photosHtml + '</td>' +
+        '<td style="color:var(--clean);">' + fmt(e.salidaTime) + '</td>' +
+        '<td>' + ds + '</td>' +
+        '<td>' + b + '</td>' +
+      '</tr>';
     }).join(''); 
   }
 
@@ -2510,15 +2813,31 @@
         };
         
         dTbody.innerHTML = dayLogs.map(e => {
+          const idx = state.auditLog.indexOf(e);
           const dur = (e.entradaTime && e.salidaTime) ? Math.round((e.salidaTime - e.entradaTime) / 1000) : null;
           const ds = dur !== null ? (dur >= 60 ? Math.floor(dur / 60) + 'min ' + (dur % 60) + 's' : dur + 's') : '–';
           const de = e.diagnostic === 'excelente' ? '🙂 Excelente' : e.diagnostic === 'regular' ? '😐 Regular' : '🙁 Malo';
           const b = e.status === 'limpio' ? '<span class="badge badge-clean">🟢 Limpio</span>' : '<span class="badge badge-process">🟡 En Proceso</span>';
+          
+          let photosHtml = '<div class="table-photos-col">';
+          if (e.photoBefore) {
+            photosHtml += '<div class="table-photo-thumb" onclick="openPhotoComparison(' + idx + ')" title="Ver foto inicial (Antes)"><img src="' + e.photoBefore + '" /></div>';
+          } else {
+            photosHtml += '<div class="table-photo-thumb empty" title="Sin foto inicial">–</div>';
+          }
+          if (e.photoAfter) {
+            photosHtml += '<div class="table-photo-thumb" onclick="openPhotoComparison(' + idx + ')" title="Ver foto final (Después)"><img src="' + e.photoAfter + '" /></div>';
+          } else {
+            photosHtml += '<div class="table-photo-thumb empty" title="Sin foto final">–</div>';
+          }
+          photosHtml += '</div>';
+          
           return '<tr>' +
             '<td><strong>' + e.zoneName + '</strong></td>' +
             '<td>' + e.workerName + '</td>' +
             '<td style="color:var(--process);">' + fmt(e.entradaTime) + '</td>' +
             '<td>' + de + '</td>' +
+            '<td>' + photosHtml + '</td>' +
             '<td style="color:var(--clean);">' + fmt(e.salidaTime) + '</td>' +
             '<td>' + ds + '</td>' +
             '<td>' + b + '</td>' +
@@ -2568,6 +2887,41 @@
             '<div style="flex:1;"><div style="font-weight:600;font-size:0.88rem;">' + w.name + '</div>' +
             '<div class="rank-bar"><div class="rank-bar-fill" style="width:' + barPct + '%;background:linear-gradient(90deg,var(--primary),var(--gold));"></div></div></div>' +
             '<span style="font-weight:700;font-size:0.85rem;color:var(--gold);white-space:nowrap;">' + w.stats.completed + ' zonas</span></div>';
+        }).join('');
+      }
+    }
+    
+    // Dirtiest Zones: lowest avg starting diagnostic score (malo=1, regular=2, excelente=3)
+    const dirtyEl = document.getElementById('rank-dirtiest-zones');
+    if (dirtyEl) {
+      const zoneStats = {};
+      state.auditLog.forEach(e => {
+        if (e.diagnostic) {
+          const score = e.diagnostic === 'excelente' ? 3 : e.diagnostic === 'regular' ? 2 : 1;
+          if (!zoneStats[e.zid]) {
+            zoneStats[e.zid] = { name: e.zoneName, totalScore: 0, count: 0 };
+          }
+          zoneStats[e.zid].totalScore += score;
+          zoneStats[e.zid].count++;
+        }
+      });
+      
+      const sortedZones = Object.values(zoneStats).map(z => {
+        const avg = z.totalScore / z.count;
+        return { ...z, avg };
+      }).sort((a, b) => a.avg - b.avg); // lowest first (more dirty)
+      
+      if (!sortedZones.length) {
+        dirtyEl.innerHTML = '<div style="padding:1rem;color:var(--text-muted);text-align:center;">Sin evaluaciones aún.</div>';
+      } else {
+        dirtyEl.innerHTML = sortedZones.slice(0, 5).map((z, i) => {
+          const barPct = Math.round((z.avg / 3) * 100);
+          const barColor = z.avg >= 2.5 ? 'var(--clean)' : z.avg >= 1.5 ? 'var(--process)' : 'var(--dirty)';
+          return '<div style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0;border-bottom:1px solid var(--border);">' +
+            '<span class="rank-medal">' + (i + 1) + '.</span>' +
+            '<div style="flex:1;"><div style="font-weight:600;font-size:0.88rem;display:flex;justify-content:space-between;"><span>' + z.name + '</span><span style="font-size:0.72rem;color:var(--text-muted);">' + z.count + ' eval.</span></div>' +
+            '<div class="rank-bar"><div class="rank-bar-fill" style="width:' + barPct + '%;background:' + barColor + ';"></div></div></div>' +
+            '<span style="font-weight:700;font-size:0.85rem;color:' + barColor + ';white-space:nowrap;">Score: ' + z.avg.toFixed(1) + '</span></div>';
         }).join('');
       }
     }
@@ -2670,46 +3024,89 @@
     
     // Rankings
     const withData = statsArr.filter(w => w.stats.completed > 0);
-    if (withData.length > 0) {
-      const effSorted = [...withData].sort((a, b) => a.stats.avgTimeSec - b.stats.avgTimeSec);
-      html += '<h2>Ranking de Eficiencia (Menor tiempo promedio)</h2>' +
-        '<table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">' +
-          '<thead>' +
-            '<tr style="background:#f2f2f2; text-align:left;">' +
-              '<th style="padding:8px; border:1px solid #ddd;">#</th>' +
-              '<th style="padding:8px; border:1px solid #ddd;">Trabajador</th>' +
-              '<th style="padding:8px; border:1px solid #ddd;">Promedio/Zona</th>' +
-            '</tr>' +
-          '</thead>' +
-          '<tbody>';
-      effSorted.forEach((w, i) => { 
-        html += '<tr>' +
-          '<td style="padding:8px; border:1px solid #ddd;">' + (i + 1) + '</td>' +
-          '<td style="padding:8px; border:1px solid #ddd;">' + w.name + '</td>' +
-          '<td style="padding:8px; border:1px solid #ddd;">' + fmtDuration(w.stats.avgTimeSec) + '</td>' +
-        '</tr>'; 
-      });
-      html += '</tbody></table>';
+    
+    // Calculate dirtiest zones ranking for print
+    const zoneStats = {};
+    state.auditLog.forEach(e => {
+      if (e.diagnostic) {
+        const score = e.diagnostic === 'excelente' ? 3 : e.diagnostic === 'regular' ? 2 : 1;
+        if (!zoneStats[e.zid]) {
+          zoneStats[e.zid] = { name: e.zoneName, totalScore: 0, count: 0 };
+        }
+        zoneStats[e.zid].totalScore += score;
+        zoneStats[e.zid].count++;
+      }
+    });
+    const sortedZones = Object.values(zoneStats).map(z => {
+      const avg = z.totalScore / z.count;
+      return { ...z, avg };
+    }).sort((a, b) => a.avg - b.avg);
+    
+    if (withData.length > 0 || sortedZones.length > 0) {
+      if (withData.length > 0) {
+        const effSorted = [...withData].sort((a, b) => a.stats.avgTimeSec - b.stats.avgTimeSec);
+        html += '<h2>Ranking de Eficiencia (Menor tiempo promedio)</h2>' +
+          '<table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">' +
+            '<thead>' +
+              '<tr style="background:#f2f2f2; text-align:left;">' +
+                '<th style="padding:8px; border:1px solid #ddd;">#</th>' +
+                '<th style="padding:8px; border:1px solid #ddd;">Trabajador</th>' +
+                '<th style="padding:8px; border:1px solid #ddd;">Promedio/Zona</th>' +
+              '</tr>' +
+            '</thead>' +
+            '<tbody>';
+        effSorted.forEach((w, i) => { 
+          html += '<tr>' +
+            '<td style="padding:8px; border:1px solid #ddd;">' + (i + 1) + '</td>' +
+            '<td style="padding:8px; border:1px solid #ddd;">' + w.name + '</td>' +
+            '<td style="padding:8px; border:1px solid #ddd;">' + fmtDuration(w.stats.avgTimeSec) + '</td>' +
+          '</tr>'; 
+        });
+        html += '</tbody></table>';
+        
+        const prodSorted = [...withData].sort((a, b) => b.stats.completed - a.stats.completed);
+        html += '<h2>Ranking de Productividad (Más zonas)</h2>' +
+          '<table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">' +
+            '<thead>' +
+              '<tr style="background:#f2f2f2; text-align:left;">' +
+                '<th style="padding:8px; border:1px solid #ddd;">#</th>' +
+                '<th style="padding:8px; border:1px solid #ddd;">Trabajador</th>' +
+                '<th style="padding:8px; border:1px solid #ddd;">Zonas</th>' +
+              '</tr>' +
+            '</thead>' +
+            '<tbody>';
+        prodSorted.forEach((w, i) => { 
+          html += '<tr>' +
+            '<td style="padding:8px; border:1px solid #ddd;">' + (i + 1) + '</td>' +
+            '<td style="padding:8px; border:1px solid #ddd;">' + w.name + '</td>' +
+            '<td style="padding:8px; border:1px solid #ddd;">' + w.stats.completed + '</td>' +
+          '</tr>'; 
+        });
+        html += '</tbody></table>';
+      }
       
-      const prodSorted = [...withData].sort((a, b) => b.stats.completed - a.stats.completed);
-      html += '<h2>Ranking de Productividad (Más zonas)</h2>' +
-        '<table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">' +
-          '<thead>' +
-            '<tr style="background:#f2f2f2; text-align:left;">' +
-              '<th style="padding:8px; border:1px solid #ddd;">#</th>' +
-              '<th style="padding:8px; border:1px solid #ddd;">Trabajador</th>' +
-              '<th style="padding:8px; border:1px solid #ddd;">Zonas</th>' +
-            '</tr>' +
-          '</thead>' +
-          '<tbody>';
-      prodSorted.forEach((w, i) => { 
-        html += '<tr>' +
-          '<td style="padding:8px; border:1px solid #ddd;">' + (i + 1) + '</td>' +
-          '<td style="padding:8px; border:1px solid #ddd;">' + w.name + '</td>' +
-          '<td style="padding:8px; border:1px solid #ddd;">' + w.stats.completed + '</td>' +
-        '</tr>'; 
-      });
-      html += '</tbody></table>';
+      if (sortedZones.length > 0) {
+        html += '<h2>Ranking Histórico de Zonas Más Sucias (Peor diagnóstico inicial promedio)</h2>' +
+          '<table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">' +
+            '<thead>' +
+              '<tr style="background:#f2f2f2; text-align:left;">' +
+                '<th style="padding:8px; border:1px solid #ddd;">#</th>' +
+                '<th style="padding:8px; border:1px solid #ddd;">Zona</th>' +
+                '<th style="padding:8px; border:1px solid #ddd;">Evaluaciones</th>' +
+                '<th style="padding:8px; border:1px solid #ddd;">Score Promedio (Excelente=3, Malo=1)</th>' +
+              '</tr>' +
+            '</thead>' +
+            '<tbody>';
+        sortedZones.slice(0, 5).forEach((z, i) => {
+          html += '<tr>' +
+            '<td style="padding:8px; border:1px solid #ddd;">' + (i + 1) + '</td>' +
+            '<td style="padding:8px; border:1px solid #ddd;"><strong>' + z.name + '</strong></td>' +
+            '<td style="padding:8px; border:1px solid #ddd;">' + z.count + '</td>' +
+            '<td style="padding:8px; border:1px solid #ddd;">' + z.avg.toFixed(1) + ' / 3.0</td>' +
+          '</tr>';
+        });
+        html += '</tbody></table>';
+      }
     }
     html += '<p style="margin-top:2rem;font-size:0.8rem;color:#999;">Generado por Valtek Optima — ' + formattedDate + '</p>';
     document.getElementById('report-print-area').innerHTML = html;
