@@ -877,13 +877,67 @@
         <h3>📊 Informe de Rendimiento</h3>
         <button class="btn-sm btn-green" onclick="generateReport()">🖨 Generar Informe (PDF)</button>
       </div>
+      
+      <!-- Date Picker Selector (Calendar) -->
+      <div class="j-card" style="margin-bottom: 1.5rem;">
+        <div class="j-card-title">📅 Filtrar por Fecha</div>
+        <div class="flex-row" style="align-items: center; gap: 1rem;">
+          <div class="f-group" style="margin-bottom: 0; max-width: 220px;">
+            <label class="f-label">Seleccionar Día</label>
+            <input type="date" class="f-input" id="report-date-picker" onchange="renderReports()">
+          </div>
+          <div style="font-size: 0.88rem; color: var(--text-dim); margin-top: 1.25rem;" id="report-date-info">
+            Mostrando registros del día actual.
+          </div>
+        </div>
+      </div>
+
       <!-- Summary stats -->
       <div class="stat-grid" id="report-summary-stats"></div>
+      
       <!-- Per-worker stats -->
       <div class="j-card">
         <div class="j-card-title">Rendimiento Individual por Trabajador</div>
-        <div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Trabajador</th><th>Zonas Limpias</th><th>Tiempo Total</th><th>Promedio/Zona</th><th>Diagnóstico Prom.</th><th>Eficiencia</th></tr></thead><tbody id="report-worker-tbody"></tbody></table></div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Trabajador</th>
+                <th>Zonas Limpias (Cant.)</th>
+                <th>Detalle de Salas y Zonas Limpiadas</th>
+                <th>Tiempo Total</th>
+                <th>Promedio/Zona</th>
+                <th>Diagnóstico Prom.</th>
+                <th>Eficiencia</th>
+              </tr>
+            </thead>
+            <tbody id="report-worker-tbody"></tbody>
+          </table>
+        </div>
       </div>
+
+      <!-- Day's detailed log -->
+      <div class="j-card" style="margin-bottom: 1.5rem;">
+        <div class="j-card-title">📋 Bitácora de Limpieza del Día Seleccionado</div>
+        <div id="day-audit-empty" style="text-align:center;padding:2rem;color:var(--text-muted);font-size:0.9rem;">⏳ Sin registros para este día.</div>
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="day-audit-table" style="display:none;">
+            <thead>
+              <tr>
+                <th>Zona</th>
+                <th>Operario</th>
+                <th>Entrada</th>
+                <th>Diagnóstico</th>
+                <th>Salida</th>
+                <th>Duración</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="day-audit-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- Rankings -->
       <div class="j-grid-2">
         <div class="j-card">
@@ -2254,14 +2308,15 @@
 
   function addAuditEntry(z) { 
     const w=state.users.find(u=>u.id===z.assignedTo); 
-    if(!state.auditLog.find(e=>e.zid===z.id)) {
+    const existing = state.auditLog.find(e => e.zid === z.id && e.status === 'en-proceso');
+    if(!existing) {
       state.auditLog.push({zid:z.id,zoneName:z.name,workerName:w?w.name:'–',workerId:z.assignedTo,entradaTime:z.entradaTime,diagnostic:z.diagnostic,salidaTime:null,status:'en-proceso'}); 
     }
     renderAuditTable(); 
   }
 
   function updateAuditEntry(z) { 
-    const e=state.auditLog.find(x=>x.zid===z.id); 
+    const e = [...state.auditLog].reverse().find(x => x.zid === z.id && x.status === 'en-proceso');
     if(e){e.salidaTime=z.salidaTime;e.status='limpio';} 
     renderAuditTable(); 
   }
@@ -2308,23 +2363,88 @@
     showToast('🔄 Demo reiniciada.'); 
   }
 
-  // ── REPORTS & STATS ──
-  function getWorkerStats(wid) {
-    const assigned = state.zones.filter(z => z.assignedTo === wid);
-    const completed = assigned.filter(z => z.status === 'limpio' && z.entradaTime && z.salidaTime);
-    const inProcess = assigned.filter(z => z.status === 'en-proceso');
-    const totalTimeSec = completed.reduce((sum, z) => sum + Math.round((z.salidaTime - z.entradaTime) / 1000), 0);
-    const avgTimeSec = completed.length > 0 ? Math.round(totalTimeSec / completed.length) : 0;
-    const diagScores = { excelente: 3, regular: 2, malo: 1 };
-    const diagAvg = completed.length > 0 ? (completed.reduce((s, z) => s + (diagScores[z.diagnostic] || 2), 0) / completed.length) : 0;
-    return { assigned: assigned.length, completed: completed.length, inProcess: inProcess.length, totalTimeSec, avgTimeSec, diagAvg };
+  // ── Helper: Local YYYY-MM-DD Date Formatter ──
+  function getLocalYMD(ts) {
+    if (!ts) return '';
+    const d = new Date(ts);
+    const y = d.getFullYear();
+    const m = (d.getMonth() + 1).toString().padStart(2, '0');
+    const day = d.getDate().toString().padStart(2, '0');
+    return y + '-' + m + '-' + day;
   }
 
-  function fmtDuration(sec) { if (sec <= 0) return '–'; const m = Math.floor(sec / 60), s = sec % 60; return m > 0 ? m + 'min ' + s + 's' : s + 's'; }
+  // ── REPORTS & STATS ──
+  function getWorkerStatsByDate(wid, dateStr) {
+    const assigned = state.zones.filter(z => z.assignedTo === wid);
+    const workerEntries = state.auditLog.filter(e => e.workerId === wid && getLocalYMD(e.entradaTime) === dateStr);
+    const completed = workerEntries.filter(e => e.status === 'limpio' && e.entradaTime && e.salidaTime);
+    const inProcess = workerEntries.filter(e => e.status === 'en-proceso');
+    
+    const totalTimeSec = completed.reduce((sum, e) => sum + Math.round((e.salidaTime - e.entradaTime) / 1000), 0);
+    const avgTimeSec = completed.length > 0 ? Math.round(totalTimeSec / completed.length) : 0;
+    
+    const diagScores = { excelente: 3, regular: 2, malo: 1 };
+    const diagAvg = completed.length > 0 ? (completed.reduce((s, e) => s + (diagScores[e.diagnostic] || 2), 0) / completed.length) : 0;
+    
+    const fmtTime = ts => {
+      if (!ts) return '–';
+      const d = new Date(ts);
+      return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+    };
+    
+    const detailsList = workerEntries.map(e => {
+      if (e.status === 'limpio') {
+        return e.zoneName + ' (' + fmtTime(e.entradaTime) + ' - ' + fmtTime(e.salidaTime) + ')';
+      } else {
+        return e.zoneName + ' (' + fmtTime(e.entradaTime) + ' - en proceso)';
+      }
+    });
+    
+    const detailsStr = detailsList.length > 0 ? detailsList.join(', ') : '–';
+    
+    return { 
+      assigned: assigned.length, 
+      completed: completed.length, 
+      inProcess: inProcess.length, 
+      totalTimeSec, 
+      avgTimeSec, 
+      diagAvg,
+      detailsStr
+    };
+  }
+
+  function fmtDuration(sec) { 
+    if (sec <= 0) return '–'; 
+    const m = Math.floor(sec / 60), s = sec % 60; 
+    return m > 0 ? m + 'min ' + s + 's' : s + 's'; 
+  }
 
   function renderReports() {
+    const datePicker = document.getElementById('report-date-picker');
+    let dateStr = datePicker ? datePicker.value : '';
+    if (!dateStr) {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      dateStr = yyyy + '-' + mm + '-' + dd;
+      if (datePicker) datePicker.value = dateStr;
+    }
+    
+    // Update the display label
+    const infoEl = document.getElementById('report-date-info');
+    if (infoEl) {
+      const parts = dateStr.split('-');
+      if (parts.length === 3) {
+        infoEl.textContent = 'Mostrando registros del ' + parts[2] + '/' + parts[1] + '/' + parts[0] + '.';
+      } else {
+        infoEl.textContent = 'Mostrando registros de la fecha seleccionada.';
+      }
+    }
+    
     const workers = getWorkers();
-    const statsArr = workers.map(w => ({ ...w, stats: getWorkerStats(w.id) }));
+    const statsArr = workers.map(w => ({ ...w, stats: getWorkerStatsByDate(w.id, dateStr) }));
+    
     // Summary
     const smEl = document.getElementById('report-summary-stats');
     if (smEl) {
@@ -2332,25 +2452,81 @@
       const totalTime = statsArr.reduce((s, w) => s + w.stats.totalTimeSec, 0);
       const globalAvg = totalClean > 0 ? Math.round(totalTime / totalClean) : 0;
       smEl.innerHTML =
-        '<div class="stat-card"><div class="stat-card-value" style="color:var(--clean);">' + totalClean + '</div><div class="stat-card-label">Zonas Limpiadas Hoy</div></div>' +
+        '<div class="stat-card"><div class="stat-card-value" style="color:var(--clean);">' + totalClean + '</div><div class="stat-card-label">Zonas Limpiadas</div></div>' +
         '<div class="stat-card"><div class="stat-card-value" style="color:var(--primary);">' + fmtDuration(totalTime) + '</div><div class="stat-card-label">Tiempo Total Trabajado</div></div>' +
         '<div class="stat-card"><div class="stat-card-value" style="color:var(--accent);">' + fmtDuration(globalAvg) + '</div><div class="stat-card-label">Promedio Global / Zona</div></div>' +
         '<div class="stat-card"><div class="stat-card-value" style="color:var(--gold);">' + workers.length + '</div><div class="stat-card-label">Trabajadores Activos</div></div>';
     }
+    
     // Worker table
     const wtb = document.getElementById('report-worker-tbody');
     if (wtb) {
-      if (!statsArr.length) { wtb.innerHTML = '<tr class="empty-row"><td colspan="6">Sin datos aún.</td></tr>'; }
-      else {
+      if (!statsArr.length) { 
+        wtb.innerHTML = '<tr class="empty-row"><td colspan="7">Sin datos aún.</td></tr>'; 
+      } else {
         wtb.innerHTML = statsArr.map(w => {
           const s = w.stats;
           const diagLabel = s.diagAvg >= 2.5 ? '🙂 Excelente' : s.diagAvg >= 1.5 ? '😐 Regular' : s.diagAvg > 0 ? '🙁 Malo' : '–';
           const pct = s.assigned > 0 ? Math.round(s.completed / s.assigned * 100) : 0;
           const barColor = pct >= 80 ? 'var(--clean)' : pct >= 40 ? 'var(--process)' : 'var(--dirty)';
-          return '<tr><td><strong>' + w.name + '</strong></td><td>' + s.completed + ' / ' + s.assigned + '</td><td>' + fmtDuration(s.totalTimeSec) + '</td><td>' + fmtDuration(s.avgTimeSec) + '</td><td>' + diagLabel + '</td><td><div style="display:flex;align-items:center;gap:0.5rem;"><span style="color:' + barColor + ';font-weight:700;">' + pct + '%</span><div class="rank-bar" style="flex:1;"><div class="rank-bar-fill" style="width:' + pct + '%;background:' + barColor + ';"></div></div></div></td></tr>';
+          
+          return '<tr>' +
+            '<td><strong>' + w.name + '</strong></td>' +
+            '<td>' + s.completed + ' / ' + s.assigned + '</td>' +
+            '<td style="font-size:0.8rem;color:var(--text-muted);max-width:250px;word-break:break-word;">' + s.detailsStr + '</td>' +
+            '<td>' + fmtDuration(s.totalTimeSec) + '</td>' +
+            '<td>' + fmtDuration(s.avgTimeSec) + '</td>' +
+            '<td>' + diagLabel + '</td>' +
+            '<td>' +
+              '<div style="display:flex;align-items:center;gap:0.5rem;">' +
+                '<span style="color:' + barColor + ';font-weight:700;">' + pct + '%</span>' +
+                '<div class="rank-bar" style="flex:1;">' +
+                  '<div class="rank-bar-fill" style="width:' + pct + '%;background:' + barColor + ';"></div>' +
+                '</div>' +
+              '</div>' +
+            '</td>' +
+          '</tr>';
         }).join('');
       }
     }
+    
+    // Render daily audit table for selected date
+    const dEmpty = document.getElementById('day-audit-empty');
+    const dTable = document.getElementById('day-audit-table');
+    const dTbody = document.getElementById('day-audit-tbody');
+    if (dTbody) {
+      const dayLogs = state.auditLog.filter(e => getLocalYMD(e.entradaTime) === dateStr);
+      if (dayLogs.length === 0) {
+        if (dEmpty) dEmpty.style.display = 'block';
+        if (dTable) dTable.style.display = 'none';
+      } else {
+        if (dEmpty) dEmpty.style.display = 'none';
+        if (dTable) dTable.style.display = 'table';
+        
+        const fmt = ts => {
+          if (!ts) return '–';
+          const d = new Date(ts);
+          return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0') + ':' + d.getSeconds().toString().padStart(2, '0');
+        };
+        
+        dTbody.innerHTML = dayLogs.map(e => {
+          const dur = (e.entradaTime && e.salidaTime) ? Math.round((e.salidaTime - e.entradaTime) / 1000) : null;
+          const ds = dur !== null ? (dur >= 60 ? Math.floor(dur / 60) + 'min ' + (dur % 60) + 's' : dur + 's') : '–';
+          const de = e.diagnostic === 'excelente' ? '🙂 Excelente' : e.diagnostic === 'regular' ? '😐 Regular' : '🙁 Malo';
+          const b = e.status === 'limpio' ? '<span class="badge badge-clean">🟢 Limpio</span>' : '<span class="badge badge-process">🟡 En Proceso</span>';
+          return '<tr>' +
+            '<td><strong>' + e.zoneName + '</strong></td>' +
+            '<td>' + e.workerName + '</td>' +
+            '<td style="color:var(--process);">' + fmt(e.entradaTime) + '</td>' +
+            '<td>' + de + '</td>' +
+            '<td style="color:var(--clean);">' + fmt(e.salidaTime) + '</td>' +
+            '<td>' + ds + '</td>' +
+            '<td>' + b + '</td>' +
+          '</tr>';
+        }).join('');
+      }
+    }
+    
     // Rankings
     renderRankings(statsArr);
   }
@@ -2360,8 +2536,9 @@
     // Efficiency: lowest avg time first
     const effEl = document.getElementById('rank-efficiency');
     if (effEl) {
-      if (!withData.length) { effEl.innerHTML = '<div style="padding:1rem;color:var(--text-muted);text-align:center;">Sin datos para calcular rankings.</div>'; }
-      else {
+      if (!withData.length) { 
+        effEl.innerHTML = '<div style="padding:1rem;color:var(--text-muted);text-align:center;">Sin datos para calcular rankings.</div>'; 
+      } else {
         const sorted = [...withData].sort((a, b) => a.stats.avgTimeSec - b.stats.avgTimeSec);
         const medals = ['🥇', '🥈', '🥉'];
         effEl.innerHTML = sorted.map((w, i) => {
@@ -2378,8 +2555,9 @@
     // Productivity: most zones cleaned first
     const prodEl = document.getElementById('rank-productivity');
     if (prodEl) {
-      if (!withData.length) { prodEl.innerHTML = '<div style="padding:1rem;color:var(--text-muted);text-align:center;">Sin datos.</div>'; }
-      else {
+      if (!withData.length) { 
+        prodEl.innerHTML = '<div style="padding:1rem;color:var(--text-muted);text-align:center;">Sin datos.</div>'; 
+      } else {
         const sorted = [...withData].sort((a, b) => b.stats.completed - a.stats.completed);
         const medals = ['🥇', '🥈', '🥉'];
         const maxZ = sorted[0].stats.completed || 1;
@@ -2397,37 +2575,143 @@
 
   // ── GENERATE PRINTABLE REPORT ──
   function generateReport() {
+    const datePicker = document.getElementById('report-date-picker');
+    let dateStr = datePicker ? datePicker.value : '';
+    if (!dateStr) {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      dateStr = yyyy + '-' + mm + '-' + dd;
+    }
+    
+    // format dateStr for print
+    const parts = dateStr.split('-');
+    const formattedDate = parts.length === 3 ? parts[2] + '/' + parts[1] + '/' + parts[0] : dateStr;
+    
     const workers = getWorkers();
-    const statsArr = workers.map(w => ({ ...w, stats: getWorkerStats(w.id) }));
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('es-CL') + ' ' + now.toLocaleTimeString('es-CL');
+    const statsArr = workers.map(w => ({ ...w, stats: getWorkerStatsByDate(w.id, dateStr) }));
     const school = state.currentUser && state.currentUser.schoolId ? state.schools.find(s => s.id === state.currentUser.schoolId) : null;
     const totalClean = statsArr.reduce((s, w) => s + w.stats.completed, 0);
     const totalTime = statsArr.reduce((s, w) => s + w.stats.totalTimeSec, 0);
     const globalAvg = totalClean > 0 ? Math.round(totalTime / totalClean) : 0;
+    
     let html = '<h1>📊 Informe de Rendimiento — Valtek Optima</h1>';
-    html += '<p><strong>Institución:</strong> ' + (school ? school.name : 'Demo') + ' | <strong>Fecha:</strong> ' + dateStr + '</p>';
+    html += '<p><strong>Institución:</strong> ' + (school ? school.name : 'Demo') + ' | <strong>Fecha del Reporte:</strong> ' + formattedDate + '</p>';
     html += '<p><strong>Zonas limpiadas:</strong> ' + totalClean + '/51 | <strong>Tiempo total:</strong> ' + fmtDuration(totalTime) + ' | <strong>Promedio/zona:</strong> ' + fmtDuration(globalAvg) + '</p>';
-    html += '<h2>Detalle por Trabajador</h2><table><thead><tr><th>Trabajador</th><th>Zonas Limpias</th><th>Tiempo Total</th><th>Promedio/Zona</th><th>Diagnóstico Prom.</th></tr></thead><tbody>';
+    
+    html += '<h2>Detalle por Trabajador</h2>' +
+      '<table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">' +
+        '<thead>' +
+          '<tr style="background:#f2f2f2; text-align:left;">' +
+            '<th style="padding:8px; border:1px solid #ddd;">Trabajador</th>' +
+            '<th style="padding:8px; border:1px solid #ddd;">Zonas Limpias</th>' +
+            '<th style="padding:8px; border:1px solid #ddd;">Detalle de Salas y Zonas Limpiadas</th>' +
+            '<th style="padding:8px; border:1px solid #ddd;">Tiempo Total</th>' +
+            '<th style="padding:8px; border:1px solid #ddd;">Promedio/Zona</th>' +
+            '<th style="padding:8px; border:1px solid #ddd;">Diagnóstico Prom.</th>' +
+          '</tr>' +
+        '</thead>' +
+        '<tbody>';
+        
     statsArr.forEach(w => {
       const s = w.stats;
       const dl = s.diagAvg >= 2.5 ? 'Excelente' : s.diagAvg >= 1.5 ? 'Regular' : s.diagAvg > 0 ? 'Malo' : '–';
-      html += '<tr><td>' + w.name + '</td><td>' + s.completed + '/' + s.assigned + '</td><td>' + fmtDuration(s.totalTimeSec) + '</td><td>' + fmtDuration(s.avgTimeSec) + '</td><td>' + dl + '</td></tr>';
+      html += '<tr>' +
+        '<td style="padding:8px; border:1px solid #ddd;"><strong>' + w.name + '</strong></td>' +
+        '<td style="padding:8px; border:1px solid #ddd;">' + s.completed + '/' + s.assigned + '</td>' +
+        '<td style="padding:8px; border:1px solid #ddd; font-size:0.85rem; max-width:250px; word-break:break-word;">' + s.detailsStr + '</td>' +
+        '<td style="padding:8px; border:1px solid #ddd;">' + fmtDuration(s.totalTimeSec) + '</td>' +
+        '<td style="padding:8px; border:1px solid #ddd;">' + fmtDuration(s.avgTimeSec) + '</td>' +
+        '<td style="padding:8px; border:1px solid #ddd;">' + dl + '</td>' +
+      '</tr>';
     });
     html += '</tbody></table>';
+    
+    // Detailed day log in print
+    const dayLogs = state.auditLog.filter(e => getLocalYMD(e.entradaTime) === dateStr);
+    if (dayLogs.length > 0) {
+      html += '<h2>Bitácora de Aseo Detallada</h2>' +
+        '<table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">' +
+          '<thead>' +
+            '<tr style="background:#f2f2f2; text-align:left;">' +
+              '<th style="padding:8px; border:1px solid #ddd;">Zona</th>' +
+              '<th style="padding:8px; border:1px solid #ddd;">Operario</th>' +
+              '<th style="padding:8px; border:1px solid #ddd;">Entrada</th>' +
+              '<th style="padding:8px; border:1px solid #ddd;">Diagnóstico</th>' +
+              '<th style="padding:8px; border:1px solid #ddd;">Salida</th>' +
+              '<th style="padding:8px; border:1px solid #ddd;">Duración</th>' +
+              '<th style="padding:8px; border:1px solid #ddd;">Estado</th>' +
+            '</tr>' +
+          '</thead>' +
+          '<tbody>';
+      dayLogs.forEach(e => {
+        const dur = (e.entradaTime && e.salidaTime) ? Math.round((e.salidaTime - e.entradaTime) / 1000) : null;
+        const ds = dur !== null ? (dur >= 60 ? Math.floor(dur / 60) + 'min ' + (dur % 60) + 's' : dur + 's') : '–';
+        const de = e.diagnostic === 'excelente' ? 'Excelente' : e.diagnostic === 'regular' ? 'Regular' : 'Malo';
+        const st = e.status === 'limpio' ? 'Limpio' : 'En Proceso';
+        const fmt = ts => {
+          if (!ts) return '–';
+          const d = new Date(ts);
+          return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0') + ':' + d.getSeconds().toString().padStart(2, '0');
+        };
+        html += '<tr>' +
+          '<td style="padding:8px; border:1px solid #ddd;">' + e.zoneName + '</td>' +
+          '<td style="padding:8px; border:1px solid #ddd;">' + e.workerName + '</td>' +
+          '<td style="padding:8px; border:1px solid #ddd;">' + fmt(e.entradaTime) + '</td>' +
+          '<td style="padding:8px; border:1px solid #ddd;">' + de + '</td>' +
+          '<td style="padding:8px; border:1px solid #ddd;">' + fmt(e.salidaTime) + '</td>' +
+          '<td style="padding:8px; border:1px solid #ddd;">' + ds + '</td>' +
+          '<td style="padding:8px; border:1px solid #ddd;">' + st + '</td>' +
+        '</tr>';
+      });
+      html += '</tbody></table>';
+    }
+    
     // Rankings
     const withData = statsArr.filter(w => w.stats.completed > 0);
     if (withData.length > 0) {
       const effSorted = [...withData].sort((a, b) => a.stats.avgTimeSec - b.stats.avgTimeSec);
-      html += '<h2>Ranking de Eficiencia (Menor tiempo promedio)</h2><table><thead><tr><th>#</th><th>Trabajador</th><th>Promedio/Zona</th></tr></thead><tbody>';
-      effSorted.forEach((w, i) => { html += '<tr><td>' + (i + 1) + '</td><td>' + w.name + '</td><td>' + fmtDuration(w.stats.avgTimeSec) + '</td></tr>'; });
+      html += '<h2>Ranking de Eficiencia (Menor tiempo promedio)</h2>' +
+        '<table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">' +
+          '<thead>' +
+            '<tr style="background:#f2f2f2; text-align:left;">' +
+              '<th style="padding:8px; border:1px solid #ddd;">#</th>' +
+              '<th style="padding:8px; border:1px solid #ddd;">Trabajador</th>' +
+              '<th style="padding:8px; border:1px solid #ddd;">Promedio/Zona</th>' +
+            '</tr>' +
+          '</thead>' +
+          '<tbody>';
+      effSorted.forEach((w, i) => { 
+        html += '<tr>' +
+          '<td style="padding:8px; border:1px solid #ddd;">' + (i + 1) + '</td>' +
+          '<td style="padding:8px; border:1px solid #ddd;">' + w.name + '</td>' +
+          '<td style="padding:8px; border:1px solid #ddd;">' + fmtDuration(w.stats.avgTimeSec) + '</td>' +
+        '</tr>'; 
+      });
       html += '</tbody></table>';
+      
       const prodSorted = [...withData].sort((a, b) => b.stats.completed - a.stats.completed);
-      html += '<h2>Ranking de Productividad (Más zonas)</h2><table><thead><tr><th>#</th><th>Trabajador</th><th>Zonas</th></tr></thead><tbody>';
-      prodSorted.forEach((w, i) => { html += '<tr><td>' + (i + 1) + '</td><td>' + w.name + '</td><td>' + w.stats.completed + '</td></tr>'; });
+      html += '<h2>Ranking de Productividad (Más zonas)</h2>' +
+        '<table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">' +
+          '<thead>' +
+            '<tr style="background:#f2f2f2; text-align:left;">' +
+              '<th style="padding:8px; border:1px solid #ddd;">#</th>' +
+              '<th style="padding:8px; border:1px solid #ddd;">Trabajador</th>' +
+              '<th style="padding:8px; border:1px solid #ddd;">Zonas</th>' +
+            '</tr>' +
+          '</thead>' +
+          '<tbody>';
+      prodSorted.forEach((w, i) => { 
+        html += '<tr>' +
+          '<td style="padding:8px; border:1px solid #ddd;">' + (i + 1) + '</td>' +
+          '<td style="padding:8px; border:1px solid #ddd;">' + w.name + '</td>' +
+          '<td style="padding:8px; border:1px solid #ddd;">' + w.stats.completed + '</td>' +
+        '</tr>'; 
+      });
       html += '</tbody></table>';
     }
-    html += '<p style="margin-top:2rem;font-size:0.8rem;color:#999;">Generado por Valtek Optima — ' + dateStr + '</p>';
+    html += '<p style="margin-top:2rem;font-size:0.8rem;color:#999;">Generado por Valtek Optima — ' + formattedDate + '</p>';
     document.getElementById('report-print-area').innerHTML = html;
     window.print();
   }
@@ -2441,6 +2725,15 @@
     loadData(); 
     updateClock(); 
     setInterval(updateClock, 30000);
+    // Set default date for report date picker
+    const datePicker = document.getElementById('report-date-picker');
+    if (datePicker) {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      datePicker.value = yyyy + '-' + mm + '-' + dd;
+    }
     // Refresh live monitor every 5 seconds
     setInterval(() => { 
       if (document.getElementById('jefe-tab-monitoreo') && document.getElementById('jefe-tab-monitoreo').classList.contains('active')) {
