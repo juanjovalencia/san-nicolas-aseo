@@ -1932,8 +1932,10 @@
     if (!files || files.length === 0) return;
     
     Array.from(files).forEach(file => {
-      // Check file size (max 1.5MB for localStorage safety)
-      if (file.size > 1.5 * 1024 * 1024) {
+      const isImage = file.type && file.type.startsWith('image/');
+      
+      // Check file size (max 1.5MB for non-images only, since images will be compressed)
+      if (!isImage && file.size > 1.5 * 1024 * 1024) {
         showToast(`⚠️ "${file.name}" es muy grande (máx 1.5MB para demo).`, true);
         return;
       }
@@ -1942,7 +1944,7 @@
         const reader = new FileReader();
         reader.onload = function(evt) {
           const dataURL = evt.target.result;
-          if (file.type && file.type.startsWith('image/')) {
+          if (isImage) {
             const img = new Image();
             img.onload = function() {
               const canvas = document.createElement('canvas');
@@ -1954,14 +1956,29 @@
               }
               canvas.width = w; canvas.height = h;
               canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+              
+              // Change extension from .png/etc to .jpg since it is now compressed as JPEG
+              let name = file.name;
+              const lastDot = name.lastIndexOf('.');
+              if (lastDot !== -1) {
+                name = name.substring(0, lastDot) + '.jpg';
+              } else {
+                name = name + '.jpg';
+              }
+
               tempModalFileList.push({
-                fileName: file.name, uploadDate: new Date().toLocaleDateString('es-CL'),
+                fileName: name, uploadDate: new Date().toLocaleDateString('es-CL'),
                 dataURL: canvas.toDataURL('image/jpeg', 0.5)
               });
               renderModalFileList();
             };
             img.onerror = function() {
               // Fallback for unsupported image formats (e.g. HEIC)
+              // Check size since it failed to compress
+              if (file.size > 1.5 * 1024 * 1024) {
+                showToast(`⚠️ "${file.name}" no se pudo comprimir y es muy grande (máx 1.5MB).`, true);
+                return;
+              }
               tempModalFileList.push({
                 fileName: file.name, uploadDate: new Date().toLocaleDateString('es-CL'),
                 dataURL: dataURL
