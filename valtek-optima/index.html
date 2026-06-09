@@ -1111,7 +1111,7 @@
       <div id="modal-upload-dropzone" style="border: 2px dashed rgba(255,255,255,0.15); border-radius: 10px; padding: 1.25rem; text-align: center; cursor: pointer; background: rgba(255,255,255,0.02); transition: all 0.2s;" onclick="document.getElementById('modal-upload-file-input').click()">
         <span style="font-size: 1.3rem; display: block; margin-bottom: 0.35rem;">📷</span>
         <span id="modal-upload-dropzone-text" style="font-size: 0.8rem; color: var(--text-muted);">Haz clic para seleccionar archivos o fotos</span>
-        <input type="file" id="modal-upload-file-input" style="display: none;" multiple onchange="handleModalFileSelect(event)">
+        <input type="file" id="modal-upload-file-input" style="display: none;" multiple onchange="handleModalFileSelect(event)" onclick="event.stopPropagation()">
       </div>
     </div>
 
@@ -1245,7 +1245,7 @@
   let tempPendingFinishZoneId = null;
 
   // ── PERSISTENCE ──
-  const DATA_VERSION = '4.0'; // Updated version for re-seed
+  const DATA_VERSION = '4.1'; // Updated version for re-seed and clearing localStorage
   function saveData() { 
     try {
       localStorage.setItem('vo_version', DATA_VERSION); 
@@ -1960,6 +1960,14 @@
               });
               renderModalFileList();
             };
+            img.onerror = function() {
+              // Fallback for unsupported image formats (e.g. HEIC)
+              tempModalFileList.push({
+                fileName: file.name, uploadDate: new Date().toLocaleDateString('es-CL'),
+                dataURL: dataURL
+              });
+              renderModalFileList();
+            };
             img.src = dataURL;
           } else {
             tempModalFileList.push({
@@ -2105,7 +2113,7 @@
       </g>
       <text x="300" y="720" fill="#6b7280" font-family="system-ui, sans-serif" font-size="11" text-anchor="middle">VALTEK OPTIMA • PLATAFORMA DE GESTIÓN</text>
     </svg>`;
-    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
   }
 
   function confirmUpload() {
