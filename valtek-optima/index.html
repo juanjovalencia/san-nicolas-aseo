@@ -1247,15 +1247,20 @@
   // ── PERSISTENCE ──
   const DATA_VERSION = '4.0'; // Updated version for re-seed
   function saveData() { 
-    localStorage.setItem('vo_version', DATA_VERSION); 
-    localStorage.setItem('vo_schools', JSON.stringify(state.schools)); 
-    localStorage.setItem('vo_users', JSON.stringify(state.users)); 
-    localStorage.setItem('vo_msg', state.mensajeDelDia); 
-    localStorage.setItem('vo_ext_workers', JSON.stringify(state.externalWorkers));
-    localStorage.setItem('vo_gate_log', JSON.stringify(state.gateLog));
-    localStorage.setItem('vo_file_log', JSON.stringify(state.fileLog));
-    localStorage.setItem('vo_zones', JSON.stringify(state.zones));
-    localStorage.setItem('vo_audit', JSON.stringify(state.auditLog));
+    try {
+      localStorage.setItem('vo_version', DATA_VERSION); 
+      localStorage.setItem('vo_schools', JSON.stringify(state.schools)); 
+      localStorage.setItem('vo_users', JSON.stringify(state.users)); 
+      localStorage.setItem('vo_msg', state.mensajeDelDia); 
+      localStorage.setItem('vo_ext_workers', JSON.stringify(state.externalWorkers));
+      localStorage.setItem('vo_gate_log', JSON.stringify(state.gateLog));
+      localStorage.setItem('vo_file_log', JSON.stringify(state.fileLog));
+      localStorage.setItem('vo_zones', JSON.stringify(state.zones));
+      localStorage.setItem('vo_audit', JSON.stringify(state.auditLog));
+    } catch (e) {
+      console.error('Failed to save to localStorage:', e);
+      showToast('⚠️ Límite de almacenamiento local excedido. Intente eliminar algunos archivos o usar archivos más pequeños.', true);
+    }
   }
 
   function loadData() {
@@ -1927,16 +1932,22 @@
     if (!files || files.length === 0) return;
     
     Array.from(files).forEach(file => {
+      // Check file size (max 1.5MB for localStorage safety)
+      if (file.size > 1.5 * 1024 * 1024) {
+        showToast(`⚠️ "${file.name}" es muy grande (máx 1.5MB para demo).`, true);
+        return;
+      }
+
       if (!tempModalFileList.some(f => f.fileName === file.name)) {
         const reader = new FileReader();
         reader.onload = function(evt) {
           const dataURL = evt.target.result;
-          if (file.type.startsWith('image/')) {
+          if (file.type && file.type.startsWith('image/')) {
             const img = new Image();
             img.onload = function() {
               const canvas = document.createElement('canvas');
               let w = img.width, h = img.height;
-              const max = 1000;
+              const max = 600;
               if (w > max || h > max) {
                 if (w > h) { h = Math.floor(h * (max / w)); w = max; }
                 else { w = Math.floor(w * (max / h)); h = max; }
@@ -1945,7 +1956,7 @@
               canvas.getContext('2d').drawImage(img, 0, 0, w, h);
               tempModalFileList.push({
                 fileName: file.name, uploadDate: new Date().toLocaleDateString('es-CL'),
-                dataURL: canvas.toDataURL('image/jpeg', 0.7)
+                dataURL: canvas.toDataURL('image/jpeg', 0.5)
               });
               renderModalFileList();
             };
