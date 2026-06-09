@@ -1128,6 +1128,19 @@
   </div>
 </div>
 
+<!-- DOCUMENT VIEWER MODAL -->
+<div id="doc-viewer-modal" style="position: fixed; inset: 0; z-index: 2100; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 1rem;">
+  <div class="diag-card" style="text-align: center; max-width: 90vw; max-height: 90vh; width:100%; display: flex; flex-direction: column; overflow: hidden; background: #111;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <div class="diag-title" id="viewer-modal-title" style="margin: 0; color: #fff;">Visor de Documento</div>
+      <button class="btn-sm btn-red" onclick="closeDocViewer()" style="min-width: 60px;">✕ Cerrar</button>
+    </div>
+    <div id="viewer-modal-content" style="flex: 1; overflow: auto; display: flex; align-items: center; justify-content: center;">
+      <!-- Image will be injected here -->
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <!-- PRINT REPORT (hidden, shown only during print) -->
@@ -1883,10 +1896,16 @@
         fileMetaHTML = 'Sin documento entregado';
       } else if (docObj.expiryDate && docObj.expiryDate < nowStr) {
         badgeHTML = '<span class="badge badge-expired">⚠️ Vencido (' + docObj.expiryDate + ')</span>';
-        fileMetaHTML = files.map(f => '📄 ' + f.fileName).join('<br>') + '<br>Entregado: ' + (docObj.uploadDate || files[0].uploadDate);
+        fileMetaHTML = files.map(f => {
+          const action = f.dataURL ? `onclick="openDocViewer('${f.dataURL}', '${f.fileName}')" style="cursor:pointer; color:var(--primary); text-decoration:underline;"` : '';
+          return `<span ${action}>📄 ${f.fileName}</span>`;
+        }).join('<br>') + '<br>Entregado: ' + (docObj.uploadDate || files[0].uploadDate);
       } else {
         badgeHTML = '<span class="badge badge-authorized">✅ Subido (' + files.length + ' arch.)' + (docObj.expiryDate ? ' (Vence: ' + docObj.expiryDate + ')' : ' (Sin Vencimiento)') + '</span>';
-        fileMetaHTML = files.map(f => '📄 ' + f.fileName).join('<br>') + '<br>Entregado: ' + (docObj.uploadDate || files[0].uploadDate);
+        fileMetaHTML = files.map(f => {
+          const action = f.dataURL ? `onclick="openDocViewer('${f.dataURL}', '${f.fileName}')" style="cursor:pointer; color:var(--primary); text-decoration:underline;"` : '';
+          return `<span ${action}>📄 ${f.fileName}</span>`;
+        }).join('<br>') + '<br>Entregado: ' + (docObj.uploadDate || files[0].uploadDate);
       }
 
       html += '<div class="doc-item">' +
@@ -1906,17 +1925,42 @@
     const files = e.target.files;
     if (!files || files.length === 0) return;
     
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
+    Array.from(files).forEach(file => {
       if (!tempModalFileList.some(f => f.fileName === file.name)) {
-        tempModalFileList.push({
-          fileName: file.name,
-          uploadDate: new Date().toLocaleDateString('es-CL')
-        });
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const dataURL = evt.target.result;
+          if (file.type.startsWith('image/')) {
+            const img = new Image();
+            img.onload = function() {
+              const canvas = document.createElement('canvas');
+              let w = img.width, h = img.height;
+              const max = 1000;
+              if (w > max || h > max) {
+                if (w > h) { h = Math.floor(h * (max / w)); w = max; }
+                else { w = Math.floor(w * (max / h)); h = max; }
+              }
+              canvas.width = w; canvas.height = h;
+              canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+              tempModalFileList.push({
+                fileName: file.name, uploadDate: new Date().toLocaleDateString('es-CL'),
+                dataURL: canvas.toDataURL('image/jpeg', 0.7)
+              });
+              renderModalFileList();
+            };
+            img.src = dataURL;
+          } else {
+            tempModalFileList.push({
+              fileName: file.name, uploadDate: new Date().toLocaleDateString('es-CL'),
+              dataURL: dataURL
+            });
+            renderModalFileList();
+          }
+        };
+        reader.readAsDataURL(file);
       }
-    }
+    });
     
-    renderModalFileList();
     document.getElementById('modal-upload-file-input').value = '';
     document.getElementById('modal-upload-dropzone-text').textContent = 'Haz clic para agregar más archivos o fotos';
     document.getElementById('modal-upload-dropzone').style.borderColor = 'rgba(255,255,255,0.15)';
@@ -1931,8 +1975,9 @@
     }
     
     listEl.innerHTML = tempModalFileList.map((f, index) => {
+      const viewerAction = f.dataURL ? `onclick="openDocViewer('${f.dataURL}', '${f.fileName}')" style="cursor:pointer; color:var(--primary); text-decoration:underline;"` : `style="color:var(--text-dim);"`;
       return '<div style="display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:6px; padding:0.4rem 0.6rem; font-size:0.82rem; margin-bottom:0.25rem;">' +
-        '<span style="color:var(--text-dim); text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:240px;">📄 ' + f.fileName + '</span>' +
+        `<span ${viewerAction} title="Ver archivo" style="text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:240px;">📄 ${f.fileName}</span>` +
         '<button class="btn-sm btn-red" style="padding:0.15rem 0.4rem; font-size:0.7rem; border-radius:4px;" onclick="removeTempModalFile(' + index + ')">✕</button>' +
         '</div>';
     }).join('');
@@ -1974,6 +2019,29 @@
     tempUploadDocKey = null;
     tempModalFileSelected = null;
     tempModalFileList = [];
+  }
+
+  function openDocViewer(dataURL, fileName) {
+    if (!dataURL || dataURL === '#') {
+      showToast('⚠️ Este documento no tiene archivo para previsualizar.', true);
+      return;
+    }
+    document.getElementById('viewer-modal-title').textContent = fileName || 'Documento';
+    const content = document.getElementById('viewer-modal-content');
+    if (dataURL.startsWith('data:image/')) {
+      content.innerHTML = `<img src="${dataURL}" style="max-width: 100%; max-height: 100%; object-fit: contain;">`;
+    } else {
+      content.innerHTML = `<div style="padding: 2rem; color: #fff;">
+        Vista previa en el navegador:<br><br>
+        <a href="${dataURL}" download="${fileName}" class="btn-sm btn-blue" style="text-decoration:none; display:inline-block;">⬇️ Descargar Archivo</a>
+      </div>`;
+    }
+    document.getElementById('doc-viewer-modal').style.display = 'flex';
+  }
+
+  function closeDocViewer() {
+    document.getElementById('doc-viewer-modal').style.display = 'none';
+    document.getElementById('viewer-modal-content').innerHTML = '';
   }
 
   function confirmUpload() {
