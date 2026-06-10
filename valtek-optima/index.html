@@ -404,10 +404,10 @@
       </div>
     </div>
     <button class="nav-btn active" id="nav-landing" onclick="showView('landing')">Inicio</button>
-    <button class="nav-btn" id="nav-superadmin" onclick="showView('superadmin')" style="display:none;">👑 Admin Mayor</button>
+    <button class="nav-btn" id="nav-superadmin" onclick="showView('superadmin')" style="display:none;">👑 Dueño de la App</button>
     <button class="nav-btn" id="nav-proveedor" onclick="showView('proveedor')" style="display:none;">🏢 Proveedores</button>
     <button class="nav-btn" id="nav-porteria" onclick="showView('porteria')" style="display:none;">🚪 Portería</button>
-    <button class="nav-btn" id="nav-jefe" onclick="showView('jefe')" style="display:none;">👔 Panel Jefe</button>
+    <button class="nav-btn" id="nav-jefe" onclick="showView('jefe')" style="display:none;">👑 Directora</button>
     <button class="nav-btn" id="nav-trabajador" onclick="showView('trabajador')" style="display:none;">📱 Vista Trabajador</button>
     <button class="nav-btn-primary" id="nav-login-btn" onclick="showAuth()">Iniciar Sesión</button>
     <button class="nav-btn" id="nav-logout-btn" onclick="logout()" style="display:none;">Salir</button>
@@ -442,10 +442,10 @@
     <div style="margin-top:1.25rem;padding:0.75rem;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid var(--border);">
       <div style="font-size:0.72rem;color:var(--text-muted);text-align:center;margin-bottom:0.4rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Cuentas demo</div>
       <div style="font-size:0.78rem;color:var(--text-dim);text-align:left;line-height:1.9;max-height:120px;overflow-y:auto;padding-right:0.25rem;">
-        👑 <strong>Admin Mayor:</strong> superadmin@valtek.cl / <strong>valtek2025</strong><br>
+        👑 <strong>Dueño de la App:</strong> juanjo / <strong>123</strong><br>
         🏢 <strong>Proveedor:</strong> proveedor@valtek.cl / <strong>1234</strong><br>
         🚪 <strong>Portería:</strong> porteria@valtek.cl / <strong>1234</strong><br>
-        👔 <strong>Jefe Aseo:</strong> admin@valtek.cl / <strong>1234</strong><br>
+        👑 <strong>Directora:</strong> admin@valtek.cl / <strong>1234</strong><br>
         📱 <strong>Trabajador:</strong> maria@valtek.cl / <strong>1234</strong>
       </div>
     </div>
@@ -502,7 +502,7 @@
 <!-- ADMINISTRADOR MAYOR -->
 <div id="view-superadmin" class="app-view">
   <div class="sa-header">
-    <div class="sa-header-top"><div class="sa-crown">👑</div><div><div class="sa-title-text">Panel de Administrador Mayor</div><div class="sa-title-sub">Control global de colegios, usuarios, contratistas y auditorías</div></div></div>
+    <div class="sa-header-top"><div class="sa-crown">👑</div><div><div class="sa-title-text">Panel de Dueño de la App (Super Admin)</div><div class="sa-title-sub">Control global de colegios, usuarios, contratistas y auditorías</div></div></div>
     <div class="sa-tabs">
       <button class="sa-tab active" onclick="switchSaTab('colegios')">🏫 Colegios y Usuarios</button>
       <button class="sa-tab" onclick="switchSaTab('aprobaciones')">✅ Aprobaciones de Personal</button>
@@ -536,7 +536,7 @@
           <div class="f-group">
             <label class="f-label">Rol</label>
             <select class="f-input f-select" id="nu-role">
-              <option value="admin">👔 Jefe de Aseo</option>
+              <option value="admin">👑 Directora</option>
               <option value="trabajador">📱 Trabajador</option>
               <option value="proveedor">🏢 Proveedor Terciario</option>
               <option value="porteria">🚪 Portería</option>
@@ -825,12 +825,14 @@
 <!-- JEFE PANEL (4 tabs: Personal, Asignación, Monitoreo, Informes) -->
 <div id="view-jefe" class="app-view">
   <div class="jefe-header">
-    <div class="jefe-title">Panel de Administración <span id="jefe-school-label"></span></div>
+    <div class="jefe-title">👑 Panel Directora <span id="jefe-school-label"></span></div>
     <div class="jefe-tabs">
       <button class="jefe-tab active" onclick="switchJefeTab('personal')">👥 Personal</button>
       <button class="jefe-tab" onclick="switchJefeTab('asignacion')">📋 Asignación</button>
       <button class="jefe-tab" onclick="switchJefeTab('monitoreo')">📡 Monitor en Vivo</button>
       <button class="jefe-tab" onclick="switchJefeTab('informes')">📊 Informes</button>
+      <button class="jefe-tab" onclick="switchJefeTab('aprobaciones')">✅ Aprobación Contratistas</button>
+      <button class="jefe-tab" onclick="switchJefeTab('bitacora')">📁 Bitácora de Archivos</button>
     </div>
   </div>
   <div class="jefe-body">
@@ -998,6 +1000,72 @@
       </div>
     </div>
 
+    <!-- TAB: APROBACIONES -->
+    <div class="jefe-tab-content" id="jefe-tab-aprobaciones">
+      <div class="j-card">
+        <div class="j-card-title">Aprobación de Personal Externo (Contratistas)</div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Trabajador / RUT</th>
+                <th>Tipo</th>
+                <th>Empresa (Proveedor)</th>
+                <th>Checklist Documental</th>
+                <th>Estado Aprobación</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="jefe-aprobaciones-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: BITÁCORA DE ARCHIVOS -->
+    <div class="jefe-tab-content" id="jefe-tab-bitacora">
+      <div class="j-grid-2">
+        <div class="j-card">
+          <div class="j-card-title">📁 Subir Archivo a Bitácora</div>
+          <div class="f-group">
+            <label class="f-label">Trabajador Vinculado</label>
+            <select class="f-input f-select" id="jefe-bitacora-worker-select"></select>
+          </div>
+          <div class="f-group">
+            <label class="f-label">Descripción del Documento</label>
+            <input class="f-input" id="jefe-bitacora-desc" placeholder="Ej: Certificado de inducción, inducción de seguridad, etc.">
+          </div>
+          <div class="f-group">
+            <label class="f-label">Archivo</label>
+            <div id="jefe-bitacora-dropzone" style="border: 2px dashed rgba(255,255,255,0.15); border-radius: 10px; padding: 1.5rem; text-align: center; cursor: pointer; background: rgba(255,255,255,0.02); transition: all 0.2s;" onclick="document.getElementById('jefe-bitacora-file-input').click()">
+              <span style="font-size: 1.5rem; display: block; margin-bottom: 0.5rem;">📁</span>
+              <span id="jefe-bitacora-dropzone-text" style="font-size: 0.82rem; color: var(--text-muted);">Haz clic para seleccionar o arrastra un archivo</span>
+              <input type="file" id="jefe-bitacora-file-input" style="display: none;" onchange="handleJefeBitacoraFileSelect(event)">
+            </div>
+          </div>
+          <button class="btn-sm btn-gold-sm" onclick="addJefeBitacoraEntry()">💾 Registrar en Bitácora</button>
+        </div>
+        <div class="j-card">
+          <div class="j-card-title">📖 Historial de Bitácora del Colegio</div>
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Trabajador</th>
+                  <th>Archivo</th>
+                  <th>Descripción</th>
+                  <th>Registrado Por</th>
+                  <th>Fecha</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="jefe-bitacora-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1007,7 +1075,7 @@
     <div class="phone-notch"><div class="notch-bar"></div></div>
     <div class="phone-status-bar"><span id="phone-time">10:30</span><span>📶 🔋 87%</span></div>
     <div class="phone-header"><div><div class="phone-user-name" id="phone-worker-name">Trabajador</div><div class="phone-role-badge">Personal de Aseo</div></div><div style="font-size:1.5rem;">📱</div></div>
-    <div class="msg-banner" id="msg-banner"><strong>📢 Mensaje del Jefe:</strong><span id="msg-banner-text"></span></div>
+    <div class="msg-banner" id="msg-banner"><strong>📢 Comunicado Dirección:</strong><span id="msg-banner-text"></span></div>
     <div class="phone-body" id="phone-body"></div>
   </div>
 </div>
@@ -1158,10 +1226,10 @@
 
 <!-- ═══════════════ JAVASCRIPT ═══════════════ -->
 <script>
-  const SUPER_ADMIN = { email: 'superadmin@valtek.cl', password: 'valtek2025', name: 'Super Admin Valtek', role: 'superadmin' };
+  const SUPER_ADMIN = { email: 'juanjo@valtek.cl', aliasEmail: 'juanjo', password: '123', name: 'juanjo', role: 'superadmin' };
   const SEED_SCHOOLS = [{ id: 'sch1', name: 'Colegio San Nicolás de Myra', city: 'Santiago', plan: 'Profesional' }];
   const SEED_USERS = [
-    { id: 'u1', name: 'Admin Demo', email: 'admin@valtek.cl', password: '1234', role: 'admin', schoolId: 'sch1', createdAt: '06/06/2026' },
+    { id: 'u1', name: 'Directora', email: 'admin@valtek.cl', password: '1234', role: 'admin', schoolId: 'sch1', createdAt: '06/06/2026' },
     { id: 'u2', name: 'Tía María', email: 'maria@valtek.cl', password: '1234', role: 'trabajador', schoolId: 'sch1', createdAt: '06/06/2026' },
     { id: 'u3', name: 'Tía Carmen', email: 'carmen@valtek.cl', password: '1234', role: 'trabajador', schoolId: 'sch1', createdAt: '06/06/2026' },
     { id: 'u4', name: 'Tía Rosa', email: 'rosa@valtek.cl', password: '1234', role: 'trabajador', schoolId: 'sch1', createdAt: '06/06/2026' },
@@ -1255,7 +1323,7 @@
   let tempPendingFinishZoneId = null;
 
   // ── PERSISTENCE ──
-  const DATA_VERSION = '4.1'; // Updated version for re-seed and clearing localStorage
+  const DATA_VERSION = '4.2'; // Updated version for re-seed and clearing localStorage
   function saveData() { 
     try {
       localStorage.setItem('vo_version', DATA_VERSION); 
@@ -1370,7 +1438,7 @@
   function doLogin() {
     const email = document.getElementById('login-email').value.trim().toLowerCase();
     const pass = document.getElementById('login-password').value;
-    if (email === SUPER_ADMIN.email && pass === SUPER_ADMIN.password) { loginSuccess(SUPER_ADMIN); return; }
+    if ((email === SUPER_ADMIN.email || email === SUPER_ADMIN.aliasEmail) && pass === SUPER_ADMIN.password) { loginSuccess(SUPER_ADMIN); return; }
     const user = state.users.find(u => u.email.toLowerCase() === email && u.password === pass);
     if (!user) { document.getElementById('login-error').classList.add('show'); return; }
     document.getElementById('login-error').classList.remove('show');
@@ -1384,7 +1452,7 @@
     document.getElementById('nav-avatar').textContent = user.name.charAt(0).toUpperCase();
     document.getElementById('nav-avatar').className = 'user-avatar' + (user.role==='superadmin'?' gold':'');
     document.getElementById('nav-username').textContent = user.name;
-    const rl = {superadmin:'👑 Admin Mayor', admin:'👔 Jefe', trabajador:'📱 Trabajador', proveedor:'🏢 Proveedor', porteria:'🚪 Portero'};
+    const rl = {superadmin:'👑 Dueño de la App', admin:'👑 Directora', trabajador:'📱 Trabajador', proveedor:'🏢 Proveedor', porteria:'🚪 Portero'};
     document.getElementById('nav-role-chip').innerHTML = '<span class="role-chip '+user.role+'">'+(rl[user.role]||user.role)+'</span>';
     
     document.getElementById('nav-login-btn').style.display = 'none';
@@ -1393,11 +1461,10 @@
     // Role-based Navbar visibility
     document.getElementById('nav-superadmin').style.display = user.role==='superadmin'?'inline-flex':'none';
     document.getElementById('nav-proveedor').style.display = (user.role==='proveedor'||user.role==='superadmin')?'inline-flex':'none';
-    document.getElementById('nav-porteria').style.display = (user.role==='porteria'||user.role==='superadmin')?'inline-flex':'none';
+    document.getElementById('nav-porteria').style.display = (user.role==='porteria'||user.role==='superadmin'||user.role==='admin')?'inline-flex':'none';
     document.getElementById('nav-jefe').style.display = (user.role==='admin'||user.role==='superadmin')?'inline-flex':'none';
     document.getElementById('nav-trabajador').style.display = (user.role==='trabajador'||user.role==='superadmin')?'inline-flex':'none';
 
-    // Role-based redirect
     if (user.role==='superadmin') showView('superadmin'); 
     else if (user.role==='proveedor') showView('proveedor');
     else if (user.role==='porteria') showView('porteria');
@@ -1546,8 +1613,8 @@
     tb.innerHTML=all.map((u,i)=>{
       const sch=state.schools.find(s=>s.id===u.schoolId); 
       const rolesHTML = {
-        superadmin:'<span class="role-chip superadmin">👑 Admin Mayor</span>', 
-        admin:'<span class="role-chip admin">👔 Jefe Aseo</span>',
+        superadmin:'<span class="role-chip superadmin">👑 Dueño de la App</span>', 
+        admin:'<span class="role-chip admin">👑 Directora</span>',
         trabajador:'<span class="role-chip trabajador">📱 Trabajador</span>',
         proveedor:'<span class="role-chip proveedor">🏢 Proveedor</span>',
         porteria:'<span class="role-chip porteria">🚪 Portería</span>'
@@ -2276,12 +2343,22 @@
     sNotfound.classList.remove('active');
     tempActivePorteriaWorker = null;
 
+    const schoolId = state.currentUser ? state.currentUser.schoolId : null;
+    const isSuper = state.currentUser && state.currentUser.role === 'superadmin';
+
     // Search external worker first
-    const worker = state.externalWorkers.find(w => w.rut.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() === rut.replace(/[^a-zA-Z0-9]/g, '').toLowerCase());
+    const worker = state.externalWorkers.find(w => 
+      w.rut.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() === rut.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() &&
+      (isSuper || w.schoolId === schoolId)
+    );
 
     if (!worker) {
       // Look up internal worker next
-      const internalUser = state.users.find(u => u.role === 'trabajador' && u.name.toLowerCase().includes(rut.toLowerCase()));
+      const internalUser = state.users.find(u => 
+        u.role === 'trabajador' && 
+        u.name.toLowerCase().includes(rut.toLowerCase()) &&
+        (isSuper || u.schoolId === schoolId)
+      );
       if (internalUser) {
         // Internal workers are always authorized automatically
         sAuth.classList.add('active');
@@ -2457,9 +2534,14 @@
   function switchJefeTab(t) { 
     document.querySelectorAll('.jefe-tab').forEach(x=>x.classList.remove('active')); 
     document.querySelectorAll('.jefe-tab-content').forEach(x=>x.classList.remove('active')); 
-    const ts=['personal','asignacion','monitoreo','informes']; 
-    document.querySelectorAll('.jefe-tab')[ts.indexOf(t)].classList.add('active'); 
-    document.getElementById('jefe-tab-'+t).classList.add('active'); 
+    const ts=['personal','asignacion','monitoreo','informes','aprobaciones','bitacora']; 
+    const idx = ts.indexOf(t);
+    if (idx !== -1) {
+      const tabEl = document.querySelectorAll('.jefe-tab')[idx];
+      if (tabEl) tabEl.classList.add('active');
+      const contentEl = document.getElementById('jefe-tab-'+t);
+      if (contentEl) contentEl.classList.add('active');
+    }
     renderJefeAll(); 
   }
 
@@ -2475,8 +2557,142 @@
     updateMonitoreo(); 
     renderLiveMonitor(); 
     renderReports(); 
+    renderJefeAprobacionesTable();
+    renderJefeBitacora();
     const mi=document.getElementById('msg-input'); 
     if(mi&&!mi._i){mi.value=state.mensajeDelDia;mi._i=true;} 
+  }
+
+  function renderJefeAprobacionesTable() {
+    const tbody = document.getElementById('jefe-aprobaciones-tbody');
+    if (!tbody) return;
+    
+    const schoolId = state.currentUser ? state.currentUser.schoolId : null;
+    const filteredWorkers = state.externalWorkers.filter(w => w.schoolId === schoolId);
+
+    if (!filteredWorkers.length) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No hay personal de contratistas registrado en este colegio.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = filteredWorkers.map(w => {
+      const provider = state.users.find(u => u.id === w.providerId);
+      const company = provider ? provider.name : 'Proveedor Terciario';
+      const docChecklist = renderDocChecklistHTML(w);
+      const calcStatus = checkWorkerStatus(w);
+
+      let statusBadge = '';
+      if (calcStatus === 'autorizado') statusBadge = '<span class="badge badge-authorized">🟢 Autorizado</span>';
+      else if (calcStatus === 'autorizado-forzado') statusBadge = '<span class="badge" style="background:rgba(245,158,11,0.15); border:1px solid var(--process); color:var(--process); font-weight:bold;">⚠️ Autorizado (Obs)</span>';
+      else if (calcStatus === 'rechazado') statusBadge = '<span class="badge badge-rejected">🔴 Rechazado</span>';
+      else if (calcStatus === 'vencido') statusBadge = '<span class="badge badge-expired">⚠️ Docs Vencidos</span>';
+      else statusBadge = '<span class="badge badge-pending">🟡 Pendiente</span>';
+
+      return '<tr>' +
+        '<td><strong>' + w.name + '</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">' + w.rut + '</span></td>' +
+        '<td>' + (w.type === 'aseo' ? '🧹 Aseo' : '🛠 Mantención') + '</td>' +
+        '<td>' + company + '</td>' +
+        '<td>' + docChecklist + '</td>' +
+        '<td>' + statusBadge + '</td>' +
+        '<td>' +
+          '<div style="display:flex;gap:0.4rem;">' +
+            '<button class="btn-sm btn-green" onclick="approveWorker(\''+w.id+'\')">✓</button>' +
+            '<button class="btn-sm btn-red" onclick="rejectWorker(\''+w.id+'\')">✕</button>' +
+          '</div>' +
+        '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  let tempJefeBitacoraFileSelected = null;
+
+  function renderJefeBitacora() {
+    const schoolId = state.currentUser ? state.currentUser.schoolId : null;
+    
+    // Populate select
+    const sel = document.getElementById('jefe-bitacora-worker-select');
+    if (sel) {
+      const list = [];
+      state.users.filter(u => u.role === 'trabajador' && u.schoolId === schoolId).forEach(u => {
+        list.push({ id: u.id, name: u.name + ' (Interno)', source: 'interno' });
+      });
+      state.externalWorkers.filter(w => w.schoolId === schoolId).forEach(w => {
+        list.push({ id: w.id, name: w.name + ' (Externo - ' + w.rut + ')', source: 'externo' });
+      });
+      sel.innerHTML = list.map(w => '<option value="' + w.id + '" data-name="' + w.name + '">' + w.name + '</option>').join('');
+    }
+
+    const tbody = document.getElementById('jefe-bitacora-tbody');
+    if (!tbody) return;
+
+    // Filter fileLog to include only files of workers of this school
+    const filteredFiles = state.fileLog.filter(f => {
+      const isOurUser = state.users.some(u => u.id === f.workerId && u.schoolId === schoolId);
+      const isOurExt = state.externalWorkers.some(w => w.id === f.workerId && w.schoolId === schoolId);
+      return isOurUser || isOurExt;
+    });
+
+    if (!filteredFiles.length) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No hay archivos en la bitácora de este colegio.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = filteredFiles.map(f => {
+      const dateStr = new Date(f.uploadDate).toLocaleDateString('es-CL') + ' ' + new Date(f.uploadDate).toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit'});
+      return '<tr>' +
+        '<td><strong>' + f.workerName + '</strong></td>' +
+        '<td><span style="color:var(--accent);font-family:monospace;font-size:0.8rem;">📄 ' + f.fileName + '</span></td>' +
+        '<td>' + f.description + '</td>' +
+        '<td>' + f.uploadedBy + '</td>' +
+        '<td>' + dateStr + '</td>' +
+        '<td><button class="btn-sm btn-red" onclick="deleteJefeBitacoraEntry(\''+f.id+'\')">🗑</button></td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  function handleJefeBitacoraFileSelect(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    tempJefeBitacoraFileSelected = file.name;
+    document.getElementById('jefe-bitacora-dropzone-text').innerHTML = '📄 <strong>' + file.name + '</strong> seleccionado';
+    document.getElementById('jefe-bitacora-dropzone').style.borderColor = 'var(--clean)';
+  }
+
+  function addJefeBitacoraEntry() {
+    const sel = document.getElementById('jefe-bitacora-worker-select');
+    const desc = document.getElementById('jefe-bitacora-desc').value.trim();
+    if (!sel || !sel.value) { showToast('⚠ Seleccione un trabajador.', true); return; }
+    if (!desc) { showToast('⚠ Ingrese una descripción.', true); return; }
+    
+    const fileName = tempJefeBitacoraFileSelected || 'archivo_bitacora_' + Math.floor(Math.random()*1000) + '.pdf';
+    const workerName = sel.options[sel.selectedIndex].getAttribute('data-name');
+    
+    state.fileLog.unshift({
+      id: 'fl_' + Date.now(),
+      workerId: sel.value,
+      workerName: workerName,
+      fileName: fileName,
+      description: desc,
+      uploadedBy: state.currentUser ? state.currentUser.name : 'Directora',
+      uploadDate: Date.now()
+    });
+
+    saveData();
+    document.getElementById('jefe-bitacora-desc').value = '';
+    tempJefeBitacoraFileSelected = null;
+    document.getElementById('jefe-bitacora-dropzone-text').textContent = 'Haz clic para seleccionar o arrastra un archivo';
+    document.getElementById('jefe-bitacora-dropzone').style.borderColor = 'rgba(255,255,255,0.15)';
+    renderJefeBitacora();
+    renderSaBitacora(); // Sync global
+    showToast('💾 Archivo guardado en bitácora.');
+  }
+
+  function deleteJefeBitacoraEntry(id) {
+    state.fileLog = state.fileLog.filter(f => f.id !== id);
+    saveData();
+    renderJefeBitacora();
+    renderSaBitacora(); // Sync global
+    showToast('🗑 Entrada eliminada de la bitácora.');
   }
 
   function getWorkers() { 
