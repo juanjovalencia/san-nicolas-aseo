@@ -631,7 +631,7 @@
             <div id="bitacora-dropzone" style="border: 2px dashed rgba(255,255,255,0.15); border-radius: 10px; padding: 1.5rem; text-align: center; cursor: pointer; background: rgba(255,255,255,0.02); transition: all 0.2s;" onclick="document.getElementById('bitacora-file-input').click()">
               <span style="font-size: 1.5rem; display: block; margin-bottom: 0.5rem;">📁</span>
               <span id="bitacora-dropzone-text" style="font-size: 0.82rem; color: var(--text-muted);">Haz clic para seleccionar o arrastra un archivo</span>
-              <input type="file" id="bitacora-file-input" style="display: none;" onchange="handleBitacoraFileSelect(event)">
+              <input type="file" id="bitacora-file-input" style="display: none;" accept="image/*,application/pdf" onchange="handleBitacoraFileSelect(event)">
             </div>
           </div>
           <button class="btn-sm btn-gold-sm" onclick="addBitacoraEntry()">💾 Registrar en Bitácora</button>
@@ -1040,7 +1040,7 @@
             <div id="jefe-bitacora-dropzone" style="border: 2px dashed rgba(255,255,255,0.15); border-radius: 10px; padding: 1.5rem; text-align: center; cursor: pointer; background: rgba(255,255,255,0.02); transition: all 0.2s;" onclick="document.getElementById('jefe-bitacora-file-input').click()">
               <span style="font-size: 1.5rem; display: block; margin-bottom: 0.5rem;">📁</span>
               <span id="jefe-bitacora-dropzone-text" style="font-size: 0.82rem; color: var(--text-muted);">Haz clic para seleccionar o arrastra un archivo</span>
-              <input type="file" id="jefe-bitacora-file-input" style="display: none;" onchange="handleJefeBitacoraFileSelect(event)">
+              <input type="file" id="jefe-bitacora-file-input" style="display: none;" accept="image/*,application/pdf" onchange="handleJefeBitacoraFileSelect(event)">
             </div>
           </div>
           <button class="btn-sm btn-gold-sm" onclick="addJefeBitacoraEntry()">💾 Registrar en Bitácora</button>
@@ -1189,7 +1189,7 @@
       <div id="modal-upload-dropzone" style="border: 2px dashed rgba(255,255,255,0.15); border-radius: 10px; padding: 1.25rem; text-align: center; cursor: pointer; background: rgba(255,255,255,0.02); transition: all 0.2s;" onclick="document.getElementById('modal-upload-file-input').click()">
         <span style="font-size: 1.3rem; display: block; margin-bottom: 0.35rem;">📷</span>
         <span id="modal-upload-dropzone-text" style="font-size: 0.8rem; color: var(--text-muted);">Haz clic para seleccionar archivos o fotos</span>
-        <input type="file" id="modal-upload-file-input" style="display: none;" multiple onchange="handleModalFileSelect(event)" onclick="event.stopPropagation()">
+        <input type="file" id="modal-upload-file-input" style="display: none;" multiple accept="image/*,application/pdf" onchange="handleModalFileSelect(event)" onclick="event.stopPropagation()">
       </div>
     </div>
 
@@ -1216,6 +1216,7 @@
     <div id="viewer-modal-content" style="flex: 1; overflow: auto; display: flex; align-items: center; justify-content: center;">
       <!-- Image will be injected here -->
     </div>
+    <div id="viewer-modal-navigation" style="margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem; color: #fff; padding-bottom: 0.5rem;"></div>
   </div>
 </div>
 
@@ -1316,6 +1317,11 @@
   let tempBitacoraFileDataURL = null;
   let tempModalFileSelected = null;
   let tempModalFileList = [];
+  
+  // Navigation for document viewer
+  let currentViewerWorkerId = null;
+  let currentViewerDocKey = null;
+  let currentViewerFileIndex = 0;
   
   // Temp state for cleaning photos
   let tempPhotoBeforeBase64 = null;
@@ -2227,15 +2233,46 @@
         <a href="${dataURL}" download="${fileName}" class="btn-sm btn-blue" style="text-decoration:none; display:inline-block;">⬇️ Descargar Archivo</a>
       </div>`;
     }
+
+    const navEl = document.getElementById('viewer-modal-navigation');
+    if (navEl) {
+      navEl.innerHTML = '';
+      if (currentViewerWorkerId && currentViewerDocKey) {
+        const worker = state.externalWorkers.find(w => w.id === currentViewerWorkerId);
+        if (worker) {
+          const docObj = worker.documents[currentViewerDocKey];
+          if (docObj) {
+            const files = getDocFiles(docObj);
+            if (files.length > 1) {
+              navEl.innerHTML = `
+                <button class="btn-sm btn-blue" onclick="navigateViewer(-1)" ${currentViewerFileIndex === 0 ? 'disabled style="opacity:0.4; cursor:default;"' : ''}>◀ Anterior</button>
+                <span style="font-size:0.85rem; font-weight:600; color:#fff;">Archivo ${currentViewerFileIndex + 1} de ${files.length}</span>
+                <button class="btn-sm btn-blue" onclick="navigateViewer(1)" ${currentViewerFileIndex === files.length - 1 ? 'disabled style="opacity:0.4; cursor:default;"' : ''}>Siguiente ▶</button>
+              `;
+            }
+          }
+        }
+      }
+    }
+
     document.getElementById('doc-viewer-modal').style.display = 'flex';
   }
 
   function closeDocViewer() {
     document.getElementById('doc-viewer-modal').style.display = 'none';
     document.getElementById('viewer-modal-content').innerHTML = '';
+    currentViewerWorkerId = null;
+    currentViewerDocKey = null;
+    currentViewerFileIndex = 0;
+    const navEl = document.getElementById('viewer-modal-navigation');
+    if (navEl) navEl.innerHTML = '';
   }
 
   function viewWorkerDocument(workerId, docKey, fileIndex) {
+    currentViewerWorkerId = workerId;
+    currentViewerDocKey = docKey;
+    currentViewerFileIndex = fileIndex;
+
     const worker = state.externalWorkers.find(w => w.id === workerId);
     if (!worker) return;
     const docObj = worker.documents[docKey];
@@ -2252,7 +2289,25 @@
     }
   }
 
+  function navigateViewer(direction) {
+    if (!currentViewerWorkerId || !currentViewerDocKey) return;
+    const worker = state.externalWorkers.find(w => w.id === currentViewerWorkerId);
+    if (!worker) return;
+    const docObj = worker.documents[currentViewerDocKey];
+    if (!docObj) return;
+    const files = getDocFiles(docObj);
+    
+    const newIdx = currentViewerFileIndex + direction;
+    if (newIdx >= 0 && newIdx < files.length) {
+      viewWorkerDocument(currentViewerWorkerId, currentViewerDocKey, newIdx);
+    }
+  }
+
   function viewBitacoraFile(fileId) {
+    currentViewerWorkerId = null;
+    currentViewerDocKey = null;
+    currentViewerFileIndex = 0;
+
     const entry = state.fileLog.find(f => f.id === fileId);
     if (!entry) return;
     if (!entry.dataURL || entry.dataURL === '#') {
@@ -2264,6 +2319,10 @@
   }
 
   function viewTempModalFile(index) {
+    currentViewerWorkerId = null;
+    currentViewerDocKey = null;
+    currentViewerFileIndex = 0;
+
     const file = tempModalFileList[index];
     if (file && file.dataURL) {
       openDocViewer(file.dataURL, file.fileName);
