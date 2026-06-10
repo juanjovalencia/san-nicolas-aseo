@@ -404,7 +404,7 @@
       </div>
     </div>
     <button class="nav-btn active" id="nav-landing" onclick="showView('landing')">Inicio</button>
-    <button class="nav-btn" id="nav-superadmin" onclick="showView('superadmin')" style="display:none;">👑 Dueño de la App</button>
+    <button class="nav-btn" id="nav-superadmin" onclick="showView('superadmin')" style="display:none;">juanjo</button>
     <button class="nav-btn" id="nav-proveedor" onclick="showView('proveedor')" style="display:none;">🏢 Proveedores</button>
     <button class="nav-btn" id="nav-porteria" onclick="showView('porteria')" style="display:none;">🚪 Portería</button>
     <button class="nav-btn" id="nav-jefe" onclick="showView('jefe')" style="display:none;">👑 Directora</button>
@@ -442,7 +442,7 @@
     <div style="margin-top:1.25rem;padding:0.75rem;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid var(--border);">
       <div style="font-size:0.72rem;color:var(--text-muted);text-align:center;margin-bottom:0.4rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Cuentas demo</div>
       <div style="font-size:0.78rem;color:var(--text-dim);text-align:left;line-height:1.9;max-height:120px;overflow-y:auto;padding-right:0.25rem;">
-        👑 <strong>Dueño de la App:</strong> juanjo / <strong>123</strong><br>
+        <strong>juanjo:</strong> juanjo / <strong>123</strong><br>
         🏢 <strong>Proveedor:</strong> proveedor@valtek.cl / <strong>1234</strong><br>
         🚪 <strong>Portería:</strong> porteria@valtek.cl / <strong>1234</strong><br>
         👑 <strong>Directora:</strong> admin@valtek.cl / <strong>1234</strong><br>
@@ -502,7 +502,7 @@
 <!-- ADMINISTRADOR MAYOR -->
 <div id="view-superadmin" class="app-view">
   <div class="sa-header">
-    <div class="sa-header-top"><div class="sa-crown">👑</div><div><div class="sa-title-text">Panel de Dueño de la App (Super Admin)</div><div class="sa-title-sub">Control global de colegios, usuarios, contratistas y auditorías</div></div></div>
+    <div class="sa-header-top"><div><div class="sa-title-text">Panel de juanjo (Super Admin)</div><div class="sa-title-sub">Control global de colegios, usuarios, contratistas y auditorías</div></div></div>
     <div class="sa-tabs">
       <button class="sa-tab active" onclick="switchSaTab('colegios')">🏫 Colegios y Usuarios</button>
       <button class="sa-tab" onclick="switchSaTab('aprobaciones')">✅ Aprobaciones de Personal</button>
@@ -1452,7 +1452,7 @@
     document.getElementById('nav-avatar').textContent = user.name.charAt(0).toUpperCase();
     document.getElementById('nav-avatar').className = 'user-avatar' + (user.role==='superadmin'?' gold':'');
     document.getElementById('nav-username').textContent = user.name;
-    const rl = {superadmin:'👑 Dueño de la App', admin:'👑 Directora', trabajador:'📱 Trabajador', proveedor:'🏢 Proveedor', porteria:'🚪 Portero'};
+    const rl = {superadmin:'juanjo', admin:'👑 Directora', trabajador:'📱 Trabajador', proveedor:'🏢 Proveedor', porteria:'🚪 Portero'};
     document.getElementById('nav-role-chip').innerHTML = '<span class="role-chip '+user.role+'">'+(rl[user.role]||user.role)+'</span>';
     
     document.getElementById('nav-login-btn').style.display = 'none';
@@ -1613,7 +1613,7 @@
     tb.innerHTML=all.map((u,i)=>{
       const sch=state.schools.find(s=>s.id===u.schoolId); 
       const rolesHTML = {
-        superadmin:'<span class="role-chip superadmin">👑 Dueño de la App</span>', 
+        superadmin:'<span class="role-chip superadmin">juanjo</span>', 
         admin:'<span class="role-chip admin">👑 Directora</span>',
         trabajador:'<span class="role-chip trabajador">📱 Trabajador</span>',
         proveedor:'<span class="role-chip proveedor">🏢 Proveedor</span>',
