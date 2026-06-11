@@ -50,6 +50,7 @@
     .role-chip.trabajador { background: rgba(16,185,129,0.15); color: var(--clean); border: 1px solid rgba(16,185,129,0.3); }
     .role-chip.proveedor { background: rgba(99,102,241,0.15); color: var(--accent); border: 1px solid rgba(99,102,241,0.3); }
     .role-chip.porteria { background: rgba(16,185,129,0.15); color: var(--clean); border: 1px solid rgba(16,185,129,0.3); }
+    .role-chip.jefe { background: rgba(245,158,11,0.15); color: var(--process); border: 1px solid rgba(245,158,11,0.3); }
 
     /* ── VIEWS ── */
     .app-view { display: none; padding-top: 60px; min-height: 100vh; }
@@ -448,6 +449,7 @@
         🏢 <strong>Proveedor:</strong> proveedor@valtek.cl / <strong>1234</strong><br>
         🚪 <strong>Portería:</strong> porteria@valtek.cl / <strong>1234</strong><br>
         👑 <strong>Directora:</strong> admin@valtek.cl / <strong>1234</strong><br>
+        👔 <strong>Jefe Aseo:</strong> jefe@valtek.cl / <strong>1234</strong><br>
         📱 <strong>Trabajador:</strong> maria@valtek.cl / <strong>1234</strong>
       </div>
     </div>
@@ -539,6 +541,7 @@
             <label class="f-label">Rol</label>
             <select class="f-input f-select" id="nu-role">
               <option value="admin">👑 Directora</option>
+              <option value="jefe">👔 Jefe de Aseo</option>
               <option value="trabajador">📱 Trabajador</option>
               <option value="proveedor">🏢 Proveedor Terciario</option>
               <option value="porteria">🚪 Portería</option>
@@ -833,7 +836,7 @@
 <!-- JEFE PANEL (4 tabs: Personal, Asignación, Monitoreo, Informes) -->
 <div id="view-jefe" class="app-view">
   <div class="jefe-header">
-    <div class="jefe-title">👑 Panel Directora <span id="jefe-school-label"></span></div>
+    <div class="jefe-title"><span id="jefe-title-text">👑 Panel Directora</span> <span id="jefe-school-label"></span></div>
     <div class="jefe-tabs">
       <button class="jefe-tab active" onclick="switchJefeTab('personal')">👥 Personal</button>
       <button class="jefe-tab" onclick="switchJefeTab('asignacion')">📋 Asignación</button>
@@ -1239,6 +1242,7 @@
   const SEED_SCHOOLS = [{ id: 'sch1', name: 'Colegio San Nicolás de Myra', city: 'Santiago', plan: 'Profesional' }];
   const SEED_USERS = [
     { id: 'u1', name: 'Directora', email: 'admin@valtek.cl', password: '1234', role: 'admin', schoolId: 'sch1', createdAt: '06/06/2026' },
+    { id: 'u_jefe', name: 'Jefe de Aseo', email: 'jefe@valtek.cl', password: '1234', role: 'jefe', schoolId: 'sch1', createdAt: '06/06/2026' },
     { id: 'u2', name: 'Tía María', email: 'maria@valtek.cl', password: '1234', role: 'trabajador', schoolId: 'sch1', createdAt: '06/06/2026' },
     { id: 'u3', name: 'Tía Carmen', email: 'carmen@valtek.cl', password: '1234', role: 'trabajador', schoolId: 'sch1', createdAt: '06/06/2026' },
     { id: 'u4', name: 'Tía Rosa', email: 'rosa@valtek.cl', password: '1234', role: 'trabajador', schoolId: 'sch1', createdAt: '06/06/2026' },
@@ -1338,7 +1342,7 @@
   let tempPendingFinishZoneId = null;
 
   // ── PERSISTENCE ──
-  const DATA_VERSION = '4.2'; // Updated version for re-seed and clearing localStorage
+  const DATA_VERSION = '4.3'; // Updated version for re-seed and clearing localStorage
   function saveData() { 
     try {
       localStorage.setItem('vo_version', DATA_VERSION); 
@@ -1467,23 +1471,29 @@
     document.getElementById('nav-avatar').textContent = user.name.charAt(0).toUpperCase();
     document.getElementById('nav-avatar').className = 'user-avatar' + (user.role==='superadmin'?' gold':'');
     document.getElementById('nav-username').textContent = user.name;
-    const rl = {superadmin:'juanjo', admin:'👑 Directora', trabajador:'📱 Trabajador', proveedor:'🏢 Proveedor', porteria:'🚪 Portero'};
+    const rl = {superadmin:'juanjo', admin:'👑 Directora', jefe:'👔 Jefe de Aseo', trabajador:'📱 Trabajador', proveedor:'🏢 Proveedor', porteria:'🚪 Portero'};
     document.getElementById('nav-role-chip').innerHTML = '<span class="role-chip '+user.role+'">'+(rl[user.role]||user.role)+'</span>';
     
     document.getElementById('nav-login-btn').style.display = 'none';
     document.getElementById('nav-logout-btn').style.display = 'inline-flex';
     
+    // Set navbar button text dynamically for Directora / Jefe de Aseo
+    const jefeBtn = document.getElementById('nav-jefe');
+    if (jefeBtn) {
+      jefeBtn.textContent = user.role === 'admin' ? '👑 Directora' : '👔 Jefe de Aseo';
+    }
+    
     // Role-based Navbar visibility
     document.getElementById('nav-superadmin').style.display = user.role==='superadmin'?'inline-flex':'none';
     document.getElementById('nav-proveedor').style.display = (user.role==='proveedor'||user.role==='superadmin')?'inline-flex':'none';
-    document.getElementById('nav-porteria').style.display = (user.role==='porteria'||user.role==='superadmin'||user.role==='admin')?'inline-flex':'none';
-    document.getElementById('nav-jefe').style.display = (user.role==='admin'||user.role==='superadmin')?'inline-flex':'none';
+    document.getElementById('nav-porteria').style.display = (user.role==='porteria'||user.role==='superadmin'||user.role==='admin'||user.role==='jefe')?'inline-flex':'none';
+    document.getElementById('nav-jefe').style.display = (user.role==='admin'||user.role==='jefe'||user.role==='superadmin')?'inline-flex':'none';
     document.getElementById('nav-trabajador').style.display = (user.role==='trabajador'||user.role==='superadmin')?'inline-flex':'none';
 
     if (user.role==='superadmin') showView('superadmin'); 
     else if (user.role==='proveedor') showView('proveedor');
     else if (user.role==='porteria') showView('porteria');
-    else if (user.role==='admin') showView('jefe'); 
+    else if (user.role==='admin' || user.role==='jefe') showView('jefe'); 
     else showView('trabajador');
 
     showToast('👋 ¡Bienvenido/a '+user.name+'!');
@@ -1630,6 +1640,7 @@
       const rolesHTML = {
         superadmin:'<span class="role-chip superadmin">juanjo</span>', 
         admin:'<span class="role-chip admin">👑 Directora</span>',
+        jefe:'<span class="role-chip jefe">👔 Jefe de Aseo</span>',
         trabajador:'<span class="role-chip trabajador">📱 Trabajador</span>',
         proveedor:'<span class="role-chip proveedor">🏢 Proveedor</span>',
         porteria:'<span class="role-chip porteria">🚪 Portería</span>'
@@ -2670,6 +2681,10 @@
   }
 
   function renderJefeAll() { 
+    const ttxt=document.getElementById('jefe-title-text');
+    if (ttxt && state.currentUser) {
+      ttxt.textContent = state.currentUser.role === 'admin' ? '👑 Panel Directora' : '👔 Panel Jefe de Aseo';
+    }
     const lbl=document.getElementById('jefe-school-label'); 
     if(lbl&&state.currentUser&&state.currentUser.schoolId){
       const s=state.schools.find(x=>x.id===state.currentUser.schoolId);
