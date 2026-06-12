@@ -1427,7 +1427,7 @@
 
 <!-- ═══════════════ JAVASCRIPT ═══════════════ -->
 <script>
-  const SUPER_ADMIN = { email: 'juanjo@valtek.cl', aliasEmail: 'juanjo', password: '123', name: 'juanjo', role: 'superadmin' };
+  const SUPER_ADMIN = { email: 'juanjo@valtek.cl', aliasEmail: 'juanjo', password: '123', name: 'juanjo', role: 'superadmin', schoolId: 'sch1' };
   const SEED_SCHOOLS = [{ id: 'sch1', name: 'Colegio San Nicolás de Myra', city: 'Santiago', plan: 'Profesional' }];
   const SEED_USERS = [
     { id: 'u1', name: 'Directora', email: 'admin@valtek.cl', password: '1234', role: 'admin', schoolId: 'sch1', createdAt: '06/06/2026' },
@@ -1744,7 +1744,7 @@
   }
 
   // ── PERSISTENCE ──
-  const DATA_VERSION = '4.5'; // Incremented version to force-clear localStorage and load new historical data
+  const DATA_VERSION = '4.6'; // Incremented version to load simulated active data for today
   function saveData() { 
     try {
       localStorage.setItem('vo_version', DATA_VERSION); 
@@ -1806,6 +1806,7 @@
       state.zones = JSON.parse(z);
     } else {
       initZones();
+      seedTodayActivity();
     }
     saveData();
   }
@@ -1824,6 +1825,149 @@
     ['z11','z12','z13','z14','z15','z16','z17','z18','z19','z20','c2','bP11','bP12','bP13'].forEach(id=>a(id,'u3'));
     ['z21','z22','z23','z24','z25','z26','z27','z28','z29','z30','c3','bP20','bP21','bP22','bP23'].forEach(id=>a(id,'u4'));
     ['bP30','bP31','bP32','bP33','cam0','cam1','cam2','bpc0','bpc1','bpc2'].forEach(id=>a(id,'u5'));
+  }
+
+  // Pre-populates a rich set of completed and in-progress tasks for today
+  function seedTodayActivity() {
+    const now = Date.now();
+    
+    // u2 (Tía María)
+    const cleanU2 = ['z1', 'z2', 'z3', 'z4', 'z5', 'bP10'];
+    cleanU2.forEach((zid, index) => {
+      const z = state.zones.find(x => x.id === zid);
+      if (z) {
+        z.status = 'limpio';
+        z.entradaTime = now - (10 - index) * 3600000;
+        z.salidaTime = z.entradaTime + (20 + Math.floor(Math.random() * 10)) * 60 * 1000;
+        z.diagnostic = index % 3 === 0 ? 'regular' : 'excelente';
+        
+        state.auditLog.push({
+          zid: z.id,
+          zoneName: z.name,
+          workerName: 'Tía María',
+          workerId: 'u2',
+          entradaTime: z.entradaTime,
+          diagnostic: z.diagnostic,
+          photoBefore: Math.random() < 0.3 ? generateMockPhoto(z.name, 'before') : null,
+          photoAfter: Math.random() < 0.3 ? generateMockPhoto(z.name, 'after') : null,
+          salidaTime: z.salidaTime,
+          status: 'limpio'
+        });
+      }
+    });
+    // In progress today:
+    const progU2 = state.zones.find(x => x.id === 'z6');
+    if (progU2) {
+      progU2.status = 'en-proceso';
+      progU2.entradaTime = now - 15 * 60 * 1000; // 15 mins ago
+      progU2.diagnostic = 'excelente';
+      state.auditLog.push({
+        zid: progU2.id,
+        zoneName: progU2.name,
+        workerName: 'Tía María',
+        workerId: 'u2',
+        entradaTime: progU2.entradaTime,
+        diagnostic: progU2.diagnostic,
+        photoBefore: generateMockPhoto(progU2.name, 'before'),
+        photoAfter: null,
+        salidaTime: null,
+        status: 'en-proceso'
+      });
+    }
+
+    // u3 (Tía Carmen)
+    const cleanU3 = ['z11', 'z12', 'z13', 'z14', 'bP11', 'bP12'];
+    cleanU3.forEach((zid, index) => {
+      const z = state.zones.find(x => x.id === zid);
+      if (z) {
+        z.status = 'limpio';
+        z.entradaTime = now - (8 - index) * 3600000;
+        z.salidaTime = z.entradaTime + (20 + Math.floor(Math.random() * 15)) * 60 * 1000;
+        z.diagnostic = 'excelente';
+        
+        state.auditLog.push({
+          zid: z.id,
+          zoneName: z.name,
+          workerName: 'Tía Carmen',
+          workerId: 'u3',
+          entradaTime: z.entradaTime,
+          diagnostic: z.diagnostic,
+          photoBefore: null,
+          photoAfter: null,
+          salidaTime: z.salidaTime,
+          status: 'limpio'
+        });
+      }
+    });
+
+    // u4 (Tía Rosa)
+    const cleanU4 = ['z21', 'z22', 'z23', 'z24', 'bP20', 'bP21'];
+    cleanU4.forEach((zid, index) => {
+      const z = state.zones.find(x => x.id === zid);
+      if (z) {
+        z.status = 'limpio';
+        z.entradaTime = now - (9 - index) * 3600000;
+        z.salidaTime = z.entradaTime + (20 + Math.floor(Math.random() * 10)) * 60 * 1000;
+        z.diagnostic = index === 2 ? 'malo' : 'excelente';
+        
+        state.auditLog.push({
+          zid: z.id,
+          zoneName: z.name,
+          workerName: 'Tía Rosa',
+          workerId: 'u4',
+          entradaTime: z.entradaTime,
+          diagnostic: z.diagnostic,
+          photoBefore: Math.random() < 0.4 ? generateMockPhoto(z.name, 'before') : null,
+          photoAfter: Math.random() < 0.4 ? generateMockPhoto(z.name, 'after') : null,
+          salidaTime: z.salidaTime,
+          status: 'limpio'
+        });
+      }
+    });
+    // In progress today:
+    const progU4 = state.zones.find(x => x.id === 'c3'); // Gimnasio
+    if (progU4) {
+      progU4.status = 'en-proceso';
+      progU4.entradaTime = now - 8 * 60 * 1000; // 8 mins ago
+      progU4.diagnostic = 'excelente';
+      state.auditLog.push({
+        zid: progU4.id,
+        zoneName: progU4.name,
+        workerName: 'Tía Rosa',
+        workerId: 'u4',
+        entradaTime: progU4.entradaTime,
+        diagnostic: progU4.diagnostic,
+        photoBefore: generateMockPhoto(progU4.name, 'before'),
+        photoAfter: null,
+        salidaTime: null,
+        status: 'en-proceso'
+      });
+    }
+
+    // u5 (Tía Patricia)
+    const cleanU5 = ['bP30', 'bP31', 'cam0', 'cam1', 'bpc0'];
+    cleanU5.forEach((zid, index) => {
+      const z = state.zones.find(x => x.id === zid);
+      if (z) {
+        z.status = 'limpio';
+        z.entradaTime = now - (6 - index) * 3600000;
+        z.salidaTime = z.entradaTime + (20 + Math.floor(Math.random() * 10)) * 60 * 1000;
+        z.diagnostic = 'excelente';
+        
+        state.auditLog.push({
+          zid: z.id,
+          zoneName: z.name,
+          workerName: 'Tía Patricia',
+          workerId: 'u5',
+          entradaTime: z.entradaTime,
+          diagnostic: z.diagnostic,
+          photoBefore: null,
+          photoAfter: null,
+          salidaTime: z.salidaTime,
+          status: 'limpio'
+        });
+      }
+    });
   }
 
   // Helper: get list of files safely
@@ -1890,7 +2034,7 @@
     // Set navbar button text dynamically for Directora / Jefe de Aseo
     const jefeBtn = document.getElementById('nav-jefe');
     if (jefeBtn) {
-      jefeBtn.textContent = user.role === 'admin' ? '👑 Directora' : '👔 Jefe de Aseo';
+      jefeBtn.textContent = (user.role === 'admin' || user.role === 'superadmin') ? '👑 Directora' : '👔 Jefe de Aseo';
     }
     
     // Role-based Navbar visibility
