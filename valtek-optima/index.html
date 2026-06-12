@@ -2080,6 +2080,9 @@
 
   function getMyExternalWorkers() {
     if (!state.currentUser) return [];
+    if (state.currentUser.role === 'superadmin') {
+      return state.externalWorkers;
+    }
     return state.externalWorkers.filter(w => w.providerId === state.currentUser.id);
   }
 
