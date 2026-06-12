@@ -1542,7 +1542,7 @@
     
     // Role-based Navbar visibility
     document.getElementById('nav-superadmin').style.display = user.role==='superadmin'?'inline-flex':'none';
-    document.getElementById('nav-proveedor').style.display = (user.role==='proveedor'||user.role==='superadmin')?'inline-flex':'none';
+    document.getElementById('nav-proveedor').style.display = (user.role==='proveedor'||user.role==='superadmin'||user.role==='admin'||user.role==='jefe')?'inline-flex':'none';
     document.getElementById('nav-porteria').style.display = (user.role==='porteria'||user.role==='superadmin'||user.role==='admin'||user.role==='jefe')?'inline-flex':'none';
     document.getElementById('nav-jefe').style.display = (user.role==='admin'||user.role==='jefe'||user.role==='superadmin')?'inline-flex':'none';
     document.getElementById('nav-trabajador').style.display = (user.role==='trabajador'||user.role==='superadmin')?'inline-flex':'none';
@@ -2082,6 +2082,9 @@
     if (!state.currentUser) return [];
     if (state.currentUser.role === 'superadmin') {
       return state.externalWorkers;
+    }
+    if (state.currentUser.role === 'admin' || state.currentUser.role === 'jefe') {
+      return state.externalWorkers.filter(w => w.schoolId === state.currentUser.schoolId);
     }
     return state.externalWorkers.filter(w => w.providerId === state.currentUser.id);
   }
