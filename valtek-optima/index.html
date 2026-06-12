@@ -1289,6 +1289,63 @@
         das:           { uploaded: false, fileName: null, uploadDate: null, expiryDate: null }
       },
       createdAt: '07/06/2026'
+    },
+    {
+      id: 'ew_juanjo',
+      name: 'Juan José Valencia',
+      rut: '22.687.868-8',
+      type: 'aseo',
+      phone: '+56953930491',
+      providerId: 'u_prov',
+      schoolId: 'sch1',
+      status: 'pendiente',
+      documents: {
+        cedula:        { uploaded: true, fileName: 'cedula_juanjo.pdf', uploadDate: '11/06/2026', expiryDate: '2028-12-31' },
+        antecedentes:  { uploaded: true, fileName: 'antecedentes_juanjo.pdf', uploadDate: '11/06/2026', expiryDate: '2027-06-30' },
+        inhabilidades: { uploaded: true, fileName: 'inhabilidades_juanjo.pdf', uploadDate: '11/06/2026', expiryDate: '2027-06-30' },
+        psicologico:   { uploaded: true, fileName: 'psicologico_juanjo.pdf', uploadDate: '11/06/2026', expiryDate: '2027-06-30' },
+        licencia:      { uploaded: true, fileName: 'licencia_juanjo.pdf', uploadDate: '11/06/2026', expiryDate: '2029-01-01' },
+        das:           { uploaded: true, fileName: 'das_juanjo.pdf', uploadDate: '11/06/2026', expiryDate: '2027-01-01' }
+      },
+      createdAt: '11/06/2026'
+    },
+    {
+      id: 'ew_josefa',
+      name: 'Josefa Díaz',
+      rut: '22.638.502-9',
+      type: 'aseo',
+      phone: '+56940033051',
+      providerId: 'u_prov',
+      schoolId: 'sch1',
+      status: 'pendiente',
+      documents: {
+        cedula:        { uploaded: true, fileName: 'cedula_josefa.pdf', uploadDate: '11/06/2026', expiryDate: '2028-12-31' },
+        antecedentes:  { uploaded: true, fileName: 'antecedentes_josefa.pdf', uploadDate: '11/06/2026', expiryDate: '2027-06-30' },
+        inhabilidades: { uploaded: true, fileName: 'inhabilidades_josefa.pdf', uploadDate: '11/06/2026', expiryDate: '2027-06-30' },
+        psicologico:   { uploaded: true, fileName: 'psicologico_josefa.pdf', uploadDate: '11/06/2026', expiryDate: '2027-06-30' },
+        licencia:      { uploaded: true, fileName: 'licencia_josefa.pdf', uploadDate: '11/06/2026', expiryDate: '2029-01-01' },
+        das:           { uploaded: true, fileName: 'das_josefa.pdf', uploadDate: '11/06/2026', expiryDate: '2027-01-01' }
+      },
+      createdAt: '11/06/2026'
+    },
+    {
+      id: 'ew_antonia',
+      name: 'Antonia García',
+      rut: '22.908.389-9',
+      type: 'mantencion',
+      phone: '+56985941159',
+      providerId: 'u_prov',
+      schoolId: 'sch1',
+      status: 'pendiente',
+      documents: {
+        cedula:        { uploaded: true, fileName: 'cedula_antonia.pdf', uploadDate: '11/06/2026', expiryDate: '2028-12-31' },
+        antecedentes:  { uploaded: true, fileName: 'antecedentes_antonia.pdf', uploadDate: '11/06/2026', expiryDate: '2027-06-30' },
+        inhabilidades: { uploaded: true, fileName: 'inhabilidades_antonia.pdf', uploadDate: '11/06/2026', expiryDate: '2027-06-30' },
+        psicologico:   { uploaded: true, fileName: 'psicologico_antonia.pdf', uploadDate: '11/06/2026', expiryDate: '2027-06-30' },
+        licencia:      { uploaded: true, fileName: 'licencia_antonia.pdf', uploadDate: '11/06/2026', expiryDate: '2029-01-01' },
+        das:           { uploaded: true, fileName: 'das_antonia.pdf', uploadDate: '11/06/2026', expiryDate: '2027-01-01' }
+      },
+      createdAt: '11/06/2026'
     }
   ];
 
@@ -1342,7 +1399,7 @@
   let tempPendingFinishZoneId = null;
 
   // ── PERSISTENCE ──
-  const DATA_VERSION = '4.3'; // Updated version for re-seed and clearing localStorage
+  const DATA_VERSION = '4.4'; // Updated version for re-seed and clearing localStorage
   function saveData() { 
     try {
       localStorage.setItem('vo_version', DATA_VERSION); 
