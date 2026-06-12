@@ -1032,8 +1032,8 @@
       <button class="jefe-tab" onclick="switchJefeTab('asignacion')">📋 Asignación</button>
       <button class="jefe-tab" onclick="switchJefeTab('monitoreo')">📡 Monitor en Vivo</button>
       <button class="jefe-tab" onclick="switchJefeTab('informes')">📊 Informes</button>
-      <button class="jefe-tab" onclick="switchJefeTab('aprobaciones')">✅ Aprobación Contratistas</button>
-      <button class="jefe-tab" onclick="switchJefeTab('bitacora')">📁 Bitácora de Archivos</button>
+      <button class="jefe-tab" id="jefe-tab-btn-aprobaciones" onclick="switchJefeTab('aprobaciones')">✅ Aprobación Contratistas</button>
+      <button class="jefe-tab" id="jefe-tab-btn-bitacora" onclick="switchJefeTab('bitacora')">📁 Bitácora de Archivos</button>
     </div>
   </div>
   <div class="jefe-body">
@@ -3358,9 +3358,27 @@
   }
 
   function renderJefeAll() { 
+    const activeMode = state.jefeMode || (state.currentUser ? state.currentUser.role : 'admin');
+    
+    // Hide tabs only for Jefe de Aseo
+    const isJefe = activeMode === 'jefe';
+    const aprobBtn = document.getElementById('jefe-tab-btn-aprobaciones');
+    const bitacBtn = document.getElementById('jefe-tab-btn-bitacora');
+    
+    if (aprobBtn) aprobBtn.style.display = isJefe ? 'none' : 'inline-flex';
+    if (bitacBtn) bitacBtn.style.display = isJefe ? 'none' : 'inline-flex';
+    
+    // Redirect to personal tab if current active tab is hidden
+    if (isJefe) {
+      const activeTabEl = document.querySelector('.jefe-tab-content.active');
+      if (activeTabEl && (activeTabEl.id === 'jefe-tab-aprobaciones' || activeTabEl.id === 'jefe-tab-bitacora')) {
+        switchJefeTab('personal');
+        return;
+      }
+    }
+
     const ttxt=document.getElementById('jefe-title-text');
     if (ttxt && state.currentUser) {
-      const activeMode = state.jefeMode || state.currentUser.role;
       ttxt.textContent = (activeMode === 'admin') ? '👑 Panel Directora' : '👔 Panel Jefe de Aseo';
     }
     const lbl=document.getElementById('jefe-school-label'); 
