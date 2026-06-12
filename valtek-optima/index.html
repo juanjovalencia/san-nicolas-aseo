@@ -289,13 +289,202 @@
     /* ── PRINT REPORT ── */
     #report-print-area { display: none; }
     @media print {
-      body { background: #fff !important; color: #111 !important; }
-      #navbar, #view-auth, #view-landing, #view-superadmin, #view-jefe, #view-trabajador, #view-proveedor, #view-porteria, #diagnostic-modal, #toast, #upload-modal { display: none !important; }
-      #report-print-area { display: block !important; padding: 2rem; }
-      #report-print-area h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
-      #report-print-area table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 1rem; }
-      #report-print-area th, #report-print-area td { padding: 0.5rem; border: 1px solid #ddd; text-align: left; }
-      #report-print-area th { background: #f4f4f5; font-weight: 700; }
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        font-family: 'Inter', system-ui, sans-serif !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      #navbar, #view-auth, #view-landing, #view-superadmin, #view-jefe, #view-trabajador, #view-proveedor, #view-porteria, #diagnostic-modal, #toast, #upload-modal, #finish-modal, #photo-comparison-modal {
+        display: none !important;
+      }
+      #report-print-area {
+        display: block !important;
+        padding: 0;
+        margin: 0;
+      }
+      @page {
+        margin: 1.6cm 1.2cm;
+      }
+      .page-break {
+        page-break-before: always;
+        break-before: page;
+      }
+      /* Typography & Headers */
+      h1, h2, h3 {
+        font-family: 'Outfit', system-ui, sans-serif !important;
+        color: #0f172a !important;
+        font-weight: 700;
+        margin-top: 0;
+      }
+      h1 {
+        font-size: 1.8rem;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      h2 {
+        font-size: 1.3rem;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 0.25rem;
+      }
+      p {
+        font-size: 0.9rem;
+        color: #475569;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+      }
+      
+      /* Print Header bar */
+      .print-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 3px solid #6366f1;
+        padding-bottom: 0.75rem;
+        margin-bottom: 1.5rem;
+      }
+      .print-logo {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 900;
+        color: #0f172a;
+      }
+      .print-logo span {
+        color: #6366f1;
+      }
+      .print-report-meta {
+        text-align: right;
+        font-size: 0.8rem;
+        color: #64748b;
+      }
+
+      /* KPI Cards Grid */
+      .print-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+      }
+      .print-kpi-card {
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        border-radius: 8px;
+        padding: 0.75rem;
+        text-align: center;
+      }
+      .print-kpi-val {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #6366f1;
+      }
+      .print-kpi-lbl {
+        font-size: 0.7rem;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 0.2rem;
+      }
+
+      /* Tables styling */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1.5rem;
+        page-break-inside: auto;
+      }
+      tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+      }
+      th, td {
+        padding: 0.6rem 0.8rem;
+        border-bottom: 1px solid #e2e8f0;
+        text-align: left;
+        font-size: 0.82rem;
+      }
+      th {
+        background: #1e1b4b !important;
+        color: #ffffff !important;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+      }
+      tbody tr:nth-child(even) {
+        background: #f8fafc !important;
+      }
+      
+      /* Badges */
+      .print-badge {
+        display: inline-block;
+        padding: 0.2rem 0.5rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        border-radius: 4px;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .print-badge-success {
+        background: #f0fdf4 !important;
+        color: #16a34a !important;
+        border: 1px solid #bbf7d0;
+      }
+      .print-badge-warning {
+        background: #fffbeb !important;
+        color: #d97706 !important;
+        border: 1px solid #fef3c7;
+      }
+      .print-badge-danger {
+        background: #fef2f2 !important;
+        color: #dc2626 !important;
+        border: 1px solid #fee2e2;
+      }
+      .print-badge-info {
+        background: #eff6ff !important;
+        color: #2563eb !important;
+        border: 1px solid #dbeafe;
+      }
+
+      /* Thumbnail photos for evidence */
+      .print-photos-container {
+        display: flex;
+        gap: 0.4rem;
+      }
+      .print-photo-thumb {
+        width: 32px;
+        height: 32px;
+        border-radius: 4px;
+        border: 1px solid #cbd5e1;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1f5f9;
+      }
+      .print-photo-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .print-photo-thumb.empty {
+        font-size: 0.6rem;
+        color: #94a3b8;
+      }
+
+      /* Two Column layouts for rankings */
+      .print-two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-top: 1rem;
+      }
     }
 
     /* ── WORKER PHONE ── */
@@ -1398,6 +1587,162 @@
   let tempSelectedDiagnostic = null;
   let tempPendingFinishZoneId = null;
 
+  // Helper: map zone ID to name
+  function getZoneNameById(id) {
+    if (id.startsWith('z')) {
+      return 'Sala ' + id.substring(1);
+    }
+    if (id === 'c1') return 'Cancha Fútbol';
+    if (id === 'c2') return 'Cancha Básquet';
+    if (id === 'c3') return 'Gimnasio';
+    if (id.startsWith('bP')) {
+      const floor = id.substring(2, 3);
+      const types = ['Mujeres', 'Hombres', 'Profesores', 'Discapacitados'];
+      const typeIdx = parseInt(id.substring(3));
+      return 'Baño ' + types[typeIdx] + ' ' + floor;
+    }
+    if (id === 'cam0') return 'Camarin Norte';
+    if (id === 'cam1') return 'Camarin Sur';
+    if (id === 'cam2') return 'Camarin Deportes';
+    if (id === 'bpc0') return 'Baño Patio Norte';
+    if (id === 'bpc1') return 'Baño Patio Sur';
+    if (id === 'bpc2') return 'Baño Cancha';
+    return id;
+  }
+
+  // Helper: Generate beautifully designed SVG mock photos for Before/After states
+  function generateMockPhoto(zoneName, type) {
+    const isBefore = type === 'before';
+    const bgColor = isBefore ? '#7f1d1d' : '#064e3b';
+    const strokeColor = isBefore ? '#ef4444' : '#10b981';
+    const textLabel = isBefore ? 'REGISTRO DE INGRESO (ANTES)' : 'VERIFICACIÓN DE SALIDA (DESPUÉS)';
+    const descLabel = isBefore ? 'Diagnóstico: Suciedad detectada' : 'Limpieza y desinfección completada';
+    const indicatorText = isBefore ? '🔴 REQUERIDO' : '🟢 CONCLUIDO';
+    
+    let graphic = '';
+    if (isBefore) {
+      graphic = `
+        <circle cx="200" cy="150" r="25" fill="#f87171" opacity="0.15"/>
+        <circle cx="400" cy="180" r="15" fill="#f87171" opacity="0.15"/>
+        <circle cx="300" cy="220" r="30" fill="#f87171" opacity="0.15"/>
+        <circle cx="180" cy="160" r="3" fill="#ef4444" opacity="0.5"/>
+        <circle cx="210" cy="140" r="4" fill="#ef4444" opacity="0.5"/>
+        <circle cx="390" cy="175" r="3" fill="#ef4444" opacity="0.5"/>
+        <circle cx="410" cy="190" r="4" fill="#ef4444" opacity="0.5"/>
+        <circle cx="290" cy="230" r="5" fill="#ef4444" opacity="0.5"/>
+        <circle cx="315" cy="210" r="3" fill="#ef4444" opacity="0.5"/>
+        <g transform="translate(275, 110)">
+          <path d="M10 20 L40 20 L35 45 L15 45 Z" fill="none" stroke="#ef4444" stroke-width="3"/>
+          <line x1="8" y1="15" x2="42" y2="15" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+          <line x1="20" y1="10" x2="30" y2="10" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+          <line x1="20" y1="25" x2="20" y2="40" stroke="#ef4444" stroke-width="2"/>
+          <line x1="25" y1="25" x2="25" y2="40" stroke="#ef4444" stroke-width="2"/>
+          <line x1="30" y1="25" x2="30" y2="40" stroke="#ef4444" stroke-width="2"/>
+        </g>
+      `;
+    } else {
+      graphic = `
+        <circle cx="300" cy="180" r="60" fill="#34d399" opacity="0.08"/>
+        <g transform="translate(180, 130)" fill="#10b981">
+          <path d="M 0 10 Q 10 10 10 0 Q 10 10 20 10 Q 10 10 10 20 Q 10 10 0 10 Z"/>
+        </g>
+        <g transform="translate(400, 150)" fill="#10b981">
+          <path d="M 0 8 Q 8 8 8 0 Q 8 8 16 8 Q 8 8 8 16 Q 8 8 0 8 Z"/>
+        </g>
+        <g transform="translate(290, 200)" fill="#34d399">
+          <path d="M 0 15 Q 15 15 15 0 Q 15 15 30 15 Q 15 15 15 30 Q 15 15 0 15 Z"/>
+        </g>
+        <g transform="translate(280, 100)">
+          <path d="M 20 0 L 40 10 L 40 30 C 40 45 20 55 20 55 C 20 55 0 45 0 30 L 0 10 Z" fill="none" stroke="#10b981" stroke-width="3"/>
+          <path d="M 12 25 L 18 31 L 28 19" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+      `;
+    }
+
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+      <rect width="100%" height="100%" fill="#111827"/>
+      <rect x="20" y="20" width="560" height="360" rx="12" fill="${bgColor}" stroke="${strokeColor}" stroke-width="2"/>
+      <g>
+        ${graphic}
+      </g>
+      <text x="300" y="300" fill="#ffffff" font-family="system-ui, sans-serif" font-size="20" font-weight="bold" text-anchor="middle">${zoneName}</text>
+      <text x="300" y="325" fill="#e5e7eb" font-family="system-ui, sans-serif" font-size="14" font-weight="600" text-anchor="middle">${textLabel}</text>
+      <text x="300" y="350" fill="#9ca3af" font-family="system-ui, sans-serif" font-size="12" text-anchor="middle">${descLabel} • ${indicatorText}</text>
+      <text x="30" y="45" fill="#ffffff" opacity="0.3" font-family="system-ui, sans-serif" font-size="12" font-weight="bold">VALTEK OPTIMA EVIDENCIA</text>
+    </svg>`;
+    return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+  }
+
+  // Generates 7 days of realistic historical audit log entries (excluding weekends)
+  function generateHistoricalAuditLogs() {
+    const auditLog = [];
+    const workers = [
+      { id: 'u2', name: 'Tía María', zones: ['z1','z2','z3','z4','z5','z6','z7','z8','z9','z10','c1','bP10'] },
+      { id: 'u3', name: 'Tía Carmen', zones: ['z11','z12','z13','z14','z15','z16','z17','z18','z19','z20','c2','bP11','bP12','bP13'] },
+      { id: 'u4', name: 'Tía Rosa', zones: ['z21','z22','z23','z24','z25','z26','z27','z28','z29','z30','c3','bP20','bP21','bP22','bP23'] },
+      { id: 'u5', name: 'Tía Patricia', zones: ['bP30','bP31','bP32','bP33','cam0','cam1','cam2','bpc0','bpc1','bpc2'] }
+    ];
+
+    const today = new Date();
+    // Generate data for the last 7 days (day -7 to day -1)
+    for (let dayOffset = 7; dayOffset >= 1; dayOffset--) {
+      const date = new Date(today.getTime());
+      date.setDate(today.getDate() - dayOffset);
+      
+      const dayOfWeek = date.getDay();
+      if (dayOfWeek === 0 || dayOfWeek === 6) continue; // Skip weekends
+
+      workers.forEach(worker => {
+        // Clean 70% to 90% of assigned zones
+        const numCleaned = Math.floor(worker.zones.length * (0.7 + Math.random() * 0.2));
+        const shuffledZones = [...worker.zones].sort(() => 0.5 - Math.random());
+        const selectedZones = shuffledZones.slice(0, numCleaned);
+
+        let currentTime = new Date(date.getTime());
+        currentTime.setHours(8, Math.floor(Math.random() * 30), 0, 0); // start between 8:00 and 8:30 AM
+
+        selectedZones.forEach(zid => {
+          if (currentTime.getHours() >= 17) return; // Stop at 5:00 PM
+
+          const durationMin = 15 + Math.floor(Math.random() * 20); // 15 to 35 mins
+          const entradaTime = currentTime.getTime();
+          const salidaTime = entradaTime + durationMin * 60 * 1000;
+
+          const rand = Math.random();
+          const diagnostic = rand < 0.65 ? 'excelente' : rand < 0.90 ? 'regular' : 'malo';
+
+          let photoBefore = null;
+          let photoAfter = null;
+          // 25% chance of before/after photos
+          if (Math.random() < 0.25) {
+            const zName = getZoneNameById(zid);
+            photoBefore = generateMockPhoto(zName, 'before');
+            photoAfter = generateMockPhoto(zName, 'after');
+          }
+
+          auditLog.push({
+            zid: zid,
+            zoneName: getZoneNameById(zid),
+            workerName: worker.name,
+            workerId: worker.id,
+            entradaTime: entradaTime,
+            diagnostic: diagnostic,
+            photoBefore: photoBefore,
+            photoAfter: photoAfter,
+            salidaTime: salidaTime,
+            status: 'limpio'
+          });
+
+          // Next zone starts after duration + 10 to 20 mins break
+          currentTime = new Date(salidaTime + (10 + Math.floor(Math.random() * 11)) * 60 * 1000);
+        });
+      });
+    }
+
+    auditLog.sort((a, b) => a.entradaTime - b.entradaTime);
+    return auditLog;
+  }
+
   // ── PERSISTENCE ──
   const DATA_VERSION = '4.4'; // Updated version for re-seed and clearing localStorage
   function saveData() { 
@@ -1444,7 +1789,7 @@
     state.externalWorkers = ew ? JSON.parse(ew) : JSON.parse(JSON.stringify(SEED_EXTERNAL_WORKERS));
     state.gateLog = gl ? JSON.parse(gl) : JSON.parse(JSON.stringify(SEED_GATE_LOG));
     state.fileLog = fl ? JSON.parse(fl) : JSON.parse(JSON.stringify(SEED_FILE_LOG));
-    state.auditLog = au ? JSON.parse(au) : [];
+    state.auditLog = au ? JSON.parse(au) : generateHistoricalAuditLogs();
 
     // Sync seed users
     SEED_USERS.forEach(su => { if (!state.users.find(uu => uu.email === su.email)) state.users.push(JSON.parse(JSON.stringify(su))); });
@@ -1978,37 +2323,142 @@
     const now = new Date();
     const dateStr = now.toLocaleDateString('es-CL') + ' ' + now.toLocaleTimeString('es-CL');
     
-    let html = '<h1>📊 Reporte Consolidado de Operaciones – Valtek Optima</h1>';
-    html += '<p><strong>Generado por:</strong> ' + (state.currentUser ? state.currentUser.name : 'Administrador Mayor') + ' | <strong>Fecha:</strong> ' + dateStr + '</p>';
+    const authorizedCount = state.externalWorkers.filter(w => checkWorkerStatus(w) === 'autorizado').length;
     
-    // Schools list
-    html += '<h2>Colegios Registrados</h2><table><thead><tr><th>Colegio</th><th>Ciudad</th><th>Plan</th><th>Usuarios Activos</th></tr></thead><tbody>';
+    let html = '';
+    
+    // 1. Header
+    html += '<div class="print-header">' +
+              '<div class="print-logo">VALTEK <span>OPTIMA</span></div>' +
+              '<div class="print-report-meta">' +
+                '<strong>Super Administrador Central</strong><br>' +
+                'Auditoría y Trazabilidad Consolidada' +
+              '</div>' +
+            '</div>';
+            
+    html += '<h1>📊 Reporte Ejecutivo de Operaciones del Sistema</h1>';
+    html += '<p style="margin-bottom: 1.5rem;"><strong>Generado por:</strong> ' + (state.currentUser ? state.currentUser.name : 'Super Admin (juanjo)') + ' | <strong>Fecha de Emisión:</strong> ' + dateStr + '</p>';
+    
+    // 2. KPI Cards
+    html += '<div class="print-kpi-grid">' +
+              '<div class="print-kpi-card">' +
+                '<div class="print-kpi-val">' + state.schools.length + '</div>' +
+                '<div class="print-kpi-lbl">Colegios Activos</div>' +
+              '</div>' +
+              '<div class="print-kpi-card">' +
+                '<div class="print-kpi-val">' + state.externalWorkers.length + '</div>' +
+                '<div class="print-kpi-lbl">Contratistas Totales</div>' +
+              '</div>' +
+              '<div class="print-kpi-card">' +
+                '<div class="print-kpi-val" style="color:#16a34a;">' + authorizedCount + '</div>' +
+                '<div class="print-kpi-lbl">Personal Autorizado</div>' +
+              '</div>' +
+              '<div class="print-kpi-card">' +
+                '<div class="print-kpi-val">' + state.gateLog.length + '</div>' +
+                '<div class="print-kpi-lbl">Accesos Totales</div>' +
+              '</div>' +
+            '</div>';
+            
+    // 3. Schools list
+    html += '<h2>Colegios Registrados en la Plataforma</h2>' +
+      '<table>' +
+        '<thead>' +
+          '<tr>' +
+            '<th>Nombre del Establecimiento</th>' +
+            '<th>Ubicación / Ciudad</th>' +
+            '<th>Plan Contratado</th>' +
+            '<th>Usuarios Activos</th>' +
+          '</tr>' +
+        '</thead>' +
+        '<tbody>';
+        
     state.schools.forEach(s => {
       const uc = state.users.filter(u => u.schoolId === s.id).length;
-      html += '<tr><td><strong>' + s.name + '</strong></td><td>' + s.city + '</td><td>' + s.plan + '</td><td>' + uc + '</td></tr>';
+      const planBadge = s.plan === 'Profesional' ? '<span class="print-badge print-badge-success">Profesional</span>' : '<span class="print-badge print-badge-info">' + s.plan + '</span>';
+      html += '<tr>' +
+        '<td><strong>' + s.name + '</strong></td>' +
+        '<td>' + s.city + '</td>' +
+        '<td>' + planBadge + '</td>' +
+        '<td><strong>' + uc + ' usuarios</strong></td>' +
+      '</tr>';
     });
     html += '</tbody></table>';
 
-    // Contratistas
-    html += '<h2>Personal Externo (Contratistas)</h2><table><thead><tr><th>Nombre</th><th>RUT</th><th>Tipo</th><th>Empresa</th><th>Estado</th></tr></thead><tbody>';
+    // 4. Contratistas
+    html += '<h2>Estado de Documentación de Personal Externo (Contratistas)</h2>' +
+      '<table>' +
+        '<thead>' +
+          '<tr>' +
+            '<th>Nombre del Colaborador</th>' +
+            '<th>RUT</th>' +
+            '<th>Especialidad / Tipo</th>' +
+            '<th>Proveedor / Empresa</th>' +
+            '<th>Estado de Acreditación</th>' +
+          '</tr>' +
+        '</thead>' +
+        '<tbody>';
+        
     state.externalWorkers.forEach(w => {
       const provider = state.users.find(u => u.id === w.providerId);
-      const company = provider ? provider.name : 'Proveedor Terciario';
+      const company = provider ? provider.name : 'Servicios Limpieza SpA';
       const calcStatus = checkWorkerStatus(w);
-      const st = calcStatus === 'autorizado' ? 'Autorizado' : calcStatus === 'vencido' ? 'Docs Vencidos' : calcStatus === 'rechazado' ? 'Rechazado' : 'Pendiente';
-      html += '<tr><td><strong>' + w.name + '</strong></td><td>' + w.rut + '</td><td>' + (w.type === 'aseo' ? 'Aseo' : 'Mantención') + '</td><td>' + company + '</td><td>' + st + '</td></tr>';
+      
+      let stBadge = '';
+      if (calcStatus === 'autorizado') {
+        stBadge = '<span class="print-badge print-badge-success">Acreditado / Autorizado</span>';
+      } else if (calcStatus === 'vencido') {
+        stBadge = '<span class="print-badge print-badge-warning">Documentos Vencidos</span>';
+      } else if (calcStatus === 'rechazado') {
+        stBadge = '<span class="print-badge print-badge-danger">Rechazado / Bloqueado</span>';
+      } else {
+        stBadge = '<span class="print-badge print-badge-info">Acreditación Pendiente</span>';
+      }
+      
+      const typeLabel = w.type === 'aseo' ? 'Aseo / Limpieza' : 'Mantención / Técnico';
+      
+      html += '<tr>' +
+        '<td><strong>' + w.name + '</strong></td>' +
+        '<td>' + w.rut + '</td>' +
+        '<td>' + typeLabel + '</td>' +
+        '<td>' + company + '</td>' +
+        '<td>' + stBadge + '</td>' +
+      '</tr>';
     });
     html += '</tbody></table>';
 
-    // Access Logs
-    html += '<h2>Accesos Registrados (Historial Reciente)</h2><table><thead><tr><th>Nombre</th><th>RUT</th><th>Acción</th><th>Fecha/Hora</th><th>Portero</th></tr></thead><tbody>';
-    state.gateLog.forEach(g => {
-      const ds = new Date(g.timestamp).toLocaleString('es-CL');
-      html += '<tr><td>' + g.name + '</td><td>' + g.rut + '</td><td><strong>' + g.type.toUpperCase() + '</strong></td><td>' + ds + '</td><td>' + g.registeredBy + '</td></tr>';
-    });
-    html += '</tbody></table>';
+    // 5. Access Logs
+    if (state.gateLog.length > 0) {
+      html += '<div class="page-break"></div>';
+      html += '<h2>Bitácora Reciente de Control de Accesos (Portería)</h2>' +
+        '<table>' +
+          '<thead>' +
+            '<tr>' +
+              '<th>Nombre del Colaborador</th>' +
+              '<th>RUT</th>' +
+              '<th>Acción Realizada</th>' +
+              '<th>Fecha y Hora</th>' +
+              '<th>Registrado por Portero</th>' +
+            '</tr>' +
+          '</thead>' +
+          '<tbody>';
+      state.gateLog.forEach(g => {
+        const ds = new Date(g.timestamp).toLocaleString('es-CL');
+        const actBadge = g.type === 'entrada' ? '<span class="print-badge print-badge-success">ENTRADA</span>' : '<span class="print-badge print-badge-info">SALIDA</span>';
+        
+        html += '<tr>' +
+          '<td><strong>' + g.name + '</strong></td>' +
+          '<td>' + g.rut + '</td>' +
+          '<td>' + actBadge + '</td>' +
+          '<td>' + ds + '</td>' +
+          '<td>' + g.registeredBy + '</td>' +
+        '</tr>';
+      });
+      html += '</tbody></table>';
+    }
 
-    html += '<p style="margin-top:2rem;font-size:0.8rem;color:#999;">Generado por Valtek Optima — Consolidado General</p>';
+    html += '<p style="margin-top:3rem; font-size:0.75rem; color:#94a3b8; border-top:1px solid #e2e8f0; padding-top:0.75rem; text-align:center;">' +
+              'Reporte Consolidado emitido por la plataforma central Valtek Optima el ' + now.toLocaleString('es-CL') + '.' +
+            '</p>';
     
     document.getElementById('report-print-area').innerHTML = html;
     window.print();
@@ -3374,14 +3824,14 @@
 
   function resetDemo() { 
     state.zones.forEach(z=>{z.status='pendiente';z.entradaTime=null;z.salidaTime=null;z.diagnostic=null;}); 
-    state.auditLog=[]; 
+    state.auditLog = generateHistoricalAuditLogs(); 
     saveData();
     renderPhoneBody(); 
     updateMonitoreo(); 
     renderLiveMonitor(); 
     renderJefeWorkers(); 
     renderReports(); 
-    showToast('🔄 Demo reiniciada.'); 
+    showToast('🔄 Demo reiniciada con datos históricos de 1 semana.'); 
   }
 
   // ── Helper: Local YYYY-MM-DD Date Formatter ──
@@ -3668,82 +4118,149 @@
     const totalTime = statsArr.reduce((s, w) => s + w.stats.totalTimeSec, 0);
     const globalAvg = totalClean > 0 ? Math.round(totalTime / totalClean) : 0;
     
-    let html = '<h1>📊 Informe de Rendimiento — Valtek Optima</h1>';
-    html += '<p><strong>Institución:</strong> ' + (school ? school.name : 'Demo') + ' | <strong>Fecha del Reporte:</strong> ' + formattedDate + '</p>';
-    html += '<p><strong>Zonas limpiadas:</strong> ' + totalClean + '/51 | <strong>Tiempo total:</strong> ' + fmtDuration(totalTime) + ' | <strong>Promedio/zona:</strong> ' + fmtDuration(globalAvg) + '</p>';
+    let html = '';
     
-    html += '<h2>Detalle por Trabajador</h2>' +
-      '<table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">' +
+    // 1. Header
+    html += '<div class="print-header">' +
+              '<div class="print-logo">VALTEK <span>OPTIMA</span></div>' +
+              '<div class="print-report-meta">' +
+                '<strong>' + (school ? school.name : 'Colegio San Nicolás de Myra') + '</strong><br>' +
+                'Informe de Rendimiento Diario — ' + formattedDate +
+              '</div>' +
+            '</div>';
+            
+    html += '<h1>📊 Reporte Diario de Operaciones de Limpieza</h1>';
+    
+    // 2. KPI Cards
+    html += '<div class="print-kpi-grid">' +
+              '<div class="print-kpi-card">' +
+                '<div class="print-kpi-val">' + totalClean + ' / 51</div>' +
+                '<div class="print-kpi-lbl">Zonas Limpiadas</div>' +
+              '</div>' +
+              '<div class="print-kpi-card">' +
+                '<div class="print-kpi-val">' + fmtDuration(totalTime) + '</div>' +
+                '<div class="print-kpi-lbl">Tiempo Trabajado</div>' +
+              '</div>' +
+              '<div class="print-kpi-card">' +
+                '<div class="print-kpi-val">' + fmtDuration(globalAvg) + '</div>' +
+                '<div class="print-kpi-lbl">Promedio / Zona</div>' +
+              '</div>' +
+              '<div class="print-kpi-card">' +
+                '<div class="print-kpi-val">' + workers.length + '</div>' +
+                '<div class="print-kpi-lbl">Personal Activo</div>' +
+              '</div>' +
+            '</div>';
+    
+    // 3. Table of worker performance
+    html += '<h2>Resumen de Rendimiento por Trabajador</h2>' +
+      '<table>' +
         '<thead>' +
-          '<tr style="background:#f2f2f2; text-align:left;">' +
-            '<th style="padding:8px; border:1px solid #ddd;">Trabajador</th>' +
-            '<th style="padding:8px; border:1px solid #ddd;">Zonas Limpias</th>' +
-            '<th style="padding:8px; border:1px solid #ddd;">Detalle de Salas y Zonas Limpiadas</th>' +
-            '<th style="padding:8px; border:1px solid #ddd;">Tiempo Total</th>' +
-            '<th style="padding:8px; border:1px solid #ddd;">Promedio/Zona</th>' +
-            '<th style="padding:8px; border:1px solid #ddd;">Diagnóstico Prom.</th>' +
+          '<tr>' +
+            '<th>Trabajador</th>' +
+            '<th>Zonas Limpias</th>' +
+            '<th>Detalle de Zonas Completadas</th>' +
+            '<th>Tiempo Total</th>' +
+            '<th>Promedio/Zona</th>' +
+            '<th>Diagnóstico Prom.</th>' +
           '</tr>' +
         '</thead>' +
         '<tbody>';
         
     statsArr.forEach(w => {
       const s = w.stats;
-      const dl = s.diagAvg >= 2.5 ? 'Excelente' : s.diagAvg >= 1.5 ? 'Regular' : s.diagAvg > 0 ? 'Malo' : '–';
+      const pct = s.assigned > 0 ? Math.round((s.completed / s.assigned) * 100) : 0;
+      let diagBadge = '<span class="print-badge print-badge-info">–</span>';
+      if (s.diagAvg > 0) {
+        if (s.diagAvg >= 2.5) {
+          diagBadge = '<span class="print-badge print-badge-success">Excelente</span>';
+        } else if (s.diagAvg >= 1.5) {
+          diagBadge = '<span class="print-badge print-badge-warning">Regular</span>';
+        } else {
+          diagBadge = '<span class="print-badge print-badge-danger">Malo</span>';
+        }
+      }
+      
       html += '<tr>' +
-        '<td style="padding:8px; border:1px solid #ddd;"><strong>' + w.name + '</strong></td>' +
-        '<td style="padding:8px; border:1px solid #ddd;">' + s.completed + '/' + s.assigned + '</td>' +
-        '<td style="padding:8px; border:1px solid #ddd; font-size:0.85rem; max-width:250px; word-break:break-word;">' + s.detailsStr + '</td>' +
-        '<td style="padding:8px; border:1px solid #ddd;">' + fmtDuration(s.totalTimeSec) + '</td>' +
-        '<td style="padding:8px; border:1px solid #ddd;">' + fmtDuration(s.avgTimeSec) + '</td>' +
-        '<td style="padding:8px; border:1px solid #ddd;">' + dl + '</td>' +
+        '<td><strong>' + w.name + '</strong></td>' +
+        '<td>' + s.completed + ' / ' + s.assigned + ' (' + pct + '%)</td>' +
+        '<td style="font-size:0.78rem; max-width:250px; word-break:break-word; color:#475569;">' + (s.detailsStr || '<span style="color:#94a3b8;">Sin actividad</span>') + '</td>' +
+        '<td>' + fmtDuration(s.totalTimeSec) + '</td>' +
+        '<td>' + fmtDuration(s.avgTimeSec) + '</td>' +
+        '<td>' + diagBadge + '</td>' +
       '</tr>';
     });
     html += '</tbody></table>';
     
-    // Detailed day log in print
+    // 4. Detailed day log
     const dayLogs = state.auditLog.filter(e => getLocalYMD(e.entradaTime) === dateStr);
     if (dayLogs.length > 0) {
       html += '<h2>Bitácora de Aseo Detallada</h2>' +
-        '<table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">' +
+        '<table>' +
           '<thead>' +
-            '<tr style="background:#f2f2f2; text-align:left;">' +
-              '<th style="padding:8px; border:1px solid #ddd;">Zona</th>' +
-              '<th style="padding:8px; border:1px solid #ddd;">Operario</th>' +
-              '<th style="padding:8px; border:1px solid #ddd;">Entrada</th>' +
-              '<th style="padding:8px; border:1px solid #ddd;">Diagnóstico</th>' +
-              '<th style="padding:8px; border:1px solid #ddd;">Salida</th>' +
-              '<th style="padding:8px; border:1px solid #ddd;">Duración</th>' +
-              '<th style="padding:8px; border:1px solid #ddd;">Estado</th>' +
+            '<tr>' +
+              '<th>Zona</th>' +
+              '<th>Operario</th>' +
+              '<th>Entrada</th>' +
+              '<th>Diagnóstico Inicial</th>' +
+              '<th>Evidencia (Fotos)</th>' +
+              '<th>Salida</th>' +
+              '<th>Duración</th>' +
+              '<th>Estado Final</th>' +
             '</tr>' +
           '</thead>' +
           '<tbody>';
       dayLogs.forEach(e => {
         const dur = (e.entradaTime && e.salidaTime) ? Math.round((e.salidaTime - e.entradaTime) / 1000) : null;
-        const ds = dur !== null ? (dur >= 60 ? Math.floor(dur / 60) + 'min ' + (dur % 60) + 's' : dur + 's') : '–';
-        const de = e.diagnostic === 'excelente' ? 'Excelente' : e.diagnostic === 'regular' ? 'Regular' : 'Malo';
-        const st = e.status === 'limpio' ? 'Limpio' : 'En Proceso';
+        const ds = dur !== null ? fmtDuration(dur) : '–';
+        
+        let diagBadge = '';
+        if (e.diagnostic === 'excelente') {
+          diagBadge = '<span class="print-badge print-badge-success">🙂 Excelente</span>';
+        } else if (e.diagnostic === 'regular') {
+          diagBadge = '<span class="print-badge print-badge-warning">😐 Regular</span>';
+        } else {
+          diagBadge = '<span class="print-badge print-badge-danger">🙁 Malo</span>';
+        }
+        
+        const st = e.status === 'limpio' ? '<span class="print-badge print-badge-success">Limpio</span>' : '<span class="print-badge print-badge-warning">En Proceso</span>';
+        
         const fmt = ts => {
           if (!ts) return '–';
           const d = new Date(ts);
           return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0') + ':' + d.getSeconds().toString().padStart(2, '0');
         };
+        
+        let photosHtml = '<div class="print-photos-container">';
+        if (e.photoBefore) {
+          photosHtml += '<div class="print-photo-thumb" title="Antes"><img src="' + e.photoBefore + '" /></div>';
+        } else {
+          photosHtml += '<div class="print-photo-thumb empty" title="Sin foto antes">A</div>';
+        }
+        if (e.photoAfter) {
+          photosHtml += '<div class="print-photo-thumb" title="Después"><img src="' + e.photoAfter + '" /></div>';
+        } else {
+          photosHtml += '<div class="print-photo-thumb empty" title="Sin foto después">D</div>';
+        }
+        photosHtml += '</div>';
+        
         html += '<tr>' +
-          '<td style="padding:8px; border:1px solid #ddd;">' + e.zoneName + '</td>' +
-          '<td style="padding:8px; border:1px solid #ddd;">' + e.workerName + '</td>' +
-          '<td style="padding:8px; border:1px solid #ddd;">' + fmt(e.entradaTime) + '</td>' +
-          '<td style="padding:8px; border:1px solid #ddd;">' + de + '</td>' +
-          '<td style="padding:8px; border:1px solid #ddd;">' + fmt(e.salidaTime) + '</td>' +
-          '<td style="padding:8px; border:1px solid #ddd;">' + ds + '</td>' +
-          '<td style="padding:8px; border:1px solid #ddd;">' + st + '</td>' +
+          '<td><strong>' + e.zoneName + '</strong></td>' +
+          '<td>' + e.workerName + '</td>' +
+          '<td>' + fmt(e.entradaTime) + '</td>' +
+          '<td>' + diagBadge + '</td>' +
+          '<td>' + photosHtml + '</td>' +
+          '<td>' + fmt(e.salidaTime) + '</td>' +
+          '<td>' + ds + '</td>' +
+          '<td>' + st + '</td>' +
         '</tr>';
       });
       html += '</tbody></table>';
     }
     
-    // Rankings
+    // Rankings Page break!
     const withData = statsArr.filter(w => w.stats.completed > 0);
     
-    // Calculate dirtiest zones ranking for print
+    // Calculate dirtiest zones ranking
     const zoneStats = {};
     state.auditLog.forEach(e => {
       if (e.diagnostic) {
@@ -3761,72 +4278,99 @@
     }).sort((a, b) => a.avg - b.avg);
     
     if (withData.length > 0 || sortedZones.length > 0) {
+      html += '<div class="page-break"></div>';
+      html += '<h1>📈 Rankings Analíticos e Históricos</h1>';
+      
       if (withData.length > 0) {
+        html += '<div class="print-two-col">';
+        
+        // Efficiency
         const effSorted = [...withData].sort((a, b) => a.stats.avgTimeSec - b.stats.avgTimeSec);
-        html += '<h2>Ranking de Eficiencia (Menor tiempo promedio)</h2>' +
-          '<table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">' +
-            '<thead>' +
-              '<tr style="background:#f2f2f2; text-align:left;">' +
-                '<th style="padding:8px; border:1px solid #ddd;">#</th>' +
-                '<th style="padding:8px; border:1px solid #ddd;">Trabajador</th>' +
-                '<th style="padding:8px; border:1px solid #ddd;">Promedio/Zona</th>' +
-              '</tr>' +
-            '</thead>' +
-            '<tbody>';
+        html += '<div>' +
+                  '<h2>Ranking de Eficiencia (Menor tiempo promedio/zona)</h2>' +
+                  '<table>' +
+                    '<thead>' +
+                      '<tr>' +
+                        '<th style="width:50px;">#</th>' +
+                        '<th>Trabajador</th>' +
+                        '<th>Promedio / Zona</th>' +
+                      '</tr>' +
+                    '</thead>' +
+                    '<tbody>';
         effSorted.forEach((w, i) => { 
           html += '<tr>' +
-            '<td style="padding:8px; border:1px solid #ddd;">' + (i + 1) + '</td>' +
-            '<td style="padding:8px; border:1px solid #ddd;">' + w.name + '</td>' +
-            '<td style="padding:8px; border:1px solid #ddd;">' + fmtDuration(w.stats.avgTimeSec) + '</td>' +
+            '<td><strong>' + (i + 1) + '</strong></td>' +
+            '<td><strong>' + w.name + '</strong></td>' +
+            '<td>' + fmtDuration(w.stats.avgTimeSec) + '</td>' +
           '</tr>'; 
         });
-        html += '</tbody></table>';
+        html += '</tbody></table>' +
+                '</div>';
         
+        // Productivity
         const prodSorted = [...withData].sort((a, b) => b.stats.completed - a.stats.completed);
-        html += '<h2>Ranking de Productividad (Más zonas)</h2>' +
-          '<table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">' +
-            '<thead>' +
-              '<tr style="background:#f2f2f2; text-align:left;">' +
-                '<th style="padding:8px; border:1px solid #ddd;">#</th>' +
-                '<th style="padding:8px; border:1px solid #ddd;">Trabajador</th>' +
-                '<th style="padding:8px; border:1px solid #ddd;">Zonas</th>' +
-              '</tr>' +
-            '</thead>' +
-            '<tbody>';
+        html += '<div>' +
+                  '<h2>Ranking de Productividad (Zonas completadas)</h2>' +
+                  '<table>' +
+                    '<thead>' +
+                      '<tr>' +
+                        '<th style="width:50px;">#</th>' +
+                        '<th>Trabajador</th>' +
+                        '<th>Zonas Limpiadas</th>' +
+                      '</tr>' +
+                    '</thead>' +
+                    '<tbody>';
         prodSorted.forEach((w, i) => { 
           html += '<tr>' +
-            '<td style="padding:8px; border:1px solid #ddd;">' + (i + 1) + '</td>' +
-            '<td style="padding:8px; border:1px solid #ddd;">' + w.name + '</td>' +
-            '<td style="padding:8px; border:1px solid #ddd;">' + w.stats.completed + '</td>' +
+            '<td><strong>' + (i + 1) + '</strong></td>' +
+            '<td><strong>' + w.name + '</strong></td>' +
+            '<td>' + w.stats.completed + ' zonas</td>' +
           '</tr>'; 
         });
-        html += '</tbody></table>';
+        html += '</tbody></table>' +
+                '</div>';
+                
+        html += '</div>'; // close print-two-col
       }
       
       if (sortedZones.length > 0) {
-        html += '<h2>Ranking Histórico de Zonas Más Sucias (Peor diagnóstico inicial promedio)</h2>' +
-          '<table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">' +
-            '<thead>' +
-              '<tr style="background:#f2f2f2; text-align:left;">' +
-                '<th style="padding:8px; border:1px solid #ddd;">#</th>' +
-                '<th style="padding:8px; border:1px solid #ddd;">Zona</th>' +
-                '<th style="padding:8px; border:1px solid #ddd;">Evaluaciones</th>' +
-                '<th style="padding:8px; border:1px solid #ddd;">Score Promedio (Excelente=3, Malo=1)</th>' +
-              '</tr>' +
-            '</thead>' +
-            '<tbody>';
+        html += '<h2>Zonas Críticas con Peor Estado Inicial Histórico</h2>' +
+                '<p>Zonas con el promedio de diagnóstico inicial más bajo (donde 1.0 es Malo y 3.0 es Excelente). Indica áreas que acumulan mayor suciedad recurrentemente.</p>' +
+                '<table>' +
+                  '<thead>' +
+                    '<tr>' +
+                      '<th style="width:60px;">Lugar</th>' +
+                      '<th>Zona / Espacio</th>' +
+                      '<th>Total Evaluaciones</th>' +
+                      '<th>Score Promedio Inicial</th>' +
+                      '<th>Estado Crítico</th>' +
+                    '</tr>' +
+                  '</thead>' +
+                  '<tbody>';
         sortedZones.slice(0, 5).forEach((z, i) => {
+          let criticalBadge = '<span class="print-badge print-badge-danger">Crítico</span>';
+          if (z.avg >= 2.3) {
+            criticalBadge = '<span class="print-badge print-badge-success">Bajo Control</span>';
+          } else if (z.avg >= 1.7) {
+            criticalBadge = '<span class="print-badge print-badge-warning">Moderado</span>';
+          }
+          
           html += '<tr>' +
-            '<td style="padding:8px; border:1px solid #ddd;">' + (i + 1) + '</td>' +
-            '<td style="padding:8px; border:1px solid #ddd;"><strong>' + z.name + '</strong></td>' +
-            '<td style="padding:8px; border:1px solid #ddd;">' + z.count + '</td>' +
-            '<td style="padding:8px; border:1px solid #ddd;">' + z.avg.toFixed(1) + ' / 3.0</td>' +
+            '<td><strong>#' + (i + 1) + '</strong></td>' +
+            '<td><strong>' + z.name + '</strong></td>' +
+            '<td>' + z.count + ' veces limpiada</td>' +
+            '<td><strong>' + z.avg.toFixed(2) + ' / 3.00</strong></td>' +
+            '<td>' + criticalBadge + '</td>' +
           '</tr>';
         });
         html += '</tbody></table>';
       }
     }
-    html += '<p style="margin-top:2rem;font-size:0.8rem;color:#999;">Generado por Valtek Optima — ' + formattedDate + '</p>';
+    
+    html += '<p style="margin-top:3rem; font-size:0.75rem; color:#94a3b8; border-top:1px solid #e2e8f0; padding-top:0.75rem; text-align:center;">' +
+              'Reporte generado automáticamente por la Plataforma Valtek Optima en ' + new Date().toLocaleString('es-CL') + '.' +
+            '</p>';
+            
     document.getElementById('report-print-area').innerHTML = html;
     window.print();
   }
