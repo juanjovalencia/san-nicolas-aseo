@@ -599,7 +599,8 @@
     <button class="nav-btn" id="nav-superadmin" onclick="showView('superadmin')" style="display:none;">juanjo</button>
     <button class="nav-btn" id="nav-proveedor" onclick="showView('proveedor')" style="display:none;">🏢 Proveedores</button>
     <button class="nav-btn" id="nav-porteria" onclick="showView('porteria')" style="display:none;">🚪 Portería</button>
-    <button class="nav-btn" id="nav-jefe" onclick="showView('jefe')" style="display:none;">👑 Directora</button>
+    <button class="nav-btn" id="nav-directora" onclick="showJefeView('admin')" style="display:none;">👑 Directora</button>
+    <button class="nav-btn" id="nav-jefe" onclick="showJefeView('jefe')" style="display:none;">👔 Jefe de Aseo</button>
     <button class="nav-btn" id="nav-trabajador" onclick="showView('trabajador')" style="display:none;">📱 Trabajador</button>
     <button class="nav-btn-primary" id="nav-login-btn" onclick="showAuth()">Iniciar Sesión</button>
     <button class="nav-btn" id="nav-logout-btn" onclick="logout()" style="display:none;">Salir</button>
@@ -2031,23 +2032,19 @@
     document.getElementById('nav-login-btn').style.display = 'none';
     document.getElementById('nav-logout-btn').style.display = 'inline-flex';
     
-    // Set navbar button text dynamically for Directora / Jefe de Aseo
-    const jefeBtn = document.getElementById('nav-jefe');
-    if (jefeBtn) {
-      jefeBtn.textContent = (user.role === 'admin' || user.role === 'superadmin') ? '👑 Directora' : '👔 Jefe de Aseo';
-    }
-    
     // Role-based Navbar visibility
     document.getElementById('nav-superadmin').style.display = user.role==='superadmin'?'inline-flex':'none';
     document.getElementById('nav-proveedor').style.display = (user.role==='proveedor'||user.role==='superadmin'||user.role==='admin'||user.role==='jefe')?'inline-flex':'none';
     document.getElementById('nav-porteria').style.display = (user.role==='porteria'||user.role==='superadmin'||user.role==='admin'||user.role==='jefe')?'inline-flex':'none';
-    document.getElementById('nav-jefe').style.display = (user.role==='admin'||user.role==='jefe'||user.role==='superadmin')?'inline-flex':'none';
+    document.getElementById('nav-directora').style.display = (user.role==='admin'||user.role==='superadmin')?'inline-flex':'none';
+    document.getElementById('nav-jefe').style.display = (user.role==='jefe'||user.role==='superadmin')?'inline-flex':'none';
     document.getElementById('nav-trabajador').style.display = (user.role==='trabajador'||user.role==='superadmin')?'inline-flex':'none';
 
     if (user.role==='superadmin') showView('superadmin'); 
     else if (user.role==='proveedor') showView('proveedor');
     else if (user.role==='porteria') showView('porteria');
-    else if (user.role==='admin' || user.role==='jefe') showView('jefe'); 
+    else if (user.role==='admin') showJefeView('admin'); 
+    else if (user.role==='jefe') showJefeView('jefe'); 
     else showView('trabajador');
 
     showToast('👋 ¡Bienvenido/a '+user.name+'!');
@@ -2061,6 +2058,7 @@
     document.getElementById('nav-superadmin').style.display='none'; 
     document.getElementById('nav-proveedor').style.display='none'; 
     document.getElementById('nav-porteria').style.display='none'; 
+    document.getElementById('nav-directora').style.display='none'; 
     document.getElementById('nav-jefe').style.display='none'; 
     document.getElementById('nav-trabajador').style.display='none';
     
@@ -2077,13 +2075,27 @@
     document.querySelectorAll('.app-view').forEach(el=>el.classList.remove('active'));
     const el=document.getElementById('view-'+v); if(el) el.classList.add('active');
     document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-    const nb=document.getElementById('nav-'+v); if(nb) nb.classList.add('active');
+    
+    if (v === 'jefe') {
+      const activeMode = state.jefeMode || (state.currentUser ? state.currentUser.role : 'admin');
+      const targetId = activeMode === 'admin' ? 'nav-directora' : 'nav-jefe';
+      const nb = document.getElementById(targetId);
+      if (nb) nb.classList.add('active');
+    } else {
+      const nb = document.getElementById('nav-'+v);
+      if (nb) nb.classList.add('active');
+    }
     
     if(v==='superadmin') renderSuperAdmin(); 
     else if(v==='proveedor') renderProveedorAll();
     else if(v==='porteria') renderPorteriaAll();
     else if(v==='jefe') renderJefeAll(); 
     else if(v==='trabajador') renderWorkerView();
+  }
+
+  function showJefeView(mode) {
+    state.jefeMode = mode;
+    showView('jefe');
   }
 
   // ── SUPER ADMIN (ADMINISTRADOR MAYOR) ──
@@ -3348,7 +3360,8 @@
   function renderJefeAll() { 
     const ttxt=document.getElementById('jefe-title-text');
     if (ttxt && state.currentUser) {
-      ttxt.textContent = state.currentUser.role === 'admin' ? '👑 Panel Directora' : '👔 Panel Jefe de Aseo';
+      const activeMode = state.jefeMode || state.currentUser.role;
+      ttxt.textContent = (activeMode === 'admin') ? '👑 Panel Directora' : '👔 Panel Jefe de Aseo';
     }
     const lbl=document.getElementById('jefe-school-label'); 
     if(lbl&&state.currentUser&&state.currentUser.schoolId){
