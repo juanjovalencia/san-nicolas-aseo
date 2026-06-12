@@ -1684,8 +1684,8 @@
     ];
 
     const today = new Date();
-    // Generate data for the last 7 days (day -7 to day -1)
-    for (let dayOffset = 7; dayOffset >= 1; dayOffset--) {
+    // Generate data for the last 30 days (day -30 to day -1) to simulate a full month
+    for (let dayOffset = 30; dayOffset >= 1; dayOffset--) {
       const date = new Date(today.getTime());
       date.setDate(today.getDate() - dayOffset);
       
@@ -1713,8 +1713,8 @@
 
           let photoBefore = null;
           let photoAfter = null;
-          // 25% chance of before/after photos
-          if (Math.random() < 0.25) {
+          // 15% chance of before/after photos (optimal size for 30 days)
+          if (Math.random() < 0.15) {
             const zName = getZoneNameById(zid);
             photoBefore = generateMockPhoto(zName, 'before');
             photoAfter = generateMockPhoto(zName, 'after');
@@ -1744,7 +1744,7 @@
   }
 
   // ── PERSISTENCE ──
-  const DATA_VERSION = '4.4'; // Updated version for re-seed and clearing localStorage
+  const DATA_VERSION = '4.5'; // Incremented version to force-clear localStorage and load new historical data
   function saveData() { 
     try {
       localStorage.setItem('vo_version', DATA_VERSION); 
@@ -1789,7 +1789,15 @@
     state.externalWorkers = ew ? JSON.parse(ew) : JSON.parse(JSON.stringify(SEED_EXTERNAL_WORKERS));
     state.gateLog = gl ? JSON.parse(gl) : JSON.parse(JSON.stringify(SEED_GATE_LOG));
     state.fileLog = fl ? JSON.parse(fl) : JSON.parse(JSON.stringify(SEED_FILE_LOG));
-    state.auditLog = au ? JSON.parse(au) : generateHistoricalAuditLogs();
+    
+    // Generate historical audit logs if not present or empty
+    let loadedAudit = null;
+    try {
+      if (au) loadedAudit = JSON.parse(au);
+    } catch (err) {
+      console.error('Failed to parse audit log:', err);
+    }
+    state.auditLog = (loadedAudit && loadedAudit.length > 0) ? loadedAudit : generateHistoricalAuditLogs();
 
     // Sync seed users
     SEED_USERS.forEach(su => { if (!state.users.find(uu => uu.email === su.email)) state.users.push(JSON.parse(JSON.stringify(su))); });
@@ -3824,14 +3832,14 @@
 
   function resetDemo() { 
     state.zones.forEach(z=>{z.status='pendiente';z.entradaTime=null;z.salidaTime=null;z.diagnostic=null;}); 
-    state.auditLog = generateHistoricalAuditLogs(); 
+    state.auditLog = []; 
     saveData();
     renderPhoneBody(); 
     updateMonitoreo(); 
     renderLiveMonitor(); 
     renderJefeWorkers(); 
     renderReports(); 
-    showToast('🔄 Demo reiniciada con datos históricos de 1 semana.'); 
+    showToast('🔄 Demo reiniciada a cero (sin historial).'); 
   }
 
   // ── Helper: Local YYYY-MM-DD Date Formatter ──
