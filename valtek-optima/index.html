@@ -578,6 +578,56 @@
     .table-photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
     .table-photo-thumb.empty { color: var(--text-muted); border-style: dashed; cursor: default; }
     .table-photo-thumb.empty:hover { transform: none; }
+
+    /* ── EVENTOS / ENROLAMIENTO ── */
+    #view-enrolamiento { position: fixed; inset: 0; z-index: 950; background: radial-gradient(ellipse at 50% 30%, rgba(99,102,241,0.15) 0%, var(--bg) 70%); display: none; align-items: center; justify-content: center; padding: 1rem; overflow-y: auto; }
+    #view-enrolamiento.active { display: flex; }
+    .enrol-card { width: 100%; max-width: 460px; background: rgba(13,17,36,0.95); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem 2rem; backdrop-filter: blur(30px); box-shadow: 0 20px 80px rgba(0,0,0,0.6), 0 0 60px rgba(99,102,241,0.1); }
+    .enrol-success { text-align: center; }
+    .qr-display { width: 200px; height: 200px; margin: 1.5rem auto; background: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .qr-grid { display: grid; grid-template-columns: repeat(21, 1fr); gap: 0; width: 180px; height: 180px; }
+    .qr-cell { aspect-ratio: 1; }
+    .qr-cell.dark { background: #111; }
+    .qr-cell.light { background: #fff; }
+    .event-detail-card { background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.15); border-radius: 12px; padding: 1rem; margin: 1rem 0; text-align: left; }
+    .event-detail-card .ed-row { display: flex; justify-content: space-between; padding: 0.3rem 0; font-size: 0.85rem; }
+    .event-detail-card .ed-label { color: var(--text-muted); }
+    .event-detail-card .ed-value { color: var(--text); font-weight: 600; }
+    .consent-check { display: flex; align-items: flex-start; gap: 0.6rem; padding: 1rem; border-radius: 10px; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15); margin: 1rem 0; cursor: pointer; }
+    .consent-check input[type=checkbox] { accent-color: var(--primary); width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; }
+    .consent-check label { font-size: 0.78rem; color: var(--text-dim); line-height: 1.5; cursor: pointer; }
+
+    /* ── PORTERÍA EVENTOS ── */
+    .port-tabs { display: flex; gap: 0.25rem; margin-bottom: 1.5rem; }
+    .port-tab-btn { padding: 0.65rem 1.2rem; border-radius: 10px 10px 0 0; background: transparent; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.2s; }
+    .port-tab-btn.active { color: var(--clean); border-bottom-color: var(--clean); background: rgba(16,185,129,0.05); }
+    .port-tab-btn:hover:not(.active) { color: var(--text-dim); background: rgba(255,255,255,0.03); }
+    .port-tab-panel { display: none; }
+    .port-tab-panel.active { display: block; }
+
+    .ws-feed { display: flex; flex-direction: column; gap: 0.75rem; max-height: 300px; overflow-y: auto; }
+    .ws-feed-card { display: flex; align-items: center; gap: 1rem; padding: 1rem; border-radius: 12px; border-left: 4px solid var(--clean); background: rgba(16,185,129,0.06); animation: wsFadeIn 0.4s ease-out; }
+    .ws-feed-card.denied { border-left-color: var(--dirty); background: rgba(239,68,68,0.06); }
+    @keyframes wsFadeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+    .ws-feed-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .ws-feed-card .ws-feed-icon { background: rgba(16,185,129,0.15); }
+    .ws-feed-card.denied .ws-feed-icon { background: rgba(239,68,68,0.15); }
+    .ws-feed-info { flex: 1; }
+    .ws-feed-name { font-weight: 700; font-size: 0.9rem; }
+    .ws-feed-detail { font-size: 0.78rem; color: var(--text-muted); }
+    .ws-feed-time { font-size: 0.72rem; color: var(--text-muted); text-align: right; }
+
+    .qr-scanner-sim { background: rgba(99,102,241,0.04); border: 2px dashed rgba(99,102,241,0.2); border-radius: 16px; padding: 1.5rem; text-align: center; margin-bottom: 1.5rem; }
+    .qr-scanner-sim .scan-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+
+    /* Event list cards */
+    .evento-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; transition: all 0.2s; }
+    .evento-card:hover { border-color: var(--border-glow); }
+    .evento-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+    .evento-card-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; }
+    .evento-card-date { font-size: 0.78rem; color: var(--text-muted); }
+    .evento-card-meta { display: flex; gap: 1.5rem; font-size: 0.82rem; color: var(--text-dim); margin-bottom: 0.75rem; }
+    .evento-card-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
   </style>
 </head>
 <body>
@@ -930,94 +980,151 @@
 <!-- PORTERÍA -->
 <div id="view-porteria" class="app-view">
   <div class="port-container">
-    <div class="port-search-card">
-      <h2 class="port-title">Control de Acceso y Portería</h2>
-      <p class="port-subtitle">Verificación instantánea de documentación de contratistas y personal de aseo</p>
-      <div class="port-input-wrapper">
-        <input class="port-input" id="porteria-rut-search" placeholder="18.765.432-1" onkeydown="if(event.key==='Enter')lookupRut()">
-        <button class="btn-port-search" onclick="lookupRut()">Consultar</button>
+    <!-- Porteria Tabs -->
+    <div class="port-tabs">
+      <button class="port-tab-btn active" onclick="switchPorteriaTab('contratistas')">🔍 Contratistas / Personal</button>
+      <button class="port-tab-btn" onclick="switchPorteriaTab('eventos')">🎟️ Eventos Fin de Semana</button>
+    </div>
+
+    <!-- TAB: Contratistas (existing content) -->
+    <div class="port-tab-panel active" id="port-panel-contratistas">
+      <div class="port-search-card">
+        <h2 class="port-title">Control de Acceso y Portería</h2>
+        <p class="port-subtitle">Verificación instantánea de documentación de contratistas y personal de aseo</p>
+        <div class="port-input-wrapper">
+          <input class="port-input" id="porteria-rut-search" placeholder="18.765.432-1" onkeydown="if(event.key==='Enter')lookupRut()">
+          <button class="btn-port-search" onclick="lookupRut()">Consultar</button>
+        </div>
+
+        <!-- Result screens -->
+        <!-- 🟢 AUTORIZADO -->
+        <div class="status-screen status-authorized" id="port-screen-auth">
+          <div class="status-header">
+            <div class="status-icon">✓</div>
+            <div class="status-text">🟢 ACCESO PERMITIDO</div>
+          </div>
+          <div class="worker-detail-grid">
+            <div class="worker-avatar-lg" id="port-auth-avatar">?</div>
+            <div class="worker-info-fields">
+              <div class="info-item"><div class="info-label">Nombre</div><div class="info-val" id="port-auth-name"></div></div>
+              <div class="info-item"><div class="info-label">RUT</div><div class="info-val" id="port-auth-rut"></div></div>
+              <div class="info-item"><div class="info-label">Empresa</div><div class="info-val" id="port-auth-company"></div></div>
+              <div class="info-item"><div class="info-label">Tipo</div><div class="info-val" id="port-auth-type"></div></div>
+            </div>
+          </div>
+          <!-- Warning alert for forced authorization -->
+          <div id="port-auth-warning" style="display: none; background: rgba(245, 158, 11, 0.15); border: 1px dashed var(--process); border-radius: 8px; padding: 0.75rem 1rem; margin-top: 1rem; text-align: left;">
+            <div style="color: var(--process); font-weight: bold; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+              <span>⚠️ ADVERTENCIA DE SEGURIDAD</span>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem;">
+              Autorizado manualmente por el Administrador Mayor con documentación pendiente o vencida.
+            </div>
+            <ul id="port-auth-warning-list" style="margin: 0.4rem 0 0 1.25rem; padding: 0; font-size: 0.72rem; color: var(--process);"></ul>
+          </div>
+          <div class="action-buttons">
+            <button class="btn-action btn-action-in" onclick="registerGateEvent('entrada')">Registrar Entrada</button>
+            <button class="btn-action btn-action-out" onclick="registerGateEvent('salida')">Registrar Salida</button>
+          </div>
+        </div>
+
+        <!-- 🔴 BLOQUEADO -->
+        <div class="status-screen status-blocked" id="port-screen-blocked">
+          <div class="status-header">
+            <div class="status-icon">⚠</div>
+            <div class="status-text">🔴 ACCESO DENEGADO</div>
+          </div>
+          <div style="font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:1rem;" id="port-blocked-warning-title">INGRESO PROHIBIDO</div>
+          <div class="worker-detail-grid">
+            <div class="worker-avatar-lg" style="background:linear-gradient(135deg, var(--dirty), #991b1b);" id="port-blocked-avatar">?</div>
+            <div class="worker-info-fields">
+              <div class="info-item"><div class="info-label">Nombre</div><div class="info-val" id="port-blocked-name"></div></div>
+              <div class="info-item"><div class="info-label">RUT</div><div class="info-val" id="port-blocked-rut"></div></div>
+              <div class="info-item"><div class="info-label">Empresa</div><div class="info-val" id="port-blocked-company"></div></div>
+              <div class="info-item"><div class="info-label">Acceso</div><div class="info-val" style="color:var(--dirty);">BLOQUEADO</div></div>
+            </div>
+          </div>
+          <div class="status-reasons">
+            <div class="reason-title">Documentos Pendientes o Vencidos:</div>
+            <ul class="reason-list" id="port-blocked-reasons-list"></ul>
+          </div>
+        </div>
+
+        <!-- ⚪ NO ENCONTRADO -->
+        <div class="status-screen status-notfound" id="port-screen-notfound">
+          <div class="status-header">
+            <div class="status-icon">?</div>
+            <div class="status-text">RUT NO REGISTRADO</div>
+          </div>
+          <p style="font-size:0.9rem;color:var(--text-muted);">El RUT ingresado no coincide con ningún trabajador interno o externo cargado en el sistema. Solicite asistencia al administrador mayor.</p>
+        </div>
       </div>
 
-      <!-- Result screens -->
-      <!-- 🟢 AUTORIZADO -->
-      <div class="status-screen status-authorized" id="port-screen-auth">
-        <div class="status-header">
-          <div class="status-icon">✓</div>
-          <div class="status-text">🟢 ACCESO PERMITIDO</div>
+      <!-- Gate Log -->
+      <div class="j-card">
+        <div class="j-card-title">🚪 Historial de Accesos Registrados de Hoy</div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>RUT</th>
+                <th>Evento</th>
+                <th>Hora</th>
+                <th>Registrado Por</th>
+              </tr>
+            </thead>
+            <tbody id="port-history-tbody"></tbody>
+          </table>
         </div>
-        <div class="worker-detail-grid">
-          <div class="worker-avatar-lg" id="port-auth-avatar">?</div>
-          <div class="worker-info-fields">
-            <div class="info-item"><div class="info-label">Nombre</div><div class="info-val" id="port-auth-name"></div></div>
-            <div class="info-item"><div class="info-label">RUT</div><div class="info-val" id="port-auth-rut"></div></div>
-            <div class="info-item"><div class="info-label">Empresa</div><div class="info-val" id="port-auth-company"></div></div>
-            <div class="info-item"><div class="info-label">Tipo</div><div class="info-val" id="port-auth-type"></div></div>
-          </div>
-        </div>
-        <!-- Warning alert for forced authorization -->
-        <div id="port-auth-warning" style="display: none; background: rgba(245, 158, 11, 0.15); border: 1px dashed var(--process); border-radius: 8px; padding: 0.75rem 1rem; margin-top: 1rem; text-align: left;">
-          <div style="color: var(--process); font-weight: bold; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
-            <span>⚠️ ADVERTENCIA DE SEGURIDAD</span>
-          </div>
-          <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem;">
-            Autorizado manualmente por el Administrador Mayor con documentación pendiente o vencida.
-          </div>
-          <ul id="port-auth-warning-list" style="margin: 0.4rem 0 0 1.25rem; padding: 0; font-size: 0.72rem; color: var(--process);"></ul>
-        </div>
-        <div class="action-buttons">
-          <button class="btn-action btn-action-in" onclick="registerGateEvent('entrada')">Registrar Entrada</button>
-          <button class="btn-action btn-action-out" onclick="registerGateEvent('salida')">Registrar Salida</button>
-        </div>
-      </div>
-
-      <!-- 🔴 BLOQUEADO -->
-      <div class="status-screen status-blocked" id="port-screen-blocked">
-        <div class="status-header">
-          <div class="status-icon">⚠</div>
-          <div class="status-text">🔴 ACCESO DENEGADO</div>
-        </div>
-        <div style="font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:1rem;" id="port-blocked-warning-title">INGRESO PROHIBIDO</div>
-        <div class="worker-detail-grid">
-          <div class="worker-avatar-lg" style="background:linear-gradient(135deg, var(--dirty), #991b1b);" id="port-blocked-avatar">?</div>
-          <div class="worker-info-fields">
-            <div class="info-item"><div class="info-label">Nombre</div><div class="info-val" id="port-blocked-name"></div></div>
-            <div class="info-item"><div class="info-label">RUT</div><div class="info-val" id="port-blocked-rut"></div></div>
-            <div class="info-item"><div class="info-label">Empresa</div><div class="info-val" id="port-blocked-company"></div></div>
-            <div class="info-item"><div class="info-label">Acceso</div><div class="info-val" style="color:var(--dirty);">BLOQUEADO</div></div>
-          </div>
-        </div>
-        <div class="status-reasons">
-          <div class="reason-title">Documentos Pendientes o Vencidos:</div>
-          <ul class="reason-list" id="port-blocked-reasons-list"></ul>
-        </div>
-      </div>
-
-      <!-- ⚪ NO ENCONTRADO -->
-      <div class="status-screen status-notfound" id="port-screen-notfound">
-        <div class="status-header">
-          <div class="status-icon">?</div>
-          <div class="status-text">RUT NO REGISTRADO</div>
-        </div>
-        <p style="font-size:0.9rem;color:var(--text-muted);">El RUT ingresado no coincide con ningún trabajador interno o externo cargado en el sistema. Solicite asistencia al administrador mayor.</p>
       </div>
     </div>
 
-    <!-- Gate Log -->
-    <div class="j-card">
-      <div class="j-card-title">🚪 Historial de Accesos Registrados de Hoy</div>
-      <div style="overflow-x:auto;">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>RUT</th>
-              <th>Evento</th>
-              <th>Hora</th>
-              <th>Registrado Por</th>
-            </tr>
-          </thead>
-          <tbody id="port-history-tbody"></tbody>
-        </table>
+    <!-- TAB: Eventos Fin de Semana -->
+    <div class="port-tab-panel" id="port-panel-eventos">
+      <!-- QR Scanner Simulator -->
+      <div class="qr-scanner-sim">
+        <div class="scan-icon">📷</div>
+        <div style="font-family:var(--font-display); font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Simulador de Lector QR (Torniquete)</div>
+        <div class="flex-row" style="justify-content:center; gap:0.75rem; margin-bottom:1rem;">
+          <div class="f-group" style="flex:2; min-width:200px;"><input class="f-input" id="port-qr-token-input" placeholder="Ingrese token QR del visitante"></div>
+          <div class="f-group" style="min-width:160px;"><select class="f-input f-select" id="port-qr-puerta-select">
+            <option>Puerta Principal</option>
+            <option>Torniquete Acceso Norte</option>
+            <option>Torniquete Acceso Sur</option>
+          </select></div>
+        </div>
+        <button class="btn-sm btn-green" onclick="scanQrAtGate()" style="min-width:180px;">🔓 Escanear QR en Torniquete</button>
+      </div>
+
+      <!-- Manual RUT Lookup for Events -->
+      <div class="j-card">
+        <div class="j-card-title">🔍 Buscar Visitante por RUT (Apertura Manual)</div>
+        <div class="flex-row" style="margin-bottom:1rem;">
+          <div class="f-group" style="flex:2;"><input class="f-input" id="port-evento-rut-search" placeholder="12.345.678-9"></div>
+          <button class="btn-sm btn-blue" onclick="lookupEventoRut()">Buscar</button>
+        </div>
+        <div id="port-evento-rut-result" style="display:none;"></div>
+      </div>
+
+      <!-- WebSocket Live Feed -->
+      <div class="j-card">
+        <div class="j-card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--clean)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M7.76 16.24a6 6 0 0 1 0-8.49"/><path d="M4.93 19.07a10 10 0 0 1 0-14.14"/></svg>
+          Monitoreo en Vivo — Accesos de Eventos
+          <span style="margin-left:auto;font-size:0.7rem;color:var(--clean);font-weight:500;">● LIVE</span>
+        </div>
+        <div class="ws-feed" id="ws-feed-container">
+          <div style="text-align:center; padding:2rem; color:var(--text-muted); font-size:0.88rem;">⏳ Esperando accesos de visitantes...</div>
+        </div>
+      </div>
+
+      <!-- Eventos de Hoy -->
+      <div class="j-card">
+        <div class="j-card-title">📅 Eventos de Hoy</div>
+        <div id="port-eventos-hoy-list">
+          <div style="text-align:center; padding:1.5rem; color:var(--text-muted); font-size:0.88rem;">No hay eventos programados para hoy.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -1034,6 +1141,7 @@
       <button class="jefe-tab" onclick="switchJefeTab('informes')">📊 Informes</button>
       <button class="jefe-tab" id="jefe-tab-btn-aprobaciones" onclick="switchJefeTab('aprobaciones')">✅ Aprobación Contratistas</button>
       <button class="jefe-tab" id="jefe-tab-btn-bitacora" onclick="switchJefeTab('bitacora')">📁 Bitácora de Archivos</button>
+      <button class="jefe-tab" id="jefe-tab-btn-eventos" onclick="switchJefeTab('eventos')">📅 Eventos Finde</button>
     </div>
   </div>
   <div class="jefe-body">
@@ -1267,6 +1375,62 @@
       </div>
     </div>
 
+    <!-- TAB: EVENTOS FIN DE SEMANA -->
+    <div class="jefe-tab-content" id="jefe-tab-eventos">
+      <div class="j-grid-2">
+        <div class="j-card">
+          <div class="j-card-title">📅 Crear Nuevo Evento</div>
+          <div class="f-group"><label class="f-label">Nombre del Evento</label><input class="f-input" id="evento-nombre" placeholder="Ej: Copa San Nicolás, Feria de Ciencias..."></div>
+          <div class="f-group"><label class="f-label">Fecha</label><input type="date" class="f-input" id="evento-fecha"></div>
+          <div class="j-grid-2" style="gap:1rem;">
+            <div class="f-group"><label class="f-label">Hora Inicio</label><input type="time" class="f-input" id="evento-hora-inicio" value="09:00"></div>
+            <div class="f-group"><label class="f-label">Hora Fin</label><input type="time" class="f-input" id="evento-hora-fin" value="18:00"></div>
+          </div>
+          <div class="f-group">
+            <label class="f-label">Puertas Autorizadas</label>
+            <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:0.25rem;">
+              <label class="zone-check-item" style="display:flex;"><input type="checkbox" value="Puerta Principal" checked> Puerta Principal</label>
+              <label class="zone-check-item" style="display:flex;"><input type="checkbox" value="Torniquete Acceso Norte"> Torniquete Acceso Norte</label>
+              <label class="zone-check-item" style="display:flex;"><input type="checkbox" value="Torniquete Acceso Sur"> Torniquete Acceso Sur</label>
+            </div>
+          </div>
+          <button class="btn-sm btn-green" onclick="crearEvento()" style="margin-top:0.5rem;">✅ Crear Evento y Generar Link</button>
+        </div>
+        <div>
+          <div class="j-card">
+            <div class="j-card-title">🗓 Eventos Registrados</div>
+            <div id="eventos-list-container"></div>
+          </div>
+          <div class="j-card">
+            <div class="j-card-title">🔒 Compliance — Ley de Datos Personales</div>
+            <p style="font-size:0.85rem; color:var(--text-dim); line-height:1.6; margin-bottom:1rem;">Los datos personales de visitantes (RUT, nombre, teléfono) se anonimizan automáticamente 30 días después del evento, cumpliendo con la Ley N° 19.628 de Protección de Datos de Carácter Personal de Chile.</p>
+            <button class="btn-sm btn-red" onclick="ejecutarPurgaDatos()">🗑 Ejecutar Purga Manual de Datos (+30 días)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Invitados del evento seleccionado -->
+      <div class="j-card" id="evento-invitados-card" style="display:none;">
+        <div class="j-card-title" id="evento-invitados-title">👥 Invitados del Evento</div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>RUT</th>
+                <th>Teléfono</th>
+                <th>Token QR</th>
+                <th>Consentimiento</th>
+                <th>Ingresó</th>
+                <th>Hora Ingreso</th>
+              </tr>
+            </thead>
+            <tbody id="evento-invitados-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1278,6 +1442,36 @@
     <div class="phone-header"><div><div class="phone-user-name" id="phone-worker-name">Trabajador</div><div class="phone-role-badge">Personal de Aseo</div></div><div style="font-size:1.5rem;">📱</div></div>
     <div class="msg-banner" id="msg-banner"><strong>📢 Comunicado Dirección:</strong><span id="msg-banner-text"></span></div>
     <div class="phone-body" id="phone-body"></div>
+  </div>
+</div>
+
+<!-- ENROLAMIENTO PÚBLICO -->
+<div id="view-enrolamiento">
+  <div class="enrol-card" id="enrol-form-card">
+    <div style="text-align:center; margin-bottom: 1.5rem;">
+      <span style="font-size: 2rem;">🎟️</span>
+      <div style="font-family:var(--font-display); font-size:1.4rem; font-weight:800; margin-top:0.5rem;">Registro de Visitante</div>
+      <div style="font-size:0.85rem; color:var(--text-muted); margin-top:0.25rem;" id="enrol-event-title">Evento</div>
+    </div>
+    <div class="f-group"><label class="f-label">Nombre Completo</label><input class="f-input" id="enrol-nombre" placeholder="Ingrese su nombre completo"></div>
+    <div class="f-group"><label class="f-label">RUT</label><input class="f-input" id="enrol-rut" placeholder="12.345.678-9"></div>
+    <div class="f-group"><label class="f-label">Teléfono (Opcional)</label><input class="f-input" id="enrol-telefono" placeholder="+56 9 1234 5678"></div>
+    <div class="consent-check">
+      <input type="checkbox" id="enrol-consent">
+      <label for="enrol-consent">Acepto el tratamiento de mis datos personales de acuerdo a la Política de Seguridad del Colegio, con el único fin de gestionar el control de acceso y seguridad del recinto. Los datos serán eliminados automáticamente tras 30 días del evento.</label>
+    </div>
+    <div id="enrol-error" class="error-msg">Complete todos los campos obligatorios y acepte el consentimiento.</div>
+    <button class="btn-full btn-primary" onclick="submitEnrolamiento()" style="margin-top:0.5rem;">📲 Registrarme y Obtener QR</button>
+    <div style="text-align:center; margin-top:1rem;"><span class="diag-cancel" onclick="closeEnrolamiento()">← Volver al sistema</span></div>
+  </div>
+  <div class="enrol-card enrol-success" id="enrol-success-card" style="display:none;">
+    <span style="font-size: 3rem;">✅</span>
+    <div style="font-family:var(--font-display); font-size:1.3rem; font-weight:800; margin-top:0.75rem;">¡Registro Exitoso!</div>
+    <div style="font-size:0.88rem; color:var(--text-muted); margin-top:0.5rem;">Presenta este código QR en el torniquete para ingresar.</div>
+    <div class="qr-display" id="enrol-qr-display"></div>
+    <div style="font-family:monospace; font-size:0.8rem; color:var(--primary); margin-bottom:0.5rem;" id="enrol-qr-token"></div>
+    <div class="event-detail-card" id="enrol-event-details"></div>
+    <button class="btn-full btn-primary" onclick="closeEnrolamiento()" style="margin-top:1rem;">Cerrar</button>
   </div>
 </div>
 
@@ -1547,6 +1741,55 @@
     { id: 'fl_demo1', workerId: 'u2', workerName: 'Tía María (Interno)', fileName: 'contrato_firmado.pdf', description: 'Copia del contrato de trabajo', uploadedBy: 'Super Admin Valtek', uploadDate: Date.now() - 7200000 }
   ];
 
+  // ── SEED DATA: EVENTOS ──
+  const SEED_EVENTOS = [
+    {
+      id: 'ev_demo1',
+      nombre: 'Copa San Nicolás — Fútbol Interescolar',
+      encargadoId: 'u1',
+      fecha: new Date().toISOString().split('T')[0],
+      horaInicio: '09:00',
+      horaFin: '18:00',
+      puertasAutorizadas: ['Puerta Principal', 'Torniquete Acceso Norte'],
+      schoolId: 'sch1',
+      createdAt: Date.now() - 86400000
+    },
+    {
+      id: 'ev_demo2',
+      nombre: 'Feria de Ciencias Abierta',
+      encargadoId: 'u1',
+      fecha: new Date().toISOString().split('T')[0],
+      horaInicio: '10:00',
+      horaFin: '16:00',
+      puertasAutorizadas: ['Puerta Principal', 'Torniquete Acceso Norte', 'Torniquete Acceso Sur'],
+      schoolId: 'sch1',
+      createdAt: Date.now() - 43200000
+    }
+  ];
+
+  const SEED_INVITADOS = [
+    {
+      id: 'inv_1', eventoId: 'ev_demo1', rut: '16.234.567-8', nombreCompleto: 'Carlos Muñoz Pereira',
+      telefono: '+56912345678', qrToken: 'QR_A3F8K2M9', estadoConsentimiento: true,
+      timestampConsentimiento: Date.now() - 3600000, ingresoMarcado: true, horaIngreso: Date.now() - 1800000
+    },
+    {
+      id: 'inv_2', eventoId: 'ev_demo1', rut: '17.876.543-2', nombreCompleto: 'Ana Belén Torres',
+      telefono: '+56987654321', qrToken: 'QR_B7G2L5P1', estadoConsentimiento: true,
+      timestampConsentimiento: Date.now() - 7200000, ingresoMarcado: false, horaIngreso: null
+    },
+    {
+      id: 'inv_3', eventoId: 'ev_demo2', rut: '19.456.789-0', nombreCompleto: 'Diego Ramírez',
+      telefono: '', qrToken: 'QR_C4H9N8R3', estadoConsentimiento: true,
+      timestampConsentimiento: Date.now() - 5400000, ingresoMarcado: true, horaIngreso: Date.now() - 900000
+    },
+    {
+      id: 'inv_4', eventoId: 'ev_demo1', rut: '20.111.222-3', nombreCompleto: 'Francisca López',
+      telefono: '+56945678901', qrToken: 'QR_D1J6Q4W7', estadoConsentimiento: true,
+      timestampConsentimiento: Date.now() - 9000000, ingresoMarcado: false, horaIngreso: null
+    }
+  ];
+
   const ICONS = {
     sala: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
     cancha: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2v20"/></svg>',
@@ -1566,7 +1809,11 @@
     // Expanded roles state arrays
     externalWorkers: [],
     gateLog: [],
-    fileLog: []
+    fileLog: [],
+    // Eventos y visitantes
+    eventos: [],
+    invitadosAcceso: [],
+    wsFeedLog: []
   };
 
   // Temp state for document upload
@@ -1745,7 +1992,7 @@
   }
 
   // ── PERSISTENCE ──
-  const DATA_VERSION = '4.6'; // Incremented version to load simulated active data for today
+  const DATA_VERSION = '5.0'; // Incremented version for weekend access control module
   function saveData() { 
     try {
       localStorage.setItem('vo_version', DATA_VERSION); 
@@ -1757,6 +2004,8 @@
       localStorage.setItem('vo_file_log', JSON.stringify(state.fileLog));
       localStorage.setItem('vo_zones', JSON.stringify(state.zones));
       localStorage.setItem('vo_audit', JSON.stringify(state.auditLog));
+      localStorage.setItem('vo_eventos', JSON.stringify(state.eventos));
+      localStorage.setItem('vo_invitados', JSON.stringify(state.invitadosAcceso));
     } catch (e) {
       console.error('Failed to save to localStorage:', e);
       showToast('⚠️ Límite de almacenamiento local excedido. Intente eliminar algunos archivos o usar archivos más pequeños.', true);
@@ -1774,6 +2023,8 @@
       localStorage.removeItem('vo_file_log');
       localStorage.removeItem('vo_zones');
       localStorage.removeItem('vo_audit');
+      localStorage.removeItem('vo_eventos');
+      localStorage.removeItem('vo_invitados');
     }
     const s = localStorage.getItem('vo_schools');
     const u = localStorage.getItem('vo_users');
@@ -1790,6 +2041,10 @@
     state.externalWorkers = ew ? JSON.parse(ew) : JSON.parse(JSON.stringify(SEED_EXTERNAL_WORKERS));
     state.gateLog = gl ? JSON.parse(gl) : JSON.parse(JSON.stringify(SEED_GATE_LOG));
     state.fileLog = fl ? JSON.parse(fl) : JSON.parse(JSON.stringify(SEED_FILE_LOG));
+    const ev = localStorage.getItem('vo_eventos');
+    const inv = localStorage.getItem('vo_invitados');
+    state.eventos = ev ? JSON.parse(ev) : JSON.parse(JSON.stringify(SEED_EVENTOS));
+    state.invitadosAcceso = inv ? JSON.parse(inv) : JSON.parse(JSON.stringify(SEED_INVITADOS));
     
     // Generate historical audit logs if not present or empty
     let loadedAudit = null;
@@ -3135,6 +3390,8 @@
   // ── PORTERÍA PANEL ──
   function renderPorteriaAll() {
     renderPorteriaHistory();
+    renderPorteriaEventosHoy();
+    renderWsFeed();
   }
 
   let tempActivePorteriaWorker = null;
@@ -3346,7 +3603,7 @@
   function switchJefeTab(t) { 
     document.querySelectorAll('.jefe-tab').forEach(x=>x.classList.remove('active')); 
     document.querySelectorAll('.jefe-tab-content').forEach(x=>x.classList.remove('active')); 
-    const ts=['personal','asignacion','monitoreo','informes','aprobaciones','bitacora']; 
+    const ts=['personal','asignacion','monitoreo','informes','aprobaciones','bitacora','eventos']; 
     const idx = ts.indexOf(t);
     if (idx !== -1) {
       const tabEl = document.querySelectorAll('.jefe-tab')[idx];
@@ -3367,11 +3624,13 @@
     
     if (aprobBtn) aprobBtn.style.display = isJefe ? 'none' : 'inline-flex';
     if (bitacBtn) bitacBtn.style.display = isJefe ? 'none' : 'inline-flex';
+    const eventBtn = document.getElementById('jefe-tab-btn-eventos');
+    if (eventBtn) eventBtn.style.display = isJefe ? 'none' : 'inline-flex';
     
     // Redirect to personal tab if current active tab is hidden
     if (isJefe) {
       const activeTabEl = document.querySelector('.jefe-tab-content.active');
-      if (activeTabEl && (activeTabEl.id === 'jefe-tab-aprobaciones' || activeTabEl.id === 'jefe-tab-bitacora')) {
+      if (activeTabEl && (activeTabEl.id === 'jefe-tab-aprobaciones' || activeTabEl.id === 'jefe-tab-bitacora' || activeTabEl.id === 'jefe-tab-eventos')) {
         switchJefeTab('personal');
         return;
       }
@@ -3394,6 +3653,7 @@
     renderReports(); 
     renderJefeAprobacionesTable();
     renderJefeBitacora();
+    renderEventos();
     const mi=document.getElementById('msg-input'); 
     if(mi&&!mi._i){mi.value=state.mensajeDelDia;mi._i=true;} 
   }
@@ -4558,6 +4818,511 @@
     window.print();
   }
 
+  // ══════════════ EVENTOS FIN DE SEMANA ══════════════
+
+  // Temp state for enrollment
+  let currentEnrolEventId = null;
+
+  // --- API Simulated Functions ---
+  function apiEventosCrear(nombre, fecha, horaInicio, horaFin, puertas) {
+    const ev = {
+      id: 'ev_' + Date.now(),
+      nombre: nombre,
+      encargadoId: state.currentUser ? state.currentUser.id : 'u1',
+      fecha: fecha,
+      horaInicio: horaInicio,
+      horaFin: horaFin,
+      puertasAutorizadas: puertas,
+      schoolId: state.currentUser ? state.currentUser.schoolId : 'sch1',
+      createdAt: Date.now()
+    };
+    state.eventos.push(ev);
+    saveData();
+    return ev;
+  }
+
+  function apiVisitanteEnrolar(eventoId, rut, nombreCompleto, telefono, consentimiento) {
+    if (!consentimiento) return { error: 'Consentimiento requerido' };
+    if (!rut || !nombreCompleto) return { error: 'RUT y nombre son obligatorios' };
+    // Check duplicate RUT for this event
+    const dup = state.invitadosAcceso.find(i => i.eventoId === eventoId && i.rut.replace(/[^0-9kK]/gi,'') === rut.replace(/[^0-9kK]/gi,''));
+    if (dup) return { error: 'Este RUT ya está registrado para este evento' };
+    
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let token = 'QR_';
+    for (let i = 0; i < 8; i++) token += chars.charAt(Math.floor(Math.random() * chars.length));
+    
+    const inv = {
+      id: 'inv_' + Date.now(),
+      eventoId: eventoId,
+      rut: rut,
+      nombreCompleto: nombreCompleto,
+      telefono: telefono || '',
+      qrToken: token,
+      estadoConsentimiento: true,
+      timestampConsentimiento: Date.now(),
+      ingresoMarcado: false,
+      horaIngreso: null
+    };
+    state.invitadosAcceso.push(inv);
+    saveData();
+    return inv;
+  }
+
+  function apiPorteriaValidarQr(qrToken, puerta) {
+    const inv = state.invitadosAcceso.find(i => i.qrToken === qrToken);
+    if (!inv) return { allow: false, reason: 'QR Inválido — Token no encontrado en el sistema.' };
+    const ev = state.eventos.find(e => e.id === inv.eventoId);
+    if (!ev) return { allow: false, reason: 'Evento asociado no encontrado.' };
+    
+    const today = new Date().toISOString().split('T')[0];
+    if (ev.fecha !== today) return { allow: false, reason: 'El evento "' + ev.nombre + '" no es hoy (' + ev.fecha + ').' };
+    
+    const now = new Date();
+    const [sh, sm] = ev.horaInicio.split(':').map(Number);
+    const [eh, em] = ev.horaFin.split(':').map(Number);
+    const startMinutes = sh * 60 + sm - 30; // 30 min anticipation
+    const endMinutes = eh * 60 + em;
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+    
+    if (nowMinutes < startMinutes || nowMinutes > endMinutes) {
+      return { allow: false, reason: 'Fuera de horario. El evento es de ' + ev.horaInicio + ' a ' + ev.horaFin + '.' };
+    }
+    
+    if (!ev.puertasAutorizadas.includes(puerta)) {
+      return { allow: false, reason: 'La puerta "' + puerta + '" no está autorizada para este evento.' };
+    }
+    
+    if (inv.ingresoMarcado) {
+      return { allow: false, reason: 'Este visitante ya ingresó a las ' + new Date(inv.horaIngreso).toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit'}) + '.' };
+    }
+    
+    // Success!
+    inv.ingresoMarcado = true;
+    inv.horaIngreso = Date.now();
+    saveData();
+    
+    // Emit WebSocket event (simulated)
+    emitWsFeedEvent(inv, ev, puerta, true);
+    
+    return { allow: true, message: 'Acceso Autorizado', invitado: inv, evento: ev };
+  }
+
+  // --- WebSocket Feed Simulation ---
+  function emitWsFeedEvent(inv, ev, puerta, allowed) {
+    const feedEntry = {
+      id: 'ws_' + Date.now(),
+      nombre: inv.nombreCompleto,
+      rut: inv.rut,
+      evento: ev.nombre,
+      puerta: puerta,
+      allowed: allowed,
+      timestamp: Date.now()
+    };
+    if (!state.wsFeedLog) state.wsFeedLog = [];
+    state.wsFeedLog.unshift(feedEntry);
+    renderWsFeed();
+  }
+
+  function renderWsFeed() {
+    const container = document.getElementById('ws-feed-container');
+    if (!container) return;
+    if (!state.wsFeedLog || !state.wsFeedLog.length) {
+      container.innerHTML = '<div style="text-align:center; padding:2rem; color:var(--text-muted); font-size:0.88rem;">⏳ Esperando accesos de visitantes...</div>';
+      return;
+    }
+    container.innerHTML = state.wsFeedLog.slice(0, 20).map(f => {
+      const timeStr = new Date(f.timestamp).toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+      const cls = f.allowed ? '' : ' denied';
+      const icon = f.allowed ? '✅' : '❌';
+      return '<div class="ws-feed-card' + cls + '">' +
+        '<div class="ws-feed-icon">' + icon + '</div>' +
+        '<div class="ws-feed-info">' +
+          '<div class="ws-feed-name">' + f.nombre + '</div>' +
+          '<div class="ws-feed-detail">' + f.rut + ' · ' + f.evento + ' · ' + f.puerta + '</div>' +
+        '</div>' +
+        '<div class="ws-feed-time">' + timeStr + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // --- Portería Tab Switching ---
+  function switchPorteriaTab(tab) {
+    document.querySelectorAll('.port-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.port-tab-panel').forEach(p => p.classList.remove('active'));
+    const btns = document.querySelectorAll('.port-tab-btn');
+    const tabs = ['contratistas', 'eventos'];
+    const idx = tabs.indexOf(tab);
+    if (idx !== -1 && btns[idx]) btns[idx].classList.add('active');
+    const panel = document.getElementById('port-panel-' + tab);
+    if (panel) panel.classList.add('active');
+    if (tab === 'eventos') {
+      renderPorteriaEventosHoy();
+      renderWsFeed();
+    }
+  }
+
+  function renderPorteriaEventosHoy() {
+    const container = document.getElementById('port-eventos-hoy-list');
+    if (!container) return;
+    const today = new Date().toISOString().split('T')[0];
+    const todayEvents = state.eventos.filter(e => e.fecha === today);
+    if (!todayEvents.length) {
+      container.innerHTML = '<div style="text-align:center; padding:1.5rem; color:var(--text-muted); font-size:0.88rem;">No hay eventos programados para hoy.</div>';
+      return;
+    }
+    container.innerHTML = todayEvents.map(ev => {
+      const invitados = state.invitadosAcceso.filter(i => i.eventoId === ev.id);
+      const ingresaron = invitados.filter(i => i.ingresoMarcado).length;
+      return '<div class="evento-card">' +
+        '<div class="evento-card-header">' +
+          '<div class="evento-card-title">🎟️ ' + ev.nombre + '</div>' +
+          '<div><span class="badge badge-clean">' + ingresaron + '/' + invitados.length + ' ingresaron</span></div>' +
+        '</div>' +
+        '<div class="evento-card-meta">' +
+          '<span>🕐 ' + ev.horaInicio + ' — ' + ev.horaFin + '</span>' +
+          '<span>🚪 ' + ev.puertasAutorizadas.join(', ') + '</span>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // --- QR Scan at Gate ---
+  function scanQrAtGate() {
+    const tokenInput = document.getElementById('port-qr-token-input');
+    const puertaSelect = document.getElementById('port-qr-puerta-select');
+    if (!tokenInput || !puertaSelect) return;
+    const token = tokenInput.value.trim();
+    const puerta = puertaSelect.value;
+    if (!token) { showToast('⚠ Ingrese un token QR.', true); return; }
+    
+    const result = apiPorteriaValidarQr(token, puerta);
+    if (result.allow) {
+      showToast('✅ ' + result.message + ' — ' + result.invitado.nombreCompleto);
+      tokenInput.value = '';
+      renderPorteriaEventosHoy();
+    } else {
+      showToast('❌ ' + result.reason, true);
+      // Also log denied in feed
+      const inv = state.invitadosAcceso.find(i => i.qrToken === token);
+      if (inv) {
+        const ev = state.eventos.find(e => e.id === inv.eventoId);
+        if (ev) emitWsFeedEvent(inv, ev, puerta, false);
+      }
+    }
+  }
+
+  // --- Manual RUT Lookup for Events ---
+  function lookupEventoRut() {
+    const input = document.getElementById('port-evento-rut-search');
+    const resultDiv = document.getElementById('port-evento-rut-result');
+    if (!input || !resultDiv) return;
+    const rut = input.value.trim();
+    if (!rut) { showToast('⚠ Ingrese un RUT.', true); return; }
+    
+    const normalizedRut = rut.replace(/[^0-9kK]/gi, '').toLowerCase();
+    const today = new Date().toISOString().split('T')[0];
+    const todayEvents = state.eventos.filter(e => e.fecha === today);
+    const todayEventIds = todayEvents.map(e => e.id);
+    
+    const inv = state.invitadosAcceso.find(i => 
+      i.rut.replace(/[^0-9kK]/gi, '').toLowerCase() === normalizedRut &&
+      todayEventIds.includes(i.eventoId)
+    );
+    
+    if (!inv) {
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = '<div style="padding:1rem; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); border-radius:10px; color:var(--dirty); font-size:0.88rem;">❌ RUT no encontrado en ningún evento de hoy.</div>';
+      return;
+    }
+    
+    const ev = state.eventos.find(e => e.id === inv.eventoId);
+    const statusText = inv.ingresoMarcado ? '<span style="color:var(--clean);">✅ Ya ingresó a las ' + new Date(inv.horaIngreso).toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}) + '</span>' : '<span style="color:var(--process);">⏳ Pendiente de ingreso</span>';
+    
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = '<div style="padding:1.25rem; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.2); border-radius:12px;">' +
+      '<div style="font-weight:700; font-size:1rem; margin-bottom:0.5rem;">👤 ' + inv.nombreCompleto + '</div>' +
+      '<div style="font-size:0.85rem; color:var(--text-dim); line-height:1.8;">' +
+        'RUT: <strong>' + inv.rut + '</strong><br>' +
+        'Evento: <strong>' + (ev ? ev.nombre : '—') + '</strong><br>' +
+        'Token: <code style="color:var(--primary);">' + inv.qrToken + '</code><br>' +
+        'Estado: ' + statusText +
+      '</div>' +
+      (inv.ingresoMarcado ? '' : '<button class="btn-sm btn-green" onclick="forzarAperturaManual(\'' + inv.id + '\')" style="margin-top:1rem; width:100%;">🔓 Forzar Apertura Manual de Torniquete</button>') +
+    '</div>';
+  }
+
+  function forzarAperturaManual(invId) {
+    const inv = state.invitadosAcceso.find(i => i.id === invId);
+    if (!inv) { showToast('⚠ Invitado no encontrado.', true); return; }
+    if (inv.ingresoMarcado) { showToast('⚠ Este visitante ya ingresó.', true); return; }
+    
+    const ev = state.eventos.find(e => e.id === inv.eventoId);
+    inv.ingresoMarcado = true;
+    inv.horaIngreso = Date.now();
+    saveData();
+    
+    emitWsFeedEvent(inv, ev || { nombre: 'Evento' }, 'Apertura Manual', true);
+    showToast('✅ Apertura forzada exitosa — ' + inv.nombreCompleto);
+    lookupEventoRut(); // Re-render result
+    renderPorteriaEventosHoy();
+  }
+
+  // --- Crear Evento (Jefe/Directora) ---
+  function crearEvento() {
+    const nombre = document.getElementById('evento-nombre').value.trim();
+    const fecha = document.getElementById('evento-fecha').value;
+    const horaInicio = document.getElementById('evento-hora-inicio').value;
+    const horaFin = document.getElementById('evento-hora-fin').value;
+    if (!nombre || !fecha || !horaInicio || !horaFin) { showToast('⚠ Complete todos los campos del evento.', true); return; }
+    
+    const checkboxes = document.querySelectorAll('#jefe-tab-eventos input[type=checkbox]:checked');
+    const puertas = Array.from(checkboxes).map(cb => cb.value);
+    if (!puertas.length) { showToast('⚠ Seleccione al menos una puerta.', true); return; }
+    
+    const ev = apiEventosCrear(nombre, fecha, horaInicio, horaFin, puertas);
+    document.getElementById('evento-nombre').value = '';
+    document.getElementById('evento-fecha').value = '';
+    // Uncheck northern and southern gates, keep principal checked
+    checkboxes.forEach(cb => {
+      if (cb.value !== 'Puerta Principal') cb.checked = false;
+      else cb.checked = true;
+    });
+    
+    showToast('📅 Evento "' + ev.nombre + '" creado exitosamente.');
+    renderEventos();
+  }
+
+  function renderEventos() {
+    const container = document.getElementById('eventos-list-container');
+    if (!container) return;
+    
+    const schoolId = state.currentUser ? state.currentUser.schoolId : 'sch1';
+    const filtered = state.eventos.filter(e => e.schoolId === schoolId);
+    
+    if (!filtered.length) {
+      container.innerHTML = '<div style="text-align:center; padding:1.5rem; color:var(--text-muted); font-size:0.88rem;">No hay eventos registrados.</div>';
+      return;
+    }
+    
+    container.innerHTML = filtered.map(ev => {
+      const invitados = state.invitadosAcceso.filter(i => i.eventoId === ev.id);
+      const ingresaron = invitados.filter(i => i.ingresoMarcado).length;
+      const today = new Date().toISOString().split('T')[0];
+      const isToday = ev.fecha === today;
+      const isPast = ev.fecha < today;
+      let statusBadge = '';
+      if (isToday) statusBadge = '<span class="badge badge-process">🔴 HOY</span>';
+      else if (isPast) statusBadge = '<span class="badge badge-pending">📋 Pasado</span>';
+      else statusBadge = '<span class="badge badge-clean">📅 Próximo</span>';
+      
+      return '<div class="evento-card">' +
+        '<div class="evento-card-header">' +
+          '<div class="evento-card-title">🎟️ ' + ev.nombre + '</div>' +
+          statusBadge +
+        '</div>' +
+        '<div class="evento-card-date">📅 ' + ev.fecha + ' · 🕐 ' + ev.horaInicio + ' — ' + ev.horaFin + '</div>' +
+        '<div class="evento-card-meta">' +
+          '<span>👥 ' + invitados.length + ' inscritos</span>' +
+          '<span>✅ ' + ingresaron + ' ingresaron</span>' +
+          '<span>🚪 ' + ev.puertasAutorizadas.join(', ') + '</span>' +
+        '</div>' +
+        '<div class="evento-card-actions">' +
+          '<button class="btn-sm btn-blue" onclick="openEnrolamiento(\'' + ev.id + '\')">🔗 Enrolar</button>' +
+          '<button class="btn-sm btn-green" onclick="verInvitadosEvento(\'' + ev.id + '\')">👥 Ver Inscritos (' + invitados.length + ')</button>' +
+          '<button class="btn-sm btn-red" onclick="eliminarEvento(\'' + ev.id + '\')">🗑</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function eliminarEvento(evId) {
+    if (confirm('¿Seguro que deseas eliminar este evento y todos sus visitantes?')) {
+      state.eventos = state.eventos.filter(e => e.id !== evId);
+      state.invitadosAcceso = state.invitadosAcceso.filter(i => i.eventoId !== evId);
+      saveData();
+      renderEventos();
+      showToast('🗑 Evento eliminado.');
+      
+      const card = document.getElementById('evento-invitados-card');
+      if (card) card.style.display = 'none';
+    }
+  }
+
+  let currentSelectedEventId = null;
+  function verInvitadosEvento(evId) {
+    currentSelectedEventId = evId;
+    const card = document.getElementById('evento-invitados-card');
+    const tbody = document.getElementById('evento-invitados-tbody');
+    const title = document.getElementById('evento-invitados-title');
+    if (!card || !tbody || !title) return;
+    
+    const ev = state.eventos.find(e => e.id === evId);
+    if (!ev) return;
+    
+    title.innerHTML = '👥 Visitantes Inscritos en: <span style="color:var(--accent);">' + ev.nombre + '</span>';
+    tbody.innerHTML = '';
+    
+    const invitados = state.invitadosAcceso.filter(i => i.eventoId === evId);
+    if (!invitados.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:1rem;">No hay visitantes registrados para este evento aún.</td></tr>';
+    } else {
+      tbody.innerHTML = invitados.map(inv => {
+        const ingresoStatus = inv.ingresoMarcado ? '<span class="badge badge-clean">✅ INGRESÓ</span>' : '<span class="badge badge-pending">⏳ Pendiente</span>';
+        const ingresoHora = inv.ingresoMarcado && inv.horaIngreso ? new Date(inv.horaIngreso).toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit'}) : '—';
+        const consentText = inv.estadoConsentimiento ? '🟢 Aceptado' : '🔴 Rechazado';
+        return '<tr>' +
+          '<td><strong>' + inv.nombreCompleto + '</strong></td>' +
+          '<td>' + inv.rut + '</td>' +
+          '<td>' + (inv.telefono || '—') + '</td>' +
+          '<td><code style="color:var(--primary);">' + inv.qrToken + '</code></td>' +
+          '<td>' + consentText + '</td>' +
+          '<td>' + ingresoStatus + '</td>' +
+          '<td>' + ingresoHora + '</td>' +
+        '</tr>';
+      }).join('');
+    }
+    card.style.display = 'block';
+    card.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function openEnrolamiento(evId) {
+    currentEnrolEventId = evId;
+    const ev = state.eventos.find(e => e.id === evId);
+    if (!ev) return;
+    
+    document.getElementById('enrol-event-title').textContent = ev.nombre;
+    document.getElementById('enrol-nombre').value = '';
+    document.getElementById('enrol-rut').value = '';
+    document.getElementById('enrol-telefono').value = '';
+    document.getElementById('enrol-consent').checked = false;
+    document.getElementById('enrol-error').style.display = 'none';
+    
+    document.getElementById('enrol-form-card').style.display = 'block';
+    document.getElementById('enrol-success-card').style.display = 'none';
+    
+    document.getElementById('view-enrolamiento').classList.add('active');
+  }
+
+  function closeEnrolamiento() {
+    document.getElementById('view-enrolamiento').classList.remove('active');
+  }
+
+  function submitEnrolamiento() {
+    const nombre = document.getElementById('enrol-nombre').value.trim();
+    const rut = document.getElementById('enrol-rut').value.trim();
+    const telefono = document.getElementById('enrol-telefono').value.trim();
+    const consent = document.getElementById('enrol-consent').checked;
+    
+    const err = document.getElementById('enrol-error');
+    if (!nombre || !rut || !consent) {
+      err.style.display = 'block';
+      err.textContent = 'Complete todos los campos obligatorios y acepte el consentimiento.';
+      return;
+    }
+    
+    err.style.display = 'none';
+    
+    const result = apiVisitanteEnrolar(currentEnrolEventId, rut, nombre, telefono, consent);
+    if (result.error) {
+      err.style.display = 'block';
+      err.textContent = result.error;
+      return;
+    }
+    
+    // Show success card
+    document.getElementById('enrol-form-card').style.display = 'none';
+    document.getElementById('enrol-success-card').style.display = 'block';
+    
+    // Display QR code
+    generateQrCodeGrid(result.qrToken);
+    document.getElementById('enrol-qr-token').textContent = result.qrToken;
+    
+    const ev = state.eventos.find(e => e.id === currentEnrolEventId);
+    const ed = document.getElementById('enrol-event-details');
+    if (ev && ed) {
+      ed.innerHTML = '<div class="ed-row"><span class="ed-label">Evento</span><span class="ed-value">' + ev.nombre + '</span></div>' +
+        '<div class="ed-row"><span class="ed-label">Fecha</span><span class="ed-value">' + ev.fecha + '</span></div>' +
+        '<div class="ed-row"><span class="ed-label">Horario</span><span class="ed-value">' + ev.horaInicio + ' — ' + ev.horaFin + '</span></div>' +
+        '<div class="ed-row"><span class="ed-label">Puertas</span><span class="ed-value">' + ev.puertasAutorizadas.join(', ') + '</span></div>';
+    }
+    
+    renderEventos();
+  }
+
+  function generateQrCodeGrid(token) {
+    const container = document.getElementById('enrol-qr-display');
+    if (!container) return;
+    container.innerHTML = '';
+    const grid = document.createElement('div');
+    grid.className = 'qr-grid';
+    
+    // Simple hash function for token
+    let hash = 0;
+    for (let i = 0; i < token.length; i++) {
+      hash = token.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    
+    for (let r = 0; r < 21; r++) {
+      for (let c = 0; c < 21; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'qr-cell';
+        
+        // Finder pattern top-left
+        if (r < 7 && c < 7) {
+          const isDark = (r === 0 || r === 6 || c === 0 || c === 6) || (r >= 2 && r <= 4 && c >= 2 && c <= 4);
+          cell.classList.add(isDark ? 'dark' : 'light');
+        }
+        // Finder pattern top-right
+        else if (r < 7 && c >= 14) {
+          const cc = c - 14;
+          const isDark = (r === 0 || r === 6 || cc === 0 || cc === 6) || (r >= 2 && r <= 4 && cc >= 2 && cc <= 4);
+          cell.classList.add(isDark ? 'dark' : 'light');
+        }
+        // Finder pattern bottom-left
+        else if (r >= 14 && c < 7) {
+          const rr = r - 14;
+          const isDark = (rr === 0 || rr === 6 || c === 0 || c === 6) || (rr >= 2 && rr <= 4 && c >= 2 && c <= 4);
+          cell.classList.add(isDark ? 'dark' : 'light');
+        }
+        // Other random cells based on token
+        else {
+          const val = Math.abs((hash + r * 13 + c * 37) % 100);
+          cell.classList.add(val < 45 ? 'dark' : 'light');
+        }
+        grid.appendChild(cell);
+      }
+    }
+    container.appendChild(grid);
+  }
+
+  function ejecutarPurgaDatos() {
+    if (!confirm('¿Seguro que deseas purgar y anonimizar los datos de visitantes de eventos con más de 30 días de antigüedad? Esta acción cumple con la Ley N° 19.628 de Protección de Datos de Chile.')) {
+      return;
+    }
+    const thirtyDaysAgo = Date.now() - 30 * 86400000;
+    let count = 0;
+    state.eventos.forEach(ev => {
+      let eventTime = ev.createdAt || new Date(ev.fecha).getTime();
+      if (eventTime < thirtyDaysAgo) {
+        state.invitadosAcceso.forEach(inv => {
+          if (inv.eventoId === ev.id && !inv.rut.startsWith('ANONIMIZADO')) {
+            inv.rut = 'ANONIMIZADO_' + inv.id.substring(4, 8);
+            inv.nombreCompleto = 'Visitante Anónimo';
+            inv.telefono = 'ANONIMIZADO';
+            count++;
+          }
+        });
+      }
+    });
+    saveData();
+    renderEventos();
+    if (window.currentSelectedEventId) {
+      verInvitadosEvento(window.currentSelectedEventId);
+    }
+    showToast('🔒 Cumplimiento de datos: ' + count + ' registros de visitantes anonimizados.');
+  }
+
   // ── CLOCK & TOAST ──
   function updateClock() { const el=document.getElementById('phone-time'); if(!el)return; const n=new Date(); el.textContent=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0'); }
   function showToast(msg, isErr) { const t=document.getElementById('toast'); t.textContent=msg; t.className=isErr?'error show':'show'; clearTimeout(window._tt); window._tt=setTimeout(()=>t.classList.remove('show'),3000); }
@@ -4583,7 +5348,7 @@
       }
     }, 5000);
     // Formatter for Chilean RUT
-    const rutInputs = ['prov-worker-rut', 'porteria-rut-search'];
+    const rutInputs = ['prov-worker-rut', 'porteria-rut-search', 'enrol-rut', 'port-evento-rut-search'];
     rutInputs.forEach(id => {
       const el = document.getElementById(id);
       if (el) {
