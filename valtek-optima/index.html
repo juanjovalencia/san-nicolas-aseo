@@ -655,6 +655,27 @@
     .vdoc-image { max-width: 100%; max-height: 100%; object-fit: contain; }
     .vdoc-close { position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
     .vdoc-close:hover { color: #fff; }
+
+    /* ── MODAL FICHA DE ACREDITACIÓN ── */
+    #view-profile-modal { position: fixed; inset: 0; z-index: 1200; background: rgba(7,9,19,0.9); display: none; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(8px); overflow-y: auto; }
+    #view-profile-modal.active { display: flex; }
+    .profile-card { background: rgba(13,17,36,0.98); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 600px; padding: 2rem; box-shadow: 0 20px 80px rgba(0,0,0,0.6); position: relative; max-height: 90vh; overflow-y: auto; }
+    .profile-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; margin-bottom: 1.5rem; text-align: center; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; }
+    .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; text-align: left; }
+    .profile-field { display: flex; flex-direction: column; }
+    .profile-field-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem; }
+    .profile-field-value { font-size: 0.9rem; color: #fff; font-weight: 600; }
+    .profile-docs-section { margin-bottom: 1.5rem; text-align: left; }
+    .profile-docs-title { font-size: 0.85rem; font-weight: 700; color: var(--accent); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .profile-docs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+    .profile-doc-box { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 10px; padding: 0.5rem; text-align: center; cursor: pointer; transition: all 0.2s; }
+    .profile-doc-box:hover { border-color: var(--accent); background: rgba(0,242,254,0.02); }
+    .profile-doc-label { font-size: 0.65rem; color: var(--text-dim); margin-top: 0.25rem; font-weight: 600; }
+    .profile-doc-img-wrap { width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .profile-doc-img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .profile-actions { display: flex; gap: 1rem; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.25rem; }
+    .profile-close { position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
+    .profile-close:hover { color: #fff; }
   </style>
 </head>
 <body>
@@ -1553,7 +1574,71 @@
     </div>
   </div>
 </div>
-
+<!-- VIEW PROFILE MODAL -->
+<div id="view-profile-modal">
+  <div class="profile-card">
+    <span class="profile-close" onclick="closeProfileModal()">&times;</span>
+    <div class="profile-title">Ficha de Acreditación de Visitante</div>
+    
+    <div class="profile-grid">
+      <div class="profile-field">
+        <span class="profile-field-label">Nombre Completo</span>
+        <span class="profile-field-value" id="prof-nombre"></span>
+      </div>
+      <div class="profile-field">
+        <span class="profile-field-label">RUT</span>
+        <span class="profile-field-value" id="prof-rut"></span>
+      </div>
+      <div class="profile-field">
+        <span class="profile-field-label">Correo Electrónico</span>
+        <span class="profile-field-value" id="prof-email"></span>
+      </div>
+      <div class="profile-field">
+        <span class="profile-field-label">Teléfono</span>
+        <span class="profile-field-value" id="prof-telefono"></span>
+      </div>
+      <div class="profile-field">
+        <span class="profile-field-label">Consentimiento Legal</span>
+        <span class="profile-field-value" id="prof-consent"></span>
+      </div>
+      <div class="profile-field">
+        <span class="profile-field-label">Estado Acreditación</span>
+        <span class="profile-field-value" id="prof-estado"></span>
+      </div>
+    </div>
+    
+    <div class="profile-docs-section">
+      <div class="profile-docs-title">Documentos Adjuntos</div>
+      <div class="profile-docs-grid">
+        <!-- FRONT -->
+        <div class="profile-doc-box" onclick="zoomDocFromProfile('front')">
+          <div class="profile-doc-img-wrap">
+            <img class="profile-doc-img" id="prof-img-front" src="">
+          </div>
+          <div class="profile-doc-label">Carnet (Frente)</div>
+        </div>
+        <!-- BACK -->
+        <div class="profile-doc-box" onclick="zoomDocFromProfile('back')">
+          <div class="profile-doc-img-wrap">
+            <img class="profile-doc-img" id="prof-img-back" src="">
+          </div>
+          <div class="profile-doc-label">Carnet (Atrás)</div>
+        </div>
+        <!-- SELFIE -->
+        <div class="profile-doc-box" onclick="zoomDocFromProfile('selfie')">
+          <div class="profile-doc-img-wrap">
+            <img class="profile-doc-img" id="prof-img-selfie" src="">
+          </div>
+          <div class="profile-doc-label">Selfie de Rostro</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="profile-actions" id="prof-actions-area">
+      <!-- Buttons will be rendered dynamically based on status -->
+    </div>
+  </div>
+</div>
 <!-- MODALS -->
 <!-- DIAGNOSTIC MODAL -->
 <div id="diagnostic-modal">
@@ -5245,6 +5330,8 @@
       else if (isPast) statusBadge = '<span class="badge badge-pending">📋 Pasado</span>';
       else statusBadge = '<span class="badge badge-clean">📅 Próximo</span>';
       
+      const shareUrl = window.location.href.split('#')[0] + '#enrol-' + ev.id;
+      
       return '<div class="evento-card">' +
         '<div class="evento-card-header">' +
           '<div class="evento-card-title">🎟️ ' + ev.nombre + '</div>' +
@@ -5256,8 +5343,15 @@
           '<span>✅ ' + ingresaron + ' ingresaron</span>' +
           '<span>🚪 ' + ev.puertasAutorizadas.join(', ') + '</span>' +
         '</div>' +
+        '<div style="margin-bottom: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 0.5rem; border-radius: 8px; display: flex; flex-direction: column; gap: 0.25rem;">' +
+          '<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Enlace de Registro Público:</span>' +
+          '<div style="display: flex; gap: 0.5rem; align-items: center;">' +
+            '<input type="text" readonly class="f-input" value="' + shareUrl + '" style="margin:0; font-size:0.75rem; padding:0.25rem 0.5rem; flex:1; background:rgba(0,0,0,0.25); height:28px;" onclick="this.select()" id="share-link-' + ev.id + '">' +
+            '<button class="btn-xs btn-blue" onclick="copyEventLink(\'' + ev.id + '\')" style="height:28px;">📋 Copiar</button>' +
+          '</div>' +
+        '</div>' +
         '<div class="evento-card-actions">' +
-          '<button class="btn-sm btn-blue" onclick="openEnrolamiento(\'' + ev.id + '\')">🔗 Enrolar</button>' +
+          '<a href="' + shareUrl + '" target="_blank" class="btn-sm btn-blue" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:0.25rem;">🔗 Enrolar (Abrir)</a>' +
           '<button class="btn-sm btn-green" onclick="verInvitadosEvento(\'' + ev.id + '\')">👥 Ver Inscritos (' + invitados.length + ')</button>' +
           '<button class="btn-sm btn-red" onclick="eliminarEvento(\'' + ev.id + '\')">🗑</button>' +
         '</div>' +
@@ -5324,15 +5418,13 @@
         }
         const statusBadge = '<span class="badge-status-lg ' + badgeClass + '">' + estadoLabel + '</span>';
         
-        let actionsHtml = '';
+        let actionsHtml = '<div class="flex-row" style="gap:0.35rem; align-items:center;">' +
+          '<button class="btn-xs btn-blue" onclick="openFichaAcreditacion(\'' + inv.id + '\')">🔍 Ficha</button>';
         if (estado === 'pendiente') {
-          actionsHtml = '<div class="flex-row" style="gap:0.35rem;">' +
-            '<button class="btn-xs btn-green" onclick="aprobarInvitado(\'' + inv.id + '\')">🟢 Aprobar</button>' +
-            '<button class="btn-xs btn-red" onclick="rechazarInvitado(\'' + inv.id + '\')">🔴 Rechazar</button>' +
-            '</div>';
-        } else {
-          actionsHtml = '<span style="color:var(--text-muted); font-size:0.75rem;">N/A</span>';
+          actionsHtml += '<button class="btn-xs btn-green" onclick="aprobarInvitado(\'' + inv.id + '\')">🟢 Aprobar</button>' +
+            '<button class="btn-xs btn-red" onclick="rechazarInvitado(\'' + inv.id + '\')">🔴 Rechazar</button>';
         }
+        actionsHtml += '</div>';
         
         return '<tr>' +
           '<td><strong>' + inv.nombreCompleto + '</strong></td>' +
@@ -5551,6 +5643,96 @@
     renderEventos();
   }
 
+  function copyEventLink(evId) {
+    const input = document.getElementById('share-link-' + evId);
+    if (input) {
+      input.select();
+      input.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(input.value);
+      showToast('🔗 ¡Enlace de registro copiado al portapapeles!');
+    }
+  }
+
+  let currentProfileVisitorId = null;
+
+  function openFichaAcreditacion(invId) {
+    currentProfileVisitorId = invId;
+    const inv = state.invitadosAcceso.find(i => i.id === invId);
+    if (!inv) return;
+    
+    document.getElementById('prof-nombre').textContent = inv.nombreCompleto;
+    document.getElementById('prof-rut').textContent = inv.rut;
+    document.getElementById('prof-email').textContent = inv.email || '—';
+    document.getElementById('prof-telefono').textContent = inv.telefono || '—';
+    
+    const consentDate = inv.timestampConsentimiento ? new Date(inv.timestampConsentimiento).toLocaleString('es-CL') : '';
+    document.getElementById('prof-consent').innerHTML = inv.estadoConsentimiento ? 
+      '<span style="color:var(--clean);">🟢 Aceptado</span><br><span style="font-size:0.7rem; color:var(--text-muted);">' + consentDate + '</span>' : 
+      '<span style="color:var(--dirty);">🔴 Rechazado</span>';
+      
+    const estado = inv.estadoAprobacion || 'aprobado';
+    let badgeHtml = '';
+    if (estado === 'pendiente') {
+      badgeHtml = '<span class="badge-status-lg pendiente">Pendiente de Revisión</span>';
+    } else if (estado === 'aprobado') {
+      badgeHtml = '<span class="badge-status-lg aprobado">Aprobado</span>';
+    } else {
+      badgeHtml = '<span class="badge-status-lg rechazado">Rechazado</span>';
+    }
+    document.getElementById('prof-estado').innerHTML = badgeHtml;
+    
+    document.getElementById('prof-img-front').src = inv.fotoCarnetFrontal || '';
+    document.getElementById('prof-img-back').src = inv.fotoCarnetTrasera || '';
+    document.getElementById('prof-img-selfie').src = inv.fotoCara || '';
+    
+    const actionsArea = document.getElementById('prof-actions-area');
+    if (actionsArea) {
+      if (estado === 'pendiente') {
+        actionsArea.innerHTML = '<button class="btn-sm btn-green" style="flex:1;" onclick="aprobarDesdeFicha(\'' + inv.id + '\')">🟢 Aprobar Registro</button>' +
+          '<button class="btn-sm btn-red" style="flex:1;" onclick="rechazarDesdeFicha(\'' + inv.id + '\')">🔴 Rechazar Registro</button>';
+      } else {
+        actionsArea.innerHTML = '<button class="btn-sm btn-blue" style="width:100%;" onclick="closeProfileModal()">Cerrar Ficha</button>';
+      }
+    }
+    
+    document.getElementById('view-profile-modal').classList.add('active');
+  }
+
+  function closeProfileModal() {
+    const modal = document.getElementById('view-profile-modal');
+    if (modal) modal.classList.remove('active');
+  }
+
+  function zoomDocFromProfile(type) {
+    const inv = state.invitadosAcceso.find(i => i.id === currentProfileVisitorId);
+    if (!inv) return;
+    
+    let url = '';
+    let title = '';
+    if (type === 'front') {
+      url = inv.fotoCarnetFrontal;
+      title = 'Carnet Identidad (Frente) - ' + inv.nombreCompleto;
+    } else if (type === 'back') {
+      url = inv.fotoCarnetTrasera;
+      title = 'Carnet Identidad (Reverso) - ' + inv.nombreCompleto;
+    } else if (type === 'selfie') {
+      url = inv.fotoCara;
+      title = 'Selfie de Rostro - ' + inv.nombreCompleto;
+    }
+    
+    viewDoc(url, title);
+  }
+
+  function aprobarDesdeFicha(invId) {
+    aprobarInvitado(invId);
+    openFichaAcreditacion(invId);
+  }
+
+  function rechazarDesdeFicha(invId) {
+    rechazarInvitado(invId);
+    openFichaAcreditacion(invId);
+  }
+
   function generateQrCodeGrid(token) {
     const container = document.getElementById('enrol-qr-display');
     if (!container) return;
@@ -5685,6 +5867,19 @@
         e.target.value = e.target.value.replace(/[^0-9]/g, '');
       });
     }
+
+    // Hash routing for direct registration links
+    const handleHashEnrol = () => {
+      const hash = window.location.hash;
+      if (hash && hash.startsWith('#enrol-')) {
+        const evId = hash.replace('#enrol-', '');
+        setTimeout(() => {
+          openEnrolamiento(evId);
+        }, 300);
+      }
+    };
+    handleHashEnrol();
+    window.addEventListener('hashchange', handleHashEnrol);
 
     const ns = document.getElementById('nu-school'); 
     if (ns) ns.addEventListener('change', updatePlanDisplay);
