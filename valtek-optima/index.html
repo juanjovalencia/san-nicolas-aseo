@@ -676,6 +676,30 @@
     .profile-actions { display: flex; gap: 1rem; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.25rem; }
     .profile-close { position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
     .profile-close:hover { color: #fff; }
+    /* ── SIMULADOR DE ACCESO AUTOMÁTICO ── */
+    .auto-access-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    .auto-reader-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem; text-align: center; position: relative; transition: all 0.3s; }
+    .auto-reader-card.active-scan { border-color: var(--accent); box-shadow: 0 0 15px rgba(0,242,254,0.15); }
+    .auto-reader-card.success-scan { border-color: var(--clean); background: rgba(16,185,129,0.03); box-shadow: 0 0 20px rgba(16,185,129,0.1); }
+    .auto-reader-card.error-scan { border-color: var(--dirty); background: rgba(239,68,68,0.03); box-shadow: 0 0 20px rgba(239,68,68,0.1); }
+    .reader-status-indicator { font-size: 1rem; font-weight: 700; margin: 1rem 0; padding: 0.5rem; border-radius: 8px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 1px solid var(--border); }
+    .reader-status-indicator.closed { color: var(--text-muted); }
+    .reader-status-indicator.open { color: var(--clean); border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.05); }
+    .reader-status-indicator.denied { color: var(--dirty); border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.05); }
+    
+    .demo-timeline-container { background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .demo-timeline { display: flex; justify-content: space-between; margin: 1.5rem 0; position: relative; padding: 0.5rem 0; }
+    .demo-timeline::before { content: ""; position: absolute; top: 50%; left: 10px; right: 10px; height: 4px; background: rgba(255,255,255,0.05); z-index: 1; transform: translateY(-50%); }
+    .demo-timeline-progress { position: absolute; top: 50%; left: 10px; width: 0%; height: 4px; background: var(--accent); z-index: 2; transform: translateY(-50%); transition: width 0.3s ease; }
+    .demo-timeline-step { width: 36px; height: 36px; border-radius: 50%; background: #12162b; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; z-index: 3; position: relative; transition: all 0.3s; color: var(--text-dim); }
+    .demo-timeline-step.active { border-color: var(--accent); background: #070a19; color: #fff; box-shadow: 0 0 12px rgba(0,242,254,0.4); }
+    .demo-timeline-step.completed { border-color: var(--clean); background: var(--clean); color: #fff; }
+    .demo-timeline-step.failed { border-color: var(--dirty); background: var(--dirty); color: #fff; }
+    .demo-timeline-labels { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); font-weight: 600; }
+    .demo-timeline-label { width: 80px; text-align: center; line-height: 1.3; }
+    .demo-timeline-label.active { color: #fff; }
+    .demo-timeline-label.completed { color: var(--clean); }
+    .demo-timeline-label.failed { color: var(--dirty); }
   </style>
 </head>
 <body>
@@ -1130,19 +1154,82 @@
 
     <!-- TAB: Eventos Fin de Semana -->
     <div class="port-tab-panel" id="port-panel-eventos">
-      <!-- QR Scanner Simulator -->
-      <div class="qr-scanner-sim">
-        <div class="scan-icon">📷</div>
-        <div style="font-family:var(--font-display); font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Simulador de Lector QR (Torniquete)</div>
-        <div class="flex-row" style="justify-content:center; gap:0.75rem; margin-bottom:1rem;">
-          <div class="f-group" style="flex:2; min-width:200px;"><input class="f-input" id="port-qr-token-input" placeholder="Ingrese token QR del visitante"></div>
-          <div class="f-group" style="min-width:160px;"><select class="f-input f-select" id="port-qr-puerta-select">
-            <option>Puerta Principal</option>
-            <option>Torniquete Acceso Norte</option>
-            <option>Torniquete Acceso Sur</option>
-          </select></div>
+      <!-- Sistema de Acceso Automático Autónomo (P1 + P2) -->
+      <div class="j-card" style="border: 1px solid rgba(0, 242, 254, 0.2); background: radial-gradient(ellipse at 50% 0%, rgba(0,242,254,0.05) 0%, rgba(13,17,36,0.3) 75%);">
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+          <div style="font-size: 1.8rem; margin-bottom: 0.25rem;">🤖 🚪</div>
+          <div style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; color: #fff;">Sistema de Acceso Automático Autónomo (P1 + P2)</div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.25rem 0 0 0; line-height: 1.4;">
+            Control de flujo secuencial sin intervención humana. Los lectores externos abren la puerta y los internos liberan los torniquetes.
+          </p>
         </div>
-        <button class="btn-sm btn-green" onclick="scanQrAtGate()" style="min-width:180px;">🔓 Escanear QR en Torniquete</button>
+
+        <div class="auto-access-grid">
+          <!-- P1: PUERTA PRINCIPAL -->
+          <div class="auto-reader-card" id="auto-reader-p1">
+            <div style="font-size: 1.2rem; font-family: var(--font-display); font-weight: 700; margin-bottom: 0.25rem; color: #fff;">🪪 Lector QR P1</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">Puerta Exterior</div>
+            <div class="reader-status-indicator closed" id="status-p1-indicator">
+              <span id="status-p1-icon">🔒</span> <span id="status-p1-text">CERRADO</span>
+            </div>
+            
+            <div class="f-group" style="margin-top: 1rem; margin-bottom: 0.75rem;">
+              <input class="f-input" id="auto-qr-p1-input" placeholder="Token QR (Ej: QR_...)" style="font-size:0.75rem; text-align:center; height: 32px;">
+            </div>
+            <button class="btn-sm btn-blue" onclick="simularEscaneoP1()" style="width: 100%;">🔓 Escanear QR en P1</button>
+          </div>
+
+          <!-- P2: TORNIQUETE -->
+          <div class="auto-reader-card" id="auto-reader-p2">
+            <div style="font-size: 1.2rem; font-family: var(--font-display); font-weight: 700; margin-bottom: 0.25rem; color: #fff;">🌀 Lector QR P2</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">Torniquete Interior</div>
+            <div class="reader-status-indicator closed" id="status-p2-indicator">
+              <span id="status-p2-icon">🔒</span> <span id="status-p2-text">BLOQUEADO</span>
+            </div>
+            
+            <div class="f-group" style="margin-top: 1rem; margin-bottom: 0.75rem;">
+              <input class="f-input" id="auto-qr-p2-input" placeholder="Token QR (Ej: QR_...)" style="font-size:0.75rem; text-align:center; height: 32px;">
+            </div>
+            <button class="btn-sm btn-green" onclick="simularEscaneoP2()" style="width: 100%;">🔓 Escanear QR en P2</button>
+          </div>
+        </div>
+
+        <!-- DEMO DE SIMULACIÓN AUTOMÁTICA EN VIVO -->
+        <div class="demo-timeline-container">
+          <div style="font-weight: bold; font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; display:flex; align-items:center; justify-content:space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem;">
+            <span>⚡ Demo en Vivo: Trayecto Autónomo Automatizado</span>
+            <span id="demo-status-lbl" style="font-size:0.75rem; color:var(--text-muted); text-transform:none; font-family:var(--font-display);">Listo para simular</span>
+          </div>
+
+          <div class="demo-timeline">
+            <div class="demo-timeline-progress" id="demo-progress-bar"></div>
+            <div class="demo-timeline-step active" id="step-1">1</div>
+            <div class="demo-timeline-step" id="step-2">2</div>
+            <div class="demo-timeline-step" id="step-3">3</div>
+            <div class="demo-timeline-step" id="step-4">4</div>
+            <div class="demo-timeline-step" id="step-5">5</div>
+          </div>
+
+          <div class="demo-timeline-labels">
+            <div class="demo-timeline-label active" id="label-1">1. Llegada Recinto</div>
+            <div class="demo-timeline-label" id="label-2">2. QR en Lector P1</div>
+            <div class="demo-timeline-label" id="label-3">3. Ingreso y Tránsito</div>
+            <div class="demo-timeline-label" id="label-4">4. QR en Torniquete P2</div>
+            <div class="demo-timeline-label" id="label-5">5. Acceso Completado</div>
+          </div>
+
+          <div class="flex-row" style="margin-top: 1.5rem; gap: 0.75rem; align-items: center; justify-content: center; flex-wrap: wrap;">
+            <div class="f-group" style="flex:1; min-width: 220px; margin: 0;">
+              <select class="f-input f-select" id="demo-visitor-select" style="font-size:0.8rem; background:rgba(0,0,0,0.3); height:32px; padding:0 0.5rem;"></select>
+            </div>
+            <button class="btn-sm btn-green" id="btn-run-demo" onclick="iniciarDemoAutonoma()" style="min-width: 220px; font-weight: bold; box-shadow: 0 0 15px rgba(16,185,129,0.25);">
+              ⚡ Iniciar Simulación Automática
+            </button>
+            <button class="btn-sm btn-red" id="btn-stop-demo" onclick="detenerDemoAutonoma()" style="display: none; min-width: 120px;">
+              ⏹ Detener Demo
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Manual RUT Lookup for Events -->
@@ -5090,23 +5177,40 @@
       return { allow: false, reason: 'Fuera de horario. El evento es de ' + ev.horaInicio + ' a ' + ev.horaFin + '.' };
     }
     
-    if (!ev.puertasAutorizadas.includes(puerta)) {
-      return { allow: false, reason: 'La puerta "' + puerta + '" no está autorizada para este evento.' };
+    // Stage-specific checks
+    if (puerta === 'Puerta Principal') {
+      if (inv.ingresoMarcado) {
+        return { allow: false, reason: 'Este visitante ya completó su ingreso al recinto.' };
+      }
+      
+      // Update P1 state
+      inv.scanP1 = true;
+      inv.timeP1 = Date.now();
+      saveData();
+      
+      emitWsFeedEvent(inv, ev, 'P1: Puerta Exterior', true);
+      return { allow: true, message: 'Puerta Principal P1 Abierta. Ingrese a zona de tránsito.', invitado: inv, evento: ev };
+      
+    } else { // P2: Torniquete (e.g. Acceso Norte/Sur)
+      if (inv.ingresoMarcado) {
+        return { allow: false, reason: 'Este visitante ya ingresó a las ' + new Date(inv.horaIngreso).toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit'}) + '.' };
+      }
+      
+      if (!inv.scanP1) {
+        emitWsFeedEvent(inv, ev, puerta, false);
+        return { allow: false, reason: 'Acceso Denegado: Debe validar su código en Puerta Exterior (P1) primero.' };
+      }
+      
+      // Update P2 state and complete entry
+      inv.scanP2 = true;
+      inv.timeP2 = Date.now();
+      inv.ingresoMarcado = true;
+      inv.horaIngreso = Date.now();
+      saveData();
+      
+      emitWsFeedEvent(inv, ev, 'P2: Torniquete', true);
+      return { allow: true, message: 'Torniquete P2 Liberado. Acceso a evento completado.', invitado: inv, evento: ev };
     }
-    
-    if (inv.ingresoMarcado) {
-      return { allow: false, reason: 'Este visitante ya ingresó a las ' + new Date(inv.horaIngreso).toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit'}) + '.' };
-    }
-    
-    // Success!
-    inv.ingresoMarcado = true;
-    inv.horaIngreso = Date.now();
-    saveData();
-    
-    // Emit WebSocket event (simulated)
-    emitWsFeedEvent(inv, ev, puerta, true);
-    
-    return { allow: true, message: 'Acceso Autorizado', invitado: inv, evento: ev };
   }
 
   // --- WebSocket Feed Simulation ---
@@ -5728,9 +5832,300 @@
     openFichaAcreditacion(invId);
   }
 
-  function rechazarDesdeFicha(invId) {
-    rechazarInvitado(invId);
-    openFichaAcreditacion(invId);
+  }
+
+  function populateDemoVisitorSelect() {
+    const select = document.getElementById('demo-visitor-select');
+    if (!select) return;
+    select.innerHTML = '';
+    
+    state.invitadosAcceso.forEach(inv => {
+      const ev = state.eventos.find(e => e.id === inv.eventoId);
+      const evName = ev ? ev.nombre : 'Evento';
+      
+      const estado = inv.estadoAprobacion || 'aprobado';
+      let estadoLabel = 'Aprobado';
+      if (estado === 'pendiente') estadoLabel = 'Pendiente';
+      else if (estado === 'rechazado') estadoLabel = 'Rechazado';
+      
+      const opt = document.createElement('option');
+      opt.value = inv.qrToken;
+      opt.textContent = `${inv.nombreCompleto} (${estadoLabel}) - ${evName}`;
+      select.appendChild(opt);
+    });
+  }
+
+  function simularEscaneoP1() {
+    const input = document.getElementById('auto-qr-p1-input');
+    if (!input) return;
+    const token = input.value.trim();
+    if (!token) { showToast('⚠ Ingrese el token QR del visitante.', true); return; }
+    
+    const card = document.getElementById('auto-reader-p1');
+    const indicator = document.getElementById('status-p1-indicator');
+    const icon = document.getElementById('status-p1-icon');
+    const text = document.getElementById('status-p1-text');
+    if (!card || !indicator || !icon || !text) return;
+    
+    card.className = 'auto-reader-card active-scan';
+    icon.textContent = '⏳';
+    text.textContent = 'PROCESANDO...';
+    
+    setTimeout(() => {
+      const result = apiPorteriaValidarQr(token, 'Puerta Principal');
+      if (result.allow) {
+        card.className = 'auto-reader-card success-scan';
+        indicator.className = 'reader-status-indicator open';
+        icon.textContent = '🔓';
+        text.textContent = 'PUERTA ABIERTA';
+        showToast('🟢 P1: Acceso Autorizado. Puerta Principal Abierta.');
+        renderPorteriaEventosHoy();
+        populateDemoVisitorSelect();
+      } else {
+        card.className = 'auto-reader-card error-scan';
+        indicator.className = 'reader-status-indicator denied';
+        icon.textContent = '❌';
+        text.textContent = 'DENEGADO';
+        showToast('🔴 P1: ' + result.reason, true);
+      }
+    }, 1000);
+  }
+
+  function simularEscaneoP2() {
+    const input = document.getElementById('auto-qr-p2-input');
+    if (!input) return;
+    const token = input.value.trim();
+    if (!token) { showToast('⚠ Ingrese el token QR del visitante.', true); return; }
+    
+    const card = document.getElementById('auto-reader-p2');
+    const indicator = document.getElementById('status-p2-indicator');
+    const icon = document.getElementById('status-p2-icon');
+    const text = document.getElementById('status-p2-text');
+    if (!card || !indicator || !icon || !text) return;
+    
+    card.className = 'auto-reader-card active-scan';
+    icon.textContent = '⏳';
+    text.textContent = 'PROCESANDO...';
+    
+    setTimeout(() => {
+      const result = apiPorteriaValidarQr(token, 'Torniquete Acceso Norte');
+      if (result.allow) {
+        card.className = 'auto-reader-card success-scan';
+        indicator.className = 'reader-status-indicator open';
+        icon.textContent = '🔓';
+        text.textContent = 'TORNIQUETE LIBERADO';
+        showToast('🟢 P2: Acceso Autorizado. Torniquete Liberado.');
+        renderPorteriaEventosHoy();
+        populateDemoVisitorSelect();
+      } else {
+        card.className = 'auto-reader-card error-scan';
+        indicator.className = 'reader-status-indicator denied';
+        icon.textContent = '❌';
+        text.textContent = 'DENEGADO';
+        showToast('🔴 P2: ' + result.reason, true);
+      }
+    }, 1000);
+  }
+
+  let demoTimeouts = [];
+  
+  function iniciarDemoAutonoma() {
+    detenerDemoAutonoma();
+    
+    const select = document.getElementById('demo-visitor-select');
+    if (!select) return;
+    const token = select.value;
+    if (!token) { showToast('⚠ No hay visitantes para simular.', true); return; }
+    
+    const inv = state.invitadosAcceso.find(i => i.qrToken === token);
+    if (!inv) return;
+    
+    const progress = document.getElementById('demo-progress-bar');
+    const statusLbl = document.getElementById('demo-status-lbl');
+    const btnRun = document.getElementById('btn-run-demo');
+    const btnStop = document.getElementById('btn-stop-demo');
+    
+    if (btnRun) btnRun.style.display = 'none';
+    if (btnStop) btnStop.style.display = 'inline-block';
+    
+    resetSimulatedReadersUI();
+    resetTimelineUI();
+    
+    statusLbl.textContent = '🏃 ' + inv.nombreCompleto + ' se aproxima a la Puerta Exterior (P1)...';
+    statusLbl.style.color = 'var(--accent)';
+    progress.style.width = '10%';
+    
+    demoTimeouts.push(setTimeout(() => {
+      setStepActive(2);
+      statusLbl.textContent = '📸 Escaneando QR en lector P1...';
+      document.getElementById('auto-qr-p1-input').value = token;
+      
+      const card = document.getElementById('auto-reader-p1');
+      const indicator = document.getElementById('status-p1-indicator');
+      const icon = document.getElementById('status-p1-icon');
+      const text = document.getElementById('status-p1-text');
+      
+      card.className = 'auto-reader-card active-scan';
+      icon.textContent = '⏳';
+      text.textContent = 'PROCESANDO...';
+      
+      demoTimeouts.push(setTimeout(() => {
+        const result = apiPorteriaValidarQr(token, 'Puerta Principal');
+        if (result.allow) {
+          card.className = 'auto-reader-card success-scan';
+          indicator.className = 'reader-status-indicator open';
+          icon.textContent = '🔓';
+          text.textContent = 'PUERTA ABIERTA';
+          setStepCompleted(1);
+          setStepCompleted(2);
+          statusLbl.textContent = '🟢 P1 Abierta. Ingreso autorizado al recinto escolar.';
+          statusLbl.style.color = 'var(--clean)';
+          progress.style.width = '40%';
+          renderPorteriaEventosHoy();
+          
+          demoTimeouts.push(setTimeout(() => {
+            setStepActive(3);
+            statusLbl.textContent = '🚶 Caminando por la zona de tránsito hacia el torniquete (P2)...';
+            statusLbl.style.color = 'var(--accent)';
+            progress.style.width = '65%';
+            
+            demoTimeouts.push(setTimeout(() => {
+              setStepActive(4);
+              statusLbl.textContent = '📸 Escaneando QR en lector P2 (Torniquete)...';
+              document.getElementById('auto-qr-p2-input').value = token;
+              
+              const card2 = document.getElementById('auto-reader-p2');
+              const indicator2 = document.getElementById('status-p2-indicator');
+              const icon2 = document.getElementById('status-p2-icon');
+              const text2 = document.getElementById('status-p2-text');
+              
+              card2.className = 'auto-reader-card active-scan';
+              icon2.textContent = '⏳';
+              text2.textContent = 'PROCESANDO...';
+              
+              demoTimeouts.push(setTimeout(() => {
+                const result2 = apiPorteriaValidarQr(token, 'Torniquete Acceso Norte');
+                if (result2.allow) {
+                  card2.className = 'auto-reader-card success-scan';
+                  indicator2.className = 'reader-status-indicator open';
+                  icon2.textContent = '🔓';
+                  text2.textContent = 'TORNIQUETE LIBERADO';
+                  setStepCompleted(3);
+                  setStepCompleted(4);
+                  setStepCompleted(5);
+                  statusLbl.textContent = '🎉 ¡Acceso Completado! Torniquete P2 liberado.';
+                  statusLbl.style.color = 'var(--clean)';
+                  progress.style.width = '100%';
+                  renderPorteriaEventosHoy();
+                  
+                  demoTimeouts.push(setTimeout(() => {
+                    detenerDemoAutonoma();
+                  }, 4000));
+                } else {
+                  card2.className = 'auto-reader-card error-scan';
+                  indicator2.className = 'reader-status-indicator denied';
+                  icon2.textContent = '❌';
+                  text2.textContent = 'DENEGADO';
+                  setStepFailed(4);
+                  statusLbl.textContent = '❌ Acceso Denegado en P2: ' + result2.reason;
+                  statusLbl.style.color = 'var(--dirty)';
+                  demoTimeouts.push(setTimeout(() => { detenerDemoAutonoma(); }, 4000));
+                }
+              }, 1500));
+            }, 3000));
+          }, 3000));
+        } else {
+          card.className = 'auto-reader-card error-scan';
+          indicator.className = 'reader-status-indicator denied';
+          icon.textContent = '❌';
+          text.textContent = 'DENEGADO';
+          setStepFailed(2);
+          statusLbl.textContent = '❌ Acceso Denegado en P1: ' + result.reason;
+          statusLbl.style.color = 'var(--dirty)';
+          progress.style.width = '25%';
+          demoTimeouts.push(setTimeout(() => { detenerDemoAutonoma(); }, 4000));
+        }
+      }, 1500));
+    }, 2500));
+  }
+  
+  function detenerDemoAutonoma() {
+    demoTimeouts.forEach(id => clearTimeout(id));
+    demoTimeouts = [];
+    
+    const btnRun = document.getElementById('btn-run-demo');
+    const btnStop = document.getElementById('btn-stop-demo');
+    if (btnRun) btnRun.style.display = 'inline-block';
+    if (btnStop) btnStop.style.display = 'none';
+    
+    const statusLbl = document.getElementById('demo-status-lbl');
+    if (statusLbl) {
+      statusLbl.textContent = 'Listo para simular';
+      statusLbl.style.color = 'var(--text-muted)';
+    }
+    
+    const progress = document.getElementById('demo-progress-bar');
+    if (progress) progress.style.width = '0%';
+    
+    resetSimulatedReadersUI();
+    resetTimelineUI();
+  }
+  
+  function resetSimulatedReadersUI() {
+    ['p1', 'p2'].forEach(p => {
+      const card = document.getElementById('auto-reader-' + p);
+      const indicator = document.getElementById('status-' + p + '-indicator');
+      const icon = document.getElementById('status-' + p + '-icon');
+      const text = document.getElementById('status-' + p + '-text');
+      const input = document.getElementById('auto-qr-' + p + '-input');
+      
+      if (card) card.className = 'auto-reader-card';
+      if (indicator) indicator.className = 'reader-status-indicator closed';
+      if (icon) icon.textContent = '🔒';
+      if (text) text.textContent = (p === 'p1') ? 'CERRADO' : 'BLOQUEADO';
+      if (input) input.value = '';
+    });
+  }
+  
+  function resetTimelineUI() {
+    for (let i = 1; i <= 5; i++) {
+      const step = document.getElementById('step-' + i);
+      const label = document.getElementById('label-' + i);
+      if (step) {
+        step.className = (i === 1) ? 'demo-timeline-step active' : 'demo-timeline-step';
+      }
+      if (label) {
+        label.className = (i === 1) ? 'demo-timeline-label active' : 'demo-timeline-label';
+      }
+    }
+  }
+  
+  function setStepActive(stepNum) {
+    resetTimelineUI();
+    for (let i = 1; i < stepNum; i++) {
+      const step = document.getElementById('step-' + i);
+      const label = document.getElementById('label-' + i);
+      if (step) step.className = 'demo-timeline-step completed';
+      if (label) label.className = 'demo-timeline-label completed';
+    }
+    const step = document.getElementById('step-' + stepNum);
+    const label = document.getElementById('label-' + stepNum);
+    if (step) step.className = 'demo-timeline-step active';
+    if (label) label.className = 'demo-timeline-label active';
+  }
+  
+  function setStepCompleted(stepNum) {
+    const step = document.getElementById('step-' + stepNum);
+    const label = document.getElementById('label-' + stepNum);
+    if (step) step.className = 'demo-timeline-step completed';
+    if (label) label.className = 'demo-timeline-label completed';
+  }
+  
+  function setStepFailed(stepNum) {
+    const step = document.getElementById('step-' + stepNum);
+    const label = document.getElementById('label-' + stepNum);
+    if (step) step.className = 'demo-timeline-step failed';
+    if (label) label.className = 'demo-timeline-label failed';
   }
 
   function generateQrCodeGrid(token) {
