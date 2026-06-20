@@ -628,6 +628,33 @@
     .evento-card-date { font-size: 0.78rem; color: var(--text-muted); }
     .evento-card-meta { display: flex; gap: 1.5rem; font-size: 0.82rem; color: var(--text-dim); margin-bottom: 0.75rem; }
     .evento-card-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+    /* ── FOTO UPLOAD SIMULADO ── */
+    .upload-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 0.75rem; margin: 1rem 0; }
+    .upload-box { background: rgba(255,255,255,0.02); border: 2px dashed rgba(255,255,255,0.15); border-radius: 12px; padding: 1rem 0.5rem; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100px; }
+    .upload-box:hover { border-color: var(--primary); background: rgba(99,102,241,0.04); }
+    .upload-box.uploaded { border-color: var(--clean); background: rgba(16,185,129,0.04); }
+    .upload-icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
+    .upload-label { font-size: 0.7rem; font-weight: 600; color: var(--text-dim); }
+    .upload-filename { font-size: 0.65rem; color: var(--clean); font-weight: 500; margin-top: 0.25rem; word-break: break-all; max-width: 90%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+
+    /* ── INTERFAZ DE DOCUMENTOS (TABLA) ── */
+    .doc-thumbnail { width: 32px; height: 32px; border-radius: 6px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; margin-right: 0.25rem; }
+    .doc-thumbnail:hover { border-color: var(--accent); transform: scale(1.1); box-shadow: 0 0 10px rgba(0,242,254,0.3); }
+    .badge-status-lg { padding: 0.25rem 0.6rem; border-radius: 10px; font-size: 0.75rem; font-weight: 700; display: inline-block; text-transform: uppercase; }
+    .badge-status-lg.pendiente { background: rgba(245,158,11,0.15); color: var(--process); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-status-lg.aprobado { background: rgba(16,185,129,0.15); color: var(--clean); border: 1px solid rgba(16,185,129,0.3); }
+    .badge-status-lg.rechazado { background: rgba(239,68,68,0.15); color: var(--dirty); border: 1px solid rgba(239,68,68,0.3); }
+
+    /* ── MODAL VISOR DE DOCUMENTOS ── */
+    #view-doc-modal { position: fixed; inset: 0; z-index: 1200; background: rgba(7,9,19,0.9); display: none; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(8px); }
+    #view-doc-modal.active { display: flex; }
+    .vdoc-card { background: rgba(13,17,36,0.95); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 500px; padding: 1.5rem; text-align: center; box-shadow: 0 20px 80px rgba(0,0,0,0.6); position: relative; }
+    .vdoc-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; margin-bottom: 1rem; color: #fff; }
+    .vdoc-image-container { width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 12px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 1rem; }
+    .vdoc-image { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .vdoc-close { position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
+    .vdoc-close:hover { color: #fff; }
   </style>
 </head>
 <body>
@@ -1418,9 +1445,10 @@
               <tr>
                 <th>Nombre</th>
                 <th>RUT</th>
-                <th>Teléfono</th>
-                <th>Token QR</th>
-                <th>Consentimiento</th>
+                <th>Email</th>
+                <th>Documentos</th>
+                <th>Estado</th>
+                <th>Acciones</th>
                 <th>Ingresó</th>
                 <th>Hora Ingreso</th>
               </tr>
@@ -1455,23 +1483,73 @@
     </div>
     <div class="f-group"><label class="f-label">Nombre Completo</label><input class="f-input" id="enrol-nombre" placeholder="Ingrese su nombre completo"></div>
     <div class="f-group"><label class="f-label">RUT</label><input class="f-input" id="enrol-rut" placeholder="12.345.678-9"></div>
-    <div class="f-group"><label class="f-label">Teléfono (Opcional)</label><input class="f-input" id="enrol-telefono" placeholder="+56 9 1234 5678"></div>
+    <div class="f-group"><label class="f-label">Correo Electrónico</label><input type="email" class="f-input" id="enrol-email" placeholder="ejemplo@correo.com"></div>
+    <div class="f-group">
+      <label class="f-label">Fotografías de Acreditación (Obligatorias)</label>
+      <div class="upload-grid">
+        <!-- FRONT CARNET -->
+        <div class="upload-box" id="box-carnet-frontal" onclick="simulateUpload('carnet-frontal')">
+          <span class="upload-icon">🪪</span>
+          <span class="upload-label" style="font-size: 0.62rem;">Carnet (Frente)</span>
+          <span class="upload-filename" id="file-carnet-frontal-name" style="display:none;"></span>
+          <input type="hidden" id="val-carnet-frontal" value="">
+        </div>
+        <!-- BACK CARNET -->
+        <div class="upload-box" id="box-carnet-trasero" onclick="simulateUpload('carnet-trasero')">
+          <span class="upload-icon">🪪</span>
+          <span class="upload-label" style="font-size: 0.62rem;">Carnet (Atrás)</span>
+          <span class="upload-filename" id="file-carnet-trasero-name" style="display:none;"></span>
+          <input type="hidden" id="val-carnet-trasero" value="">
+        </div>
+        <!-- SELFIE -->
+        <div class="upload-box" id="box-selfie" onclick="simulateUpload('selfie')">
+          <span class="upload-icon">📸</span>
+          <span class="upload-label" style="font-size: 0.62rem;">Selfie Rostro</span>
+          <span class="upload-filename" id="file-selfie-name" style="display:none;"></span>
+          <input type="hidden" id="val-selfie" value="">
+        </div>
+      </div>
+    </div>
     <div class="consent-check">
       <input type="checkbox" id="enrol-consent">
       <label for="enrol-consent">Acepto el tratamiento de mis datos personales de acuerdo a la Política de Seguridad del Colegio, con el único fin de gestionar el control de acceso y seguridad del recinto. Los datos serán eliminados automáticamente tras 30 días del evento.</label>
     </div>
     <div id="enrol-error" class="error-msg">Complete todos los campos obligatorios y acepte el consentimiento.</div>
-    <button class="btn-full btn-primary" onclick="submitEnrolamiento()" style="margin-top:0.5rem;">📲 Registrarme y Obtener QR</button>
+    <button class="btn-full btn-primary" onclick="submitEnrolamiento()" style="margin-top:0.5rem;">📲 Registrarme y Solicitar Acreditación</button>
     <div style="text-align:center; margin-top:1rem;"><span class="diag-cancel" onclick="closeEnrolamiento()">← Volver al sistema</span></div>
   </div>
+
+  <div class="enrol-card enrol-success" id="enrol-review-card" style="display:none; text-align:center;">
+    <span style="font-size: 3rem;">⏳</span>
+    <div style="font-family:var(--font-display); font-size:1.3rem; font-weight:800; margin-top:0.75rem;">Registro en Acreditación</div>
+    <div style="font-size:0.85rem; color:var(--text-muted); margin-top:0.5rem; line-height:1.5;">
+      Tu solicitud para ingresar al evento ha sido recibida y está en proceso de revisión por seguridad.<br><br>
+      Una vez aprobada tu documentación, se enviará el código QR de acceso automáticamente a tu correo:<br>
+      <strong id="enrol-pending-email-display" style="color:var(--accent);"></strong>
+    </div>
+    <div class="event-detail-card" id="enrol-pending-event-details"></div>
+    <button class="btn-full btn-primary" onclick="closeEnrolamiento()" style="margin-top:1.5rem;">Entendido</button>
+  </div>
+
   <div class="enrol-card enrol-success" id="enrol-success-card" style="display:none;">
     <span style="font-size: 3rem;">✅</span>
-    <div style="font-family:var(--font-display); font-size:1.3rem; font-weight:800; margin-top:0.75rem;">¡Registro Exitoso!</div>
+    <div style="font-family:var(--font-display); font-size:1.3rem; font-weight:800; margin-top:0.75rem;">¡Acreditación Aprobada!</div>
     <div style="font-size:0.88rem; color:var(--text-muted); margin-top:0.5rem;">Presenta este código QR en el torniquete para ingresar.</div>
     <div class="qr-display" id="enrol-qr-display"></div>
     <div style="font-family:monospace; font-size:0.8rem; color:var(--primary); margin-bottom:0.5rem;" id="enrol-qr-token"></div>
     <div class="event-detail-card" id="enrol-event-details"></div>
     <button class="btn-full btn-primary" onclick="closeEnrolamiento()" style="margin-top:1rem;">Cerrar</button>
+  </div>
+</div>
+
+<!-- VIEW DOCUMENT MODAL -->
+<div id="view-doc-modal">
+  <div class="vdoc-card">
+    <span class="vdoc-close" onclick="closeDocModal()">&times;</span>
+    <div class="vdoc-title" id="vdoc-modal-title">Documento</div>
+    <div class="vdoc-image-container">
+      <img class="vdoc-image" id="vdoc-modal-img" src="">
+    </div>
   </div>
 </div>
 
@@ -1767,25 +1845,43 @@
     }
   ];
 
+  const MOCK_CARNET_FRONT = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200"><rect width="100%" height="100%" fill="%232e354f" rx="15"/><rect x="20" y="20" width="80" height="100" fill="%231a1d2e" rx="5"/><circle cx="60" cy="60" r="25" fill="%234f46e5"/><rect x="35" y="95" width="50" height="15" fill="%234f46e5"/><rect x="120" y="30" width="150" height="15" fill="%23ffffff"/><rect x="120" y="55" width="100" height="10" fill="%2394a3b8"/><rect x="120" y="75" width="120" height="10" fill="%2394a3b8"/><rect x="120" y="95" width="80" height="10" fill="%2394a3b8"/><text x="20" y="160" fill="%2300f2fe" font-family="monospace" font-size="12">CHILE - C.I. MOCK</text></svg>`;
+
+  const MOCK_CARNET_BACK = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200"><rect width="100%" height="100%" fill="%232e354f" rx="15"/><rect x="20" y="20" width="260" height="40" fill="%231a1d2e"/><rect x="20" y="80" width="260" height="8" fill="%2394a3b8"/><rect x="20" y="95" width="260" height="8" fill="%2394a3b8"/><rect x="20" y="110" width="180" height="8" fill="%2394a3b8"/><rect x="20" y="130" width="60" height="40" fill="%231a1d2e"/><rect x="90" y="130" width="60" height="40" fill="%231a1d2e"/><text x="160" y="160" fill="%2394a3b8" font-family="monospace" font-size="10">REPUBLICA DE CHILE</text></svg>`;
+
+  const MOCK_SELFIE = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200"><rect width="100%" height="100%" fill="%231a1d2e" rx="15"/><circle cx="150" cy="80" r="35" fill="%234f46e5"/><path d="M100 160 C 100 120, 200 120, 200 160 Z" fill="%234f46e5"/><circle cx="140" cy="75" r="4" fill="%23ffffff"/><circle cx="160" cy="75" r="4" fill="%23ffffff"/><path d="M 140 95 Q 150 105 160 95" stroke="%23ffffff" stroke-width="3" fill="none"/><text x="50%" y="185" dominant-baseline="middle" text-anchor="middle" fill="%2300f2fe" font-family="sans-serif" font-size="12">Selfie Validada</text></svg>`;
+
   const SEED_INVITADOS = [
     {
       id: 'inv_1', eventoId: 'ev_demo1', rut: '16.234.567-8', nombreCompleto: 'Carlos Muñoz Pereira',
-      telefono: '+56912345678', qrToken: 'QR_A3F8K2M9', estadoConsentimiento: true,
+      telefono: '+56912345678', email: 'carlos.munoz@gmail.com',
+      fotoCarnetFrontal: MOCK_CARNET_FRONT, fotoCarnetTrasera: MOCK_CARNET_BACK, fotoCara: MOCK_SELFIE,
+      estadoAprobacion: 'aprobado', fechaAprobacion: Date.now() - 3600000,
+      qrToken: 'QR_A3F8K2M9', estadoConsentimiento: true,
       timestampConsentimiento: Date.now() - 3600000, ingresoMarcado: true, horaIngreso: Date.now() - 1800000
     },
     {
       id: 'inv_2', eventoId: 'ev_demo1', rut: '17.876.543-2', nombreCompleto: 'Ana Belén Torres',
-      telefono: '+56987654321', qrToken: 'QR_B7G2L5P1', estadoConsentimiento: true,
+      telefono: '+56987654321', email: 'ana.torres@outlook.com',
+      fotoCarnetFrontal: MOCK_CARNET_FRONT, fotoCarnetTrasera: MOCK_CARNET_BACK, fotoCara: MOCK_SELFIE,
+      estadoAprobacion: 'pendiente', fechaAprobacion: null,
+      qrToken: 'QR_B7G2L5P1', estadoConsentimiento: true,
       timestampConsentimiento: Date.now() - 7200000, ingresoMarcado: false, horaIngreso: null
     },
     {
       id: 'inv_3', eventoId: 'ev_demo2', rut: '19.456.789-0', nombreCompleto: 'Diego Ramírez',
-      telefono: '', qrToken: 'QR_C4H9N8R3', estadoConsentimiento: true,
+      telefono: '', email: 'diego.ramirez@yahoo.com',
+      fotoCarnetFrontal: MOCK_CARNET_FRONT, fotoCarnetTrasera: MOCK_CARNET_BACK, fotoCara: MOCK_SELFIE,
+      estadoAprobacion: 'aprobado', fechaAprobacion: Date.now() - 5400000,
+      qrToken: 'QR_C4H9N8R3', estadoConsentimiento: true,
       timestampConsentimiento: Date.now() - 5400000, ingresoMarcado: true, horaIngreso: Date.now() - 900000
     },
     {
       id: 'inv_4', eventoId: 'ev_demo1', rut: '20.111.222-3', nombreCompleto: 'Francisca López',
-      telefono: '+56945678901', qrToken: 'QR_D1J6Q4W7', estadoConsentimiento: true,
+      telefono: '+56945678901', email: 'francisca.l@gmail.com',
+      fotoCarnetFrontal: MOCK_CARNET_FRONT, fotoCarnetTrasera: MOCK_CARNET_BACK, fotoCara: MOCK_SELFIE,
+      estadoAprobacion: 'pendiente', fechaAprobacion: null,
+      qrToken: 'QR_D1J6Q4W7', estadoConsentimiento: true,
       timestampConsentimiento: Date.now() - 9000000, ingresoMarcado: false, horaIngreso: null
     }
   ];
@@ -1992,7 +2088,7 @@
   }
 
   // ── PERSISTENCE ──
-  const DATA_VERSION = '5.0'; // Incremented version for weekend access control module
+  const DATA_VERSION = '5.1'; // Incremented version for visitor pre-approval & uploads module
   function saveData() { 
     try {
       localStorage.setItem('vo_version', DATA_VERSION); 
@@ -4841,9 +4937,11 @@
     return ev;
   }
 
-  function apiVisitanteEnrolar(eventoId, rut, nombreCompleto, telefono, consentimiento) {
+  function apiVisitanteEnrolar(eventoId, rut, nombreCompleto, telefono, email, fotoCarnetFrontal, fotoCarnetTrasera, fotoCara, consentimiento) {
     if (!consentimiento) return { error: 'Consentimiento requerido' };
-    if (!rut || !nombreCompleto) return { error: 'RUT y nombre son obligatorios' };
+    if (!rut || !nombreCompleto || !email) return { error: 'RUT, nombre y correo son obligatorios' };
+    if (!fotoCarnetFrontal || !fotoCarnetTrasera || !fotoCara) return { error: 'Debe cargar todas las fotografías de acreditación' };
+    
     // Check duplicate RUT for this event
     const dup = state.invitadosAcceso.find(i => i.eventoId === eventoId && i.rut.replace(/[^0-9kK]/gi,'') === rut.replace(/[^0-9kK]/gi,''));
     if (dup) return { error: 'Este RUT ya está registrado para este evento' };
@@ -4858,6 +4956,12 @@
       rut: rut,
       nombreCompleto: nombreCompleto,
       telefono: telefono || '',
+      email: email,
+      fotoCarnetFrontal: fotoCarnetFrontal,
+      fotoCarnetTrasera: fotoCarnetTrasera,
+      fotoCara: fotoCara,
+      estadoAprobacion: 'pendiente',
+      fechaAprobacion: null,
       qrToken: token,
       estadoConsentimiento: true,
       timestampConsentimiento: Date.now(),
@@ -4874,6 +4978,17 @@
     if (!inv) return { allow: false, reason: 'QR Inválido — Token no encontrado en el sistema.' };
     const ev = state.eventos.find(e => e.id === inv.eventoId);
     if (!ev) return { allow: false, reason: 'Evento asociado no encontrado.' };
+    
+    // Check approval status first
+    const status = inv.estadoAprobacion || 'aprobado';
+    if (status === 'pendiente') {
+      emitWsFeedEvent(inv, ev, puerta, false);
+      return { allow: false, reason: 'Acceso Denegado: Registro pendiente de aprobación por administración.' };
+    }
+    if (status === 'rechazado') {
+      emitWsFeedEvent(inv, ev, puerta, false);
+      return { allow: false, reason: 'Acceso Denegado: Registro rechazado por seguridad.' };
+    }
     
     const today = new Date().toISOString().split('T')[0];
     if (ev.fecha !== today) return { allow: false, reason: 'El evento "' + ev.nombre + '" no es hoy (' + ev.fecha + ').' };
@@ -5037,7 +5152,20 @@
     }
     
     const ev = state.eventos.find(e => e.id === inv.eventoId);
-    const statusText = inv.ingresoMarcado ? '<span style="color:var(--clean);">✅ Ya ingresó a las ' + new Date(inv.horaIngreso).toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}) + '</span>' : '<span style="color:var(--process);">⏳ Pendiente de ingreso</span>';
+    
+    const status = inv.estadoAprobacion || 'aprobado';
+    let statusText = '';
+    let isAllowed = false;
+    if (status === 'pendiente') {
+      statusText = '<span style="color:var(--process);">⚠️ Acreditación Pendiente de Aprobación</span>';
+    } else if (status === 'rechazado') {
+      statusText = '<span style="color:var(--dirty);">🔴 Acreditación Rechazada por Seguridad</span>';
+    } else if (inv.ingresoMarcado) {
+      statusText = '<span style="color:var(--clean);">✅ Ya ingresó a las ' + new Date(inv.horaIngreso).toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}) + '</span>';
+    } else {
+      statusText = '<span style="color:var(--clean);">⏳ Pendiente de ingreso (Aprobado)</span>';
+      isAllowed = true;
+    }
     
     resultDiv.style.display = 'block';
     resultDiv.innerHTML = '<div style="padding:1.25rem; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.2); border-radius:12px;">' +
@@ -5048,7 +5176,7 @@
         'Token: <code style="color:var(--primary);">' + inv.qrToken + '</code><br>' +
         'Estado: ' + statusText +
       '</div>' +
-      (inv.ingresoMarcado ? '' : '<button class="btn-sm btn-green" onclick="forzarAperturaManual(\'' + inv.id + '\')" style="margin-top:1rem; width:100%;">🔓 Forzar Apertura Manual de Torniquete</button>') +
+      (isAllowed ? '<button class="btn-sm btn-green" onclick="forzarAperturaManual(\'' + inv.id + '\')" style="margin-top:1rem; width:100%;">🔓 Forzar Apertura Manual de Torniquete</button>' : '') +
     '</div>';
   }
 
@@ -5165,18 +5293,53 @@
     
     const invitados = state.invitadosAcceso.filter(i => i.eventoId === evId);
     if (!invitados.length) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:1rem;">No hay visitantes registrados para este evento aún.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:1rem;">No hay visitantes registrados para este evento aún.</td></tr>';
     } else {
       tbody.innerHTML = invitados.map(inv => {
         const ingresoStatus = inv.ingresoMarcado ? '<span class="badge badge-clean">✅ INGRESÓ</span>' : '<span class="badge badge-pending">⏳ Pendiente</span>';
         const ingresoHora = inv.ingresoMarcado && inv.horaIngreso ? new Date(inv.horaIngreso).toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit'}) : '—';
-        const consentText = inv.estadoConsentimiento ? '🟢 Aceptado' : '🔴 Rechazado';
+        
+        let docsHtml = '';
+        if (inv.fotoCarnetFrontal) {
+          docsHtml += '<button class="doc-thumbnail" title="Ver Carnet Frente" onclick="viewDoc(\'' + inv.fotoCarnetFrontal + '\', \'Carnet Identidad (Frente) - ' + inv.nombreCompleto + '\')">🪪</button>';
+        }
+        if (inv.fotoCarnetTrasera) {
+          docsHtml += '<button class="doc-thumbnail" title="Ver Carnet Reverso" onclick="viewDoc(\'' + inv.fotoCarnetTrasera + '\', \'Carnet Identidad (Reverso) - ' + inv.nombreCompleto + '\')">🪪</button>';
+        }
+        if (inv.fotoCara) {
+          docsHtml += '<button class="doc-thumbnail" title="Ver Selfie" onclick="viewDoc(\'' + inv.fotoCara + '\', \'Selfie de Rostro - ' + inv.nombreCompleto + '\')">📸</button>';
+        }
+        if (!docsHtml) docsHtml = '<span style="color:var(--text-muted); font-size:0.75rem;">Sin docs</span>';
+        
+        const estado = inv.estadoAprobacion || 'aprobado';
+        let badgeClass = 'aprobado';
+        let estadoLabel = 'Aprobado';
+        if (estado === 'pendiente') {
+          badgeClass = 'pendiente';
+          estadoLabel = 'Pendiente';
+        } else if (estado === 'rechazado') {
+          badgeClass = 'rechazado';
+          estadoLabel = 'Rechazado';
+        }
+        const statusBadge = '<span class="badge-status-lg ' + badgeClass + '">' + estadoLabel + '</span>';
+        
+        let actionsHtml = '';
+        if (estado === 'pendiente') {
+          actionsHtml = '<div class="flex-row" style="gap:0.35rem;">' +
+            '<button class="btn-xs btn-green" onclick="aprobarInvitado(\'' + inv.id + '\')">🟢 Aprobar</button>' +
+            '<button class="btn-xs btn-red" onclick="rechazarInvitado(\'' + inv.id + '\')">🔴 Rechazar</button>' +
+            '</div>';
+        } else {
+          actionsHtml = '<span style="color:var(--text-muted); font-size:0.75rem;">N/A</span>';
+        }
+        
         return '<tr>' +
           '<td><strong>' + inv.nombreCompleto + '</strong></td>' +
           '<td>' + inv.rut + '</td>' +
-          '<td>' + (inv.telefono || '—') + '</td>' +
-          '<td><code style="color:var(--primary);">' + inv.qrToken + '</code></td>' +
-          '<td>' + consentText + '</td>' +
+          '<td>' + (inv.email || '—') + '</td>' +
+          '<td>' + docsHtml + '</td>' +
+          '<td>' + statusBadge + '</td>' +
+          '<td>' + actionsHtml + '</td>' +
           '<td>' + ingresoStatus + '</td>' +
           '<td>' + ingresoHora + '</td>' +
         '</tr>';
@@ -5194,11 +5357,15 @@
     document.getElementById('enrol-event-title').textContent = ev.nombre;
     document.getElementById('enrol-nombre').value = '';
     document.getElementById('enrol-rut').value = '';
+    document.getElementById('enrol-email').value = '';
     document.getElementById('enrol-telefono').value = '';
     document.getElementById('enrol-consent').checked = false;
     document.getElementById('enrol-error').style.display = 'none';
     
+    resetSimulatedUploads();
+    
     document.getElementById('enrol-form-card').style.display = 'block';
+    document.getElementById('enrol-review-card').style.display = 'none';
     document.getElementById('enrol-success-card').style.display = 'none';
     
     document.getElementById('view-enrolamiento').classList.add('active');
@@ -5211,35 +5378,45 @@
   function submitEnrolamiento() {
     const nombre = document.getElementById('enrol-nombre').value.trim();
     const rut = document.getElementById('enrol-rut').value.trim();
+    const email = document.getElementById('enrol-email').value.trim();
     const telefono = document.getElementById('enrol-telefono').value.trim();
     const consent = document.getElementById('enrol-consent').checked;
     
+    const fotoFrontal = document.getElementById('val-carnet-frontal').value;
+    const fotoTrasera = document.getElementById('val-carnet-trasero').value;
+    const fotoCara = document.getElementById('val-selfie').value;
+    
     const err = document.getElementById('enrol-error');
-    if (!nombre || !rut || !consent) {
+    if (!nombre || !rut || !email || !consent) {
       err.style.display = 'block';
       err.textContent = 'Complete todos los campos obligatorios y acepte el consentimiento.';
       return;
     }
     
+    if (!fotoFrontal || !fotoTrasera || !fotoCara) {
+      err.style.display = 'block';
+      err.textContent = 'Debe cargar las 3 fotografías requeridas (Frente, Atrás y Selfie).';
+      return;
+    }
+    
     err.style.display = 'none';
     
-    const result = apiVisitanteEnrolar(currentEnrolEventId, rut, nombre, telefono, consent);
+    const result = apiVisitanteEnrolar(currentEnrolEventId, rut, nombre, telefono, email, fotoFrontal, fotoTrasera, fotoCara, consent);
     if (result.error) {
       err.style.display = 'block';
       err.textContent = result.error;
       return;
     }
     
-    // Show success card
+    // Show pending review card
     document.getElementById('enrol-form-card').style.display = 'none';
-    document.getElementById('enrol-success-card').style.display = 'block';
+    document.getElementById('enrol-review-card').style.display = 'block';
+    document.getElementById('enrol-success-card').style.display = 'none';
     
-    // Display QR code
-    generateQrCodeGrid(result.qrToken);
-    document.getElementById('enrol-qr-token').textContent = result.qrToken;
+    document.getElementById('enrol-pending-email-display').textContent = email;
     
     const ev = state.eventos.find(e => e.id === currentEnrolEventId);
-    const ed = document.getElementById('enrol-event-details');
+    const ed = document.getElementById('enrol-pending-event-details');
     if (ev && ed) {
       ed.innerHTML = '<div class="ed-row"><span class="ed-label">Evento</span><span class="ed-value">' + ev.nombre + '</span></div>' +
         '<div class="ed-row"><span class="ed-label">Fecha</span><span class="ed-value">' + ev.fecha + '</span></div>' +
@@ -5247,6 +5424,129 @@
         '<div class="ed-row"><span class="ed-label">Puertas</span><span class="ed-value">' + ev.puertasAutorizadas.join(', ') + '</span></div>';
     }
     
+    // Reset inputs
+    document.getElementById('enrol-nombre').value = '';
+    document.getElementById('enrol-rut').value = '';
+    document.getElementById('enrol-email').value = '';
+    document.getElementById('enrol-telefono').value = '';
+    document.getElementById('enrol-consent').checked = false;
+    resetSimulatedUploads();
+    
+    renderEventos();
+  }
+
+  function simulateUpload(type) {
+    let mockVal = '';
+    let label = '';
+    let boxId = '';
+    let nameId = '';
+    
+    if (type === 'carnet-frontal') {
+      mockVal = MOCK_CARNET_FRONT;
+      label = 'carnet_frontal.svg';
+      boxId = 'box-carnet-frontal';
+      nameId = 'file-carnet-frontal-name';
+      document.getElementById('val-carnet-frontal').value = mockVal;
+    } else if (type === 'carnet-trasero') {
+      mockVal = MOCK_CARNET_BACK;
+      label = 'carnet_trasero.svg';
+      boxId = 'box-carnet-trasero';
+      nameId = 'file-carnet-trasero-name';
+      document.getElementById('val-carnet-trasero').value = mockVal;
+    } else if (type === 'selfie') {
+      mockVal = MOCK_SELFIE;
+      label = 'selfie_rostro.svg';
+      boxId = 'box-selfie';
+      nameId = 'file-selfie-name';
+      document.getElementById('val-selfie').value = mockVal;
+    }
+    
+    const box = document.getElementById(boxId);
+    const nameEl = document.getElementById(nameId);
+    if (box && nameEl) {
+      box.classList.add('uploaded');
+      nameEl.textContent = label;
+      nameEl.style.display = 'block';
+    }
+    showToast('📸 Foto cargada exitosamente: ' + label);
+  }
+  
+  function resetSimulatedUploads() {
+    ['carnet-frontal', 'carnet-trasero', 'selfie'].forEach(type => {
+      let boxId = '';
+      let nameId = '';
+      let valId = '';
+      if (type === 'carnet-frontal') {
+        boxId = 'box-carnet-frontal';
+        nameId = 'file-carnet-frontal-name';
+        valId = 'val-carnet-frontal';
+      } else if (type === 'carnet-trasero') {
+        boxId = 'box-carnet-trasero';
+        nameId = 'file-carnet-trasero-name';
+        valId = 'val-carnet-trasero';
+      } else if (type === 'selfie') {
+        boxId = 'box-selfie';
+        nameId = 'file-selfie-name';
+        valId = 'val-selfie';
+      }
+      
+      const box = document.getElementById(boxId);
+      const nameEl = document.getElementById(nameId);
+      const valEl = document.getElementById(valId);
+      if (box) box.classList.remove('uploaded');
+      if (nameEl) {
+        nameEl.textContent = '';
+        nameEl.style.display = 'none';
+      }
+      if (valEl) valEl.value = '';
+    });
+  }
+
+  function viewDoc(url, title) {
+    const modal = document.getElementById('view-doc-modal');
+    const modalTitle = document.getElementById('vdoc-modal-title');
+    const modalImg = document.getElementById('vdoc-modal-img');
+    if (!modal || !modalTitle || !modalImg) return;
+    
+    modalTitle.textContent = title;
+    modalImg.src = url;
+    modal.classList.add('active');
+  }
+  
+  function closeDocModal() {
+    const modal = document.getElementById('view-doc-modal');
+    if (modal) modal.classList.remove('active');
+  }
+
+  function aprobarInvitado(invId) {
+    const inv = state.invitadosAcceso.find(i => i.id === invId);
+    if (!inv) return;
+    
+    inv.estadoAprobacion = 'aprobado';
+    inv.fechaAprobacion = Date.now();
+    saveData();
+    
+    showToast('📧 Correo enviado a ' + inv.email + ' con su código QR.');
+    
+    if (currentSelectedEventId) {
+      verInvitadosEvento(currentSelectedEventId);
+    }
+    renderEventos();
+  }
+  
+  function rechazarInvitado(invId) {
+    const inv = state.invitadosAcceso.find(i => i.id === invId);
+    if (!inv) return;
+    
+    inv.estadoAprobacion = 'rechazado';
+    inv.fechaAprobacion = Date.now();
+    saveData();
+    
+    showToast('🔴 Acreditación rechazada para ' + inv.nombreCompleto);
+    
+    if (currentSelectedEventId) {
+      verInvitadosEvento(currentSelectedEventId);
+    }
     renderEventos();
   }
 
